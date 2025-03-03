@@ -4,6 +4,6 @@ var FILES_BASE = ""
 //DEV
 // var BASE_URL = "https://dev.api.lextracking.com/api/"
 // var BASE_URL = "http://localhost:8081/api/"
-var BASE_URL = "https://api-tracking.lexart.tech"
+var BASE_URL = "https://dev-api-tracking.lexart.tech"
 //PD
 // var BASE_URL = "https://api.lextracking.com/api/"
