@@ -36,3 +36,9 @@ The complete manual you could find in this link: https://bit.ly/49wkk4l
 - with the naming convention of `YYYY_MM_DD.sql` (EX: 2023_09_06.sql).
 - you can run the files manually to update the database to the state you want.
 
+
+### Initial Setup
+- Backend port exposed at nginx configuration
+- Create a .env at the same level of each .env.example with the same content and the right value of variables.
+
+
