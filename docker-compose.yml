@@ -13,6 +13,7 @@ services:
     command: [sh, -c, "cd application/app && npm install && npm install -g bower && bower install --force-latest --allow-root && npm run dev"]
     environment:
       - NODE_ENV=development
+    platform: linux/amd64
     # depends_on:
     #   - bower
     expose:
