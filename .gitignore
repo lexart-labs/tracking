@@ -18,7 +18,7 @@ app/bower_components/
 
 dist/
 bower_components/
-application/app/package-lock.json
+app/package-lock.json
 application/app/package-lock.json
 
 # Node artifact files
@@ -28,7 +28,7 @@ app/bower_components/
 app/src/env.js
 application/app/dist/
 application/app/bower_components/
-application/app/src/env.js
+# application/app/src/env.js
 # API
 api/config/conn.php
 # Compiled Java class files
