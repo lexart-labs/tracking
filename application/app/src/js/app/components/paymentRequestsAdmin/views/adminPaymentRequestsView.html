@@ -5,98 +5,119 @@
 			</h1>
 	</div>
 </div>
-
-<div class="lexart-wa__cnt summary-content">
-	<form class="lexart-frm lexart-frm--inline" ng-submit="submitForm()">
-			<div class="lexart-frm__fld">
+<details style="margin-top: 1rem;">
+	<summary>
+		<span class="summary-title">Filtros</span>
+		<div class="summary-chevron-up">
+			<i class="ri-arrow-right-s-line feather feather-chevron-down"></i>
+		</div>
+	</summary>
+	<div class="lexart-wa__cnt summary-content">
+		<form class="lexart-frm lexart-frm--inline" ng-submit="submitForm()">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="user-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.user_input.label' | translate }}</b>
-							</span>
-							<ui-select id="user-select" ng-model="paymentRequestFilters.user" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.user_input.placeholder' | translate }}">
-											{{$select.selected.name}}
-									</ui-select-match>
-									<ui-select-choices repeat="user in users | filter: $select.search">
-											<div ng-bind-html="user.name | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.user_input.label' | translate }}</b>
+						</span>
+						<ui-select id="user-select" ng-model="paymentRequestFilters.user"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.user_input.placeholder' | translate }}">
+								{{$select.selected.name}}
+							</ui-select-match>
+							<ui-select-choices repeat="user in users | filter: $select.search">
+								<div ng-bind-html="user.name | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="status-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.status_input.label' | translate }}</b>
-							</span>
-							<ui-select id="status-select" ng-model="paymentRequestFilters.status" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.status_input.placeholder' | translate }}">
-											{{statusTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="status in statuses | filter: $select.search">
-											<div ng-bind-html="statusTexts[status] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.status_input.label' | translate }}</b>
+						</span>
+						<ui-select id="status-select" ng-model="paymentRequestFilters.status"
+							class="lexart-select lexart-select--input"
+							theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.status_input.placeholder' | translate }}">
+								{{statusTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="status in statuses | filter: $select.search">
+								<div ng-bind-html="statusTexts[status] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
+				</div>
 			</div>
-
-			<div class="lexart-frm__fld">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="concept-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.concept_input.label' | translate }}</b>
-							</span>
-							<ui-select id="concept-select" ng-model="paymentRequestFilters.concept" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.concept_input.placeholder' | translate }}">
-											{{conceptTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="concept in concepts | filter: $select.search">
-											<div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.concept_input.label' | translate }}</b>
+						</span>
+						<ui-select id="concept-select" ng-model="paymentRequestFilters.concept"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.concept_input.placeholder' | translate }}">
+								{{conceptTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="concept in concepts | filter: $select.search">
+								<div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+	
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="currency-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.currency-label' | translate }}</b>
-							</span>
-							<ui-select id="currency-select" ng-model="paymentRequestFilters.currency" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="Select currency">
-											{{currencyTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="currency in currencies | filter: $select.search">
-											<div ng-bind-html="currencyTexts[currency] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.currency-label' | translate }}</b>
+						</span>
+						<ui-select id="currency-select" ng-model="paymentRequestFilters.currency"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match placeholder="Select currency">
+								{{currencyTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="currency in currencies | filter: $select.search">
+								<div ng-bind-html="currencyTexts[currency] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
+				</div>
 			</div>
-
-			<div class="lexart-frm__fld">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="start-date">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.start-date' | translate }}</b>
-							</span>
-							<input type="date" id="start-date" ng-model="paymentRequestFilters.startDate" class="lexart-input lexart-input--date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.start-date' | translate }}</b>
+						</span>
+						<input type="date" id="start-date" ng-model="paymentRequestFilters.startDate"
+							class="lexart-input lexart-input--date">
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+	
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="end-date">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.end-date' | translate }}</b>
-							</span>
-							<input type="date" id="end-date" ng-model="paymentRequestFilters.endDate" class="lexart-input lexart-input--date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.end-date' | translate }}</b>
+						</span>
+						<input type="date" id="end-date" ng-model="paymentRequestFilters.endDate"
+							class="lexart-input lexart-input--date">
 					</label>
+				</div>
+	
 			</div>
-
 			<div class="lexart-frm__fld">
-					<button class="lexart-btn lexart-btn--darkest lexart-btn__right" type="submit" style="margin-right: 0;">
-						{{ 'payment_requests.filter' | translate }}
-					</button>
+				<button class="lexart-btn lexart-btn--darkest lexart-btn__right" type="submit" style="margin-right: 0;">
+					{{ 'payment_requests.filter' | translate }}
+				</button>
 			</div>
-	</form>
-</div>
+		</form>
+	</div>
+</details>
+
 
 <details style="margin-top: 1rem;">
     <summary>
