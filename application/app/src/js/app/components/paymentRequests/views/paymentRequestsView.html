@@ -58,10 +58,9 @@
                         <span class="lexart-frm__lbl-name">
                             <b>{{ 'payment_requests.start-date' | translate }}</b>
                         </span>
-                        <div moment-picker="paymentRequest.startDate" format="YYYY-MM-DD" change='handleCheckAmount()'>
-                            <input type='text' ng-model='paymentRequest.startDate'>        
+                        <div moment-picker="paymentRequest.start_date" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                            <input type='text' ng-model='paymentRequest.start_date'>        
                         </div>
-                        <!-- <input ng-change="handleCheckAmount()" type="date" id="start-date" ng-model="paymentRequest.startDate" class="lexart-input lexart-input--date"> -->
                     </label>
                 </div>
                 <div class="lexart-frm__fld">
@@ -69,42 +68,42 @@
                         <span class="lexart-frm__lbl-name">
                             <b>{{ 'payment_requests.end-date' | translate }}</b>
                         </span>
-                        <div moment-picker="paymentRequest.endDate" format="YYYY-MM-DD" change='handleCheckAmount()'>
-                            <input type='text' ng-model='paymentRequest.endDate'>
+                        <div moment-picker="paymentRequest.end_date" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                            <input type='text' ng-model='paymentRequest.end_date'>
                         </div>
-                        <!-- <input ng-change="handleCheckAmount()" type="date" id="end-date" ng-model="paymentRequest.endDate" class="lexart-input lexart-input--date"> -->
                     </label>
                 </div>
             </div>
-            <div class="lexart-frm__fldgrp">
+            <div class="lexart-frm__fldgrp" ng-if="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'EXTERNAL' || paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'CLOSURE'">
                 <div class="lexart-frm__fld">
                     <label class="lexart-frm__lbl" for="currency-select">
                         <span class="lexart-frm__lbl-name">
-                            <b>{{ 'payment_requests.form_accordion.currency_input.label' | translate }}</b>
+                            <b>{{ 'payment_requests.form_accordion.bill_link' | translate }}</b>
                         </span>
                         <input
                             type="text"
-                            ng-model="paymentRequest.reportLink"
-                            placeholder="{{ 'payment_requests.form_accordion.currency_input.placeholder' | translate }}">
+                            ng-model="paymentRequest.bill_link"
+                            placeholder="{{ 'payment_requests.form_accordion.bill_link_placeholder' | translate }}">
                     </label>
                 </div>
-                <div class="lexart-frm__fld">
-                    <label class="lexart-frm__lbl" for="currency-select">
+                <div class="lexart-frm__fld" ng-show="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'EXTERNAL'">
+                    <label class="lexart-frm__lbl" >
                         <span class="lexart-frm__lbl-name">
-                            <b>{{ 'payment_requests.form_accordion.currency_input.label' | translate }}</b>
+                            <b>{{ 'payment_requests.form_accordion.report_link' | translate }}</b>
                         </span>
                         <input
                             type="text"
-                            ng-model="paymentRequest.reportBill"
-                            placeholder="{{ 'payment_requests.form_accordion.currency_input.placeholder' | translate }}">
+                            ng-model="paymentRequest.report_link"
+                            placeholder="{{ 'payment_requests.form_accordion.report_link_placeholder' | translate }}">
                     </label>
                 </div>
+                <div class="lexart-frm__fld" ng-hide="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'EXTERNAL'"></div>
             </div>
             <div class="lexart-frm__fldgrp">
                 <div class="lexart-frm__fld">
                     <label class="lexart-frm__lbl" for="concept_description-input">
                         <span class="lexart-frm__lbl-name">
-                            <b>{{ 'payment_requests.form_accordion.concept_description_input.label' | translate }}</b>
+                            <b>{{ 'payment_requests.form_accordion.observation_table_header' | translate }}</b>
                         </span>
                         <textarea 
                             id="concept_description-input"

@@ -190,7 +190,11 @@ class PaymentRequestController extends BaseController
                     "payment_request_id" => $payment_request_id,
                     "concept" => PaymentRequestDetailConcepts::from($detail["concept"]),
                     "concept_description" => $detail["concept_description"],
-                    "amount" => $detail["amount"]
+                    "amount" => $detail["amount"],
+                    "bill_link" => $detail["bill_link"] ?? null,
+                    "report_link" => $detail["report_link"] ?? null,
+                    "start_date" => $detail["start_date"] ?? null,
+                    "end_date" => $detail["end_date"] ?? null
                 ];
 
                 DB::table('PaymentRequestDetail')->insert($attributes);
@@ -303,8 +307,8 @@ class PaymentRequestController extends BaseController
             }
     
             // GET startDate and endDate from request
-            $inputStart = $request->input('startDate');
-            $inputEnd = $request->input('endDate');
+            $inputStart = $request->input('start_date');
+            $inputEnd = $request->input('end_date');
     
             // If startDate is provided, use it; otherwise, get the last closure date
             if ($inputStart) {

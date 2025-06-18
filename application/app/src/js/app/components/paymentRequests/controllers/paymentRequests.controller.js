@@ -22,12 +22,13 @@
 			$scope.paymentRequestDetails = [];
 			$scope.paymentRequestDetailsTotalAmount = 0;
 			$scope.paymentRequests = [];
-			$scope.concepts = ["Closure", "Benefits", "Compensation"];
+			$scope.concepts = ["Closure", "Benefits", "Compensation", "External"];
 			$scope.paymentRequest = { ...INITIAL_STATE_PAYMENT_REQUEST };
 			$scope.conceptTexts = {
 				Closure: $translate.instant("payment_requests.concepts.closure"),
 				Benefits: $translate.instant("payment_requests.concepts.benefits"),
 				Compensation: $translate.instant("payment_requests.concepts.compensation"),
+				External: $translate.instant("payment_requests.concepts.external_closure"),
 			};
 			$scope.statusTexts = {
 				Pending: $translate.instant("payment_requests.status.pending"),
@@ -42,7 +43,7 @@
 
 			function getClosureAmount() {
 				PaymentRequestsService.getAmountSinceLastClosure(
-					{userId: USER_ID, startDate: $scope.paymentRequest.startDate, endDate: $scope.paymentRequest.endDate},
+					{userId: USER_ID, start_date: $scope.paymentRequest.star_date, end_date: $scope.paymentRequest.end_date},
 					function (err, result) {
 						if (err) return $rootScope.showToaster(err.Error, "error");
 						$scope.paymentRequest.amount = result.amount;
@@ -72,16 +73,28 @@
 			}
 
 			$scope.handleCheckAmount = function () {
-				console.log("🚀  --> $scope.paymentRequest:", $scope.paymentRequest)
-				if ($scope.paymentRequest.concept.toUpperCase() != "CLOSURE" || !$scope.paymentRequest.startDate || !$scope.paymentRequest.endDate) {
+
+				// Make a description for each concept and show the toast with corresponding text
+				if ($scope.paymentRequest.concept.toUpperCase() == "CLOSURE") {
+					$rootScope.showToaster($translate.instant("payment_requests.concepts_explanation.closure"),"info");
+				} else if ($scope.paymentRequest.concept.toUpperCase() == "BENEFITS") {
+					$rootScope.showToaster($translate.instant("payment_requests.concepts_explanation.benefits"),"info");
+				} else if ($scope.paymentRequest.concept.toUpperCase() == "COMPENSATION") {
+					$rootScope.showToaster($translate.instant("payment_requests.concepts_explanation.compensation"),"info");
+				} else if ($scope.paymentRequest.concept.toUpperCase() == "EXTERNAL"){
+					$rootScope.showToaster($translate.instant("payment_requests.concepts_explanation.external_closure"),"info");
+				}
+
+
+				if ($scope.paymentRequest.concept.toUpperCase() != "CLOSURE") {
 					$scope.paymentRequest.amount = null;
 					$scope.isAmountInputDisabled = false;
 					return;
 				}
 
 				$scope.isAmountInputDisabled = true;
-
-				getClosureAmount();
+				if ($scope.paymentRequest.concept.toUpperCase() == "CLOSURE" && $scope.paymentRequest.start_date && $scope.paymentRequest.end_date)
+					getClosureAmount();
 
 				return;
 			};
@@ -129,26 +142,13 @@
 
 			$scope.savePaymentRequest = function () {
 				PaymentRequestsService.save(
-					$scope.paymentRequestDetails,
-					function (err, result) {
+					$scope.paymentRequestDetails, function (err, result) {
 						if (err) {
-							if (!err.Error)
-								return $rootScope.showToaster(
-									$translate.instant(
-										"payment_requests.error_messages.error_to_save"
-									),
-									"error"
-								);
-
+							if (!err.Error) return $rootScope.showToaster($translate.instant( "payment_requests.error_messages.error_to_save"), "error");
 							return $rootScope.showToaster(err.Error, "error");
 						}
 						if (err == null && result == null) {
-							return $rootScope.showToaster(
-								$translate.instant(
-									"payment_requests.error_messages.error_to_hours"
-								),
-								"error"
-							);
+							return $rootScope.showToaster($translate.instant("payment_requests.error_messages.error_to_hours"),"error");
 						}
 
 						getUserPaymentRequestHistory();
@@ -158,12 +158,7 @@
 						$scope.paymentRequestDetailsTotalAmount = 0.00
 						$scope.isAmountInputDisabled = false;
 
-						$rootScope.showToaster(
-							$translate.instant(
-								"payment_requests.success_messages.payment_request_created"
-							),
-							"success"
-						);
+						$rootScope.showToaster($translate.instant("payment_requests.success_messages.payment_request_created"),"success");
 					}
 				);
 			};
