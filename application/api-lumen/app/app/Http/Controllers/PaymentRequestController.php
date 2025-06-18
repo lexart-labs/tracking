@@ -285,6 +285,75 @@ class PaymentRequestController extends BaseController
         }
     }
 
+    public function getBalanceBetweenDates(Request $request)
+    {
+        $operation = "Get balance since dates";
+    
+        try {
+            $user_id = $request->route('user_id');
+    
+            if (!is_numeric($user_id)) {
+                return new Response(["Error" => INVALID_NUMERIC_ID, "Operation" => $operation], 400);
+            }
+    
+            $weekly_hours = Weeklyhours::where('idUser', $user_id)->latest('id')->first();
+    
+            if ($weekly_hours == null) {
+                return new Response(['Error' => MISSING_WEEKLY_HOURS, "Operation" => $operation], 422);
+            }
+    
+            // GET startDate and endDate from request
+            $inputStart = $request->input('startDate');
+            $inputEnd = $request->input('endDate');
+    
+            // If startDate is provided, use it; otherwise, get the last closure date
+            if ($inputStart) {
+                $start_date = date("Y-m-d 00:00:00", strtotime($inputStart));
+            } else {
+                $last_closure = PaymentRequest::latest()
+                    ->whereHas('payment_request_details', function ($query) {
+                        $query->where('concept', PaymentRequestDetailConcepts::Closure);
+                    })
+                    ->where('user_id', $user_id)
+                    ->first();
+    
+                $start_date = $last_closure ? $last_closure->created_at : date("Y-m-01 00:00:00");
+            }
+    
+            // Si no viene endDate, usar ahora
+            $end_date = $inputEnd
+                ? date("Y-m-d 23:59:59", strtotime($inputEnd))
+                : date("Y-m-d 23:59:59");
+    
+            $tracks = Tracks::join("Tasks", "Tracks.idTask", "=", "Tasks.id")
+                ->where("Tracks.idUser", $user_id)
+                ->whereBetween("Tracks.startTime", [$start_date, $end_date])
+                ->whereNotNull("Tracks.endTime")
+                ->select(
+                    "Tracks.trackCost",
+                    "Tasks.name AS taskName",
+                    "Tracks.duracion AS trackDuration"
+                )
+                ->get();
+    
+            $amount = $tracks->sum('trackCost');
+    
+            return new Response([
+                'response' => [
+                    'tracks' => $tracks,
+                    'start_date' => $start_date,
+                    'end_date' => $end_date,
+                    'amount' => $amount,
+                    'currency' => $weekly_hours->currency,
+                    'response' => 'Balance calculated successfully'
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            return new Response(["Error" => INTERNAL_SERVER_ERROR, "Operation" => $operation], 500);
+        }
+    }
+    
+
     public function getUserHistory(Request $request)
     {
         try {

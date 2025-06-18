@@ -14,62 +14,111 @@
     </summary>
     <div class="lexart-wa__cnt summary-content">
         <form class="lexart-frm" ng-submit="addPaymentRequest()">
-            <div class="lexart-frm__fld">
-                <label class="lexart-frm__lbl" for="concept-select">
-                    <span class="lexart-frm__lbl-name">
-                        <b>{{ 'payment_requests.form_accordion.concept_input.label' | translate }}</b>
-                    </span>
-                    <ui-select
-                        id="concept-select"
-                        ng-model="paymentRequest.concept"
-                        class="lexart-select lexart-select--input"
-                        theme="selectize"
-                        append-to-body="true"
-                        ng-change="changeConcept($select.selected)"
-                    >
-                        <ui-select-match 
-                            placeholder="{{ 'payment_requests.form_accordion.concept_input.placeholder' | translate }}"
-                        >
-                            {{conceptTexts[$select.selected]}}
-                        </ui-select-match>
-                        <ui-select-choices repeat="concept in concepts | filter: $select.search">
-                            <div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
-                        </ui-select-choices>
-                    </ui-select>
-                </label>
+            <div class="lexart-frm__fldgrp">
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="concept-select">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.form_accordion.concept_input.label' | translate }}</b>
+                        </span>
+                        <ui-select
+                            id="concept-select"
+                            ng-model="paymentRequest.concept"
+                            class="lexart-select lexart-select--input"
+                            theme="selectize"
+                            append-to-body="true"
+                            ng-change="handleCheckAmount($select.selected)">
+                            <ui-select-match
+                                placeholder="{{ 'payment_requests.form_accordion.concept_input.placeholder' | translate }}">
+                                {{conceptTexts[$select.selected]}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="concept in concepts | filter: $select.search">
+                                <div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+                    </label>
+                </div>
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="amount-input">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.form_accordion.amount_input.label' | translate }}</b>
+                        </span>
+                        <input
+                            type="number"
+                            step="0.01"
+                            id="amount-input"
+                            ng-model="paymentRequest.amount"
+                            placeholder="{{ 'payment_requests.form_accordion.amount_input.placeholder' | translate }}"
+                            ng-disabled="isAmountInputDisabled">
+                    </label>
+                </div>
             </div>
-            <div class="lexart-frm__fld">
-                <label class="lexart-frm__lbl" for="amount-input">
-                    <span class="lexart-frm__lbl-name">
-                        <b>{{ 'payment_requests.form_accordion.amount_input.label' | translate }}</b>
-                    </span>
-                    <input 
-                        type="number"
-                        step="0.01"
-                        id="amount-input"
-                        ng-model="paymentRequest.amount"
-                        placeholder="{{ 'payment_requests.form_accordion.amount_input.placeholder' | translate }}"
-                        ng-disabled="isAmountInputDisabled"
-                    >
-                </label>
+            <div class="lexart-frm__fldgrp" ng-if="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'CLOSURE'">
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="start-date">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.start-date' | translate }}</b>
+                        </span>
+                        <div moment-picker="paymentRequest.startDate" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                            <input type='text' ng-model='paymentRequest.startDate'>        
+                        </div>
+                        <!-- <input ng-change="handleCheckAmount()" type="date" id="start-date" ng-model="paymentRequest.startDate" class="lexart-input lexart-input--date"> -->
+                    </label>
+                </div>
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="end-date">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.end-date' | translate }}</b>
+                        </span>
+                        <div moment-picker="paymentRequest.endDate" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                            <input type='text' ng-model='paymentRequest.endDate'>
+                        </div>
+                        <!-- <input ng-change="handleCheckAmount()" type="date" id="end-date" ng-model="paymentRequest.endDate" class="lexart-input lexart-input--date"> -->
+                    </label>
+                </div>
             </div>
-            <div class="lexart-frm__fld">
-                <label class="lexart-frm__lbl" for="concept_description-input">
-                    <span class="lexart-frm__lbl-name">
-                        <b>{{ 'payment_requests.form_accordion.concept_description_input.label' | translate }}</b>
-                    </span>
-                    <textarea 
-                        id="concept_description-input"
-                        padding="true"
-                        rows="4"
-                        ng-model="paymentRequest.concept_description"
-                        placeholder="{{ 'payment_requests.form_accordion.concept_description_input.placeholder' | translate }}"
-                    ></textarea>
-                </label>
+            <div class="lexart-frm__fldgrp">
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="currency-select">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.form_accordion.currency_input.label' | translate }}</b>
+                        </span>
+                        <input
+                            type="text"
+                            ng-model="paymentRequest.reportLink"
+                            placeholder="{{ 'payment_requests.form_accordion.currency_input.placeholder' | translate }}">
+                    </label>
+                </div>
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="currency-select">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.form_accordion.currency_input.label' | translate }}</b>
+                        </span>
+                        <input
+                            type="text"
+                            ng-model="paymentRequest.reportBill"
+                            placeholder="{{ 'payment_requests.form_accordion.currency_input.placeholder' | translate }}">
+                    </label>
+                </div>
+            </div>
+            <div class="lexart-frm__fldgrp">
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl" for="concept_description-input">
+                        <span class="lexart-frm__lbl-name">
+                            <b>{{ 'payment_requests.form_accordion.concept_description_input.label' | translate }}</b>
+                        </span>
+                        <textarea 
+                            id="concept_description-input"
+                            padding="true"
+                            rows="4"
+                            ng-model="paymentRequest.concept_description"
+                            placeholder="{{ 'payment_requests.form_accordion.concept_description_input.placeholder' | translate }}"
+                        ></textarea>
+                    </label>
+                </div>
             </div>
 
             <div class="lexart-frm__fld">
-                <button class="lexart-btn lexart-btn--darkest lexart-btn__right" type="submit" style="margin-right: 0;">
+                <button class="lexart-btn lexart-btn__right" type="submit" style="margin-right: 0;">
                     {{ 'payment_requests.form_accordion.add_concept_button_text' | translate }}
                 </button>
             </div>
@@ -80,11 +129,7 @@
             <h1><b>{{ 'payment_requests.form_accordion.request_table_title' | translate }}</b></h1>
             <p>{{ 'payment_requests.form_accordion.request_table_subtitle' | translate }}</p>
         </header>
-        <aside style="padding: 1rem 0; display: flex; justify-content: flex-end;">
-            <button class="lexart-btn lexart-btn--darkest" type="button" style="margin-right: 0;" ng-click="savePaymentRequest()">
-                {{ 'payment_requests.form_accordion.save_request_button_text' | translate }}
-            </button>
-        </aside>
+        
         <main>
             <payment-request-details-table 
                 details-to-show="paymentRequestDetails" 
@@ -95,6 +140,11 @@
             >
             </payment-request-details-table>
         </main>
+        <aside style="padding: 1rem 0; display: flex; justify-content: flex-end;">
+            <button class="lexart-btn" type="button" style="margin-right: 0;" ng-click="savePaymentRequest()">
+                {{ 'payment_requests.form_accordion.save_request_button_text' | translate }}
+            </button>
+        </aside>
     </div>
 </details>
 <details style="margin-top: 1rem;">
