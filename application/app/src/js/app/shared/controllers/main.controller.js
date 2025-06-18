@@ -593,13 +593,13 @@
                     access: true
                 },
 
-                // {
-                //     uisref: 'app.calendar',
-                //     icon: 'ri-calendar-line',
-                //     name: 'Calendar',
-                //     label: $filter('translate')('navigation.calendar'),
-                //     access: true
-                // },
+                {
+                    uisref: 'app.calendar',
+                    icon: 'ri-calendar-line',
+                    name: 'Calendar',
+                    label: $filter('translate')('navigation.calendar'),
+                    access: true
+                },
 
                 {
                     uisref: '',
