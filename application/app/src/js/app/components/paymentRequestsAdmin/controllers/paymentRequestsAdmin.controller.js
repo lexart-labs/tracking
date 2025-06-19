@@ -56,6 +56,13 @@
 				Approved: $translate.instant("payment_requests.status.approved"),
 				Rejected: $translate.instant("payment_requests.status.rejected"),
 			};
+			$scope.statusColors = {
+				Pending: 'imm-tag-info',
+				Canceled: 'imm-tag-zafran',
+				Approved: 'imm-tag-lime',
+				Rejected: 'imm-tag-danger'
+			};
+
 			$scope.concepts = Object.keys($scope.conceptTexts);
 			$scope.statuses = Object.keys($scope.statusTexts);
 			$scope.currencies = Object.keys($scope.currencyTexts);
@@ -91,24 +98,16 @@
 						paymentRequests
 					},
 					controller: ['$scope', function ($scope) {
-            $scope.updatePaymentRequestStatus = function (status) {
+            			$scope.updatePaymentRequestStatus = function (status) {
 							const paymentRequest = $scope.ngDialogData.paymentRequests;
-							PaymentRequestsServiceAdmin.updateStatus(paymentRequest.id, status, function(err, result) {
-								if (err) {
-										$rootScope.showToaster(
-												$translate.instant("payment_requests.error_messages.error_to_update_status"),
-												"error"
-										);
-								} else {
-									getAllPaymentRequests();
-									$rootScope.showToaster(
-											$translate.instant("payment_requests.success_messages.status_updated"),
-											"success"
-									);
-								}
+							PaymentRequestsServiceAdmin.updateStatus(paymentRequest.id, status, function (err, result) {
+								ngDialog.close();
+								if (err) return $rootScope.showToaster($translate.instant("payment_requests.error_messages.error_to_update_status"),"error");
+								getAllPaymentRequests();
+								$rootScope.showToaster($translate.instant("payment_requests.success_messages.status_updated"),"success");
 							});
-            };
-        	}]
+            			};
+        			}]
 				});
 			};
 
@@ -151,24 +150,28 @@
 
 			function getAllPaymentRequests(query) {
 				PaymentRequestsServiceAdmin.find(query, function (err, result) {
-						if (err) {
-								$rootScope.showToaster(
-										$translate.instant("payment_requests.error_messages.error_to_fetch"),
-										"error"
-								);
-						} else {
-							  const allPaymentRequests = result.map((r) => {
-									  const date = r.created_at;
-									  r.created_at = new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
-									  r.total = r.payment_request_details.reduce((acc, curr) => {
-										return acc += curr.amount;
-									}, 0);
-									return r;
-								})
-								$scope.allPaymentRequests = allPaymentRequests;
-						}
+					if (err) {
+						$rootScope.showToaster(
+							$translate.instant("payment_requests.error_messages.error_to_fetch"),
+							"error"
+						);
+					} else {
+						const allPaymentRequests = result.map((r) => {
+							const date = r.created_at;
+							r.created_at = new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
+							r.created_at_display = moment(date).format('MMM DD, YYYY');
+							r.start_date_display = r.payment_request_details.find(detail => detail.start_date)?.start_date ? moment(r.payment_request_details.find(detail => detail.start_date).start_date).format('MMM DD, YYYY') : '';
+							r.end_date_display = r.payment_request_details.find(detail => detail.end_date)?.end_date ? moment(r.payment_request_details.find(detail => detail.end_date).end_date).format('MMM DD, YYYY') : '';
+							r.status_display = $scope.statusTexts[r.status];
+							r.total = r.payment_request_details.reduce((acc, curr) => {
+								return acc += curr.amount;
+							}, 0);
+							return r;
+						});
+						$scope.allPaymentRequests = allPaymentRequests;
+					}
 				});
-		  };
+			};
 		},
 	]);
 })(angular);

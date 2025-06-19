@@ -58,7 +58,7 @@ class PaymentRequestController extends BaseController
             $query = $this->applyFilters($query, $request);
             $rows = $query->with([
                 'user' => function ($q) {
-                    $q->select('id', 'name');
+                    $q->select('id', 'name', 'email', 'photo');
                 },
                 'payment_request_details'
             ])->get();

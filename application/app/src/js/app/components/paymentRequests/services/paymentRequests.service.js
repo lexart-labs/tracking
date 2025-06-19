@@ -7,9 +7,8 @@
         var model = "payment_requests";
 
         var factory = {
-            getAmountSinceLastClosure: function ({ userId, startDate, endDate }, cb) {
-                console.log(`🚀  --> { userId, startDate, endDate }:`, { userId, startDate, endDate })
-                RestClient.get(`${model}/closure/${userId}/${startDate}/${endDate}`, function (err, result) {
+            getAmountSinceLastClosure: function ({ userId, start_date, end_date }, cb) {
+                RestClient.get(`${model}/closure/${userId}/${start_date}/${end_date}`, function (err, result) {
                     cb(err, result);
                 });
             },

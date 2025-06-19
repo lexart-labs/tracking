@@ -43,7 +43,7 @@
 
 			function getClosureAmount() {
 				PaymentRequestsService.getAmountSinceLastClosure(
-					{userId: USER_ID, start_date: $scope.paymentRequest.star_date, end_date: $scope.paymentRequest.end_date},
+					{userId: USER_ID, start_date: $scope.paymentRequest.start_date, end_date: $scope.paymentRequest.end_date},
 					function (err, result) {
 						if (err) return $rootScope.showToaster(err.Error, "error");
 						$scope.paymentRequest.amount = result.amount;
@@ -93,8 +93,9 @@
 				}
 
 				$scope.isAmountInputDisabled = true;
-				if ($scope.paymentRequest.concept.toUpperCase() == "CLOSURE" && $scope.paymentRequest.start_date && $scope.paymentRequest.end_date)
+				if ($scope.paymentRequest.concept.toUpperCase() == "CLOSURE" && $scope.paymentRequest.start_date && $scope.paymentRequest.end_date) {
 					getClosureAmount();
+				}
 
 				return;
 			};
