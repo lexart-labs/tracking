@@ -68,16 +68,16 @@
 			$scope.currencies = Object.keys($scope.currencyTexts);
 
 			this.$onInit = function () {
-					getAllPaymentRequests();
+					getAllPaymentRequests($scope.paymentRequestFilters);
 					getAllUsers();
 			};
 
 			$scope.submitForm = function() {
 				getAllPaymentRequests($scope.paymentRequestFilters);
-		  };
+			};
 
-		  function getAllUsers() {
-			PaymentRequestsServiceAdmin.getAllUsers(function (err, result) {
+			function getAllUsers() {
+				PaymentRequestsServiceAdmin.getAllUsers(function (err, result) {
 					if (err) {
 							$rootScope.showToaster(
 									$translate.instant("payment_requests.error_messages.error_to_fetch"),
@@ -87,7 +87,7 @@
 						$scope.users = result;
 					}
 				});
-	  	};
+			};
 
 			$scope.showPaymentRequestDetailsDialog = function(paymentRequests) {
 				ngDialog.open({

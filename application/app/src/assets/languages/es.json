@@ -606,8 +606,8 @@
       "total_table_footer": "Total",
       "report_link": "Report Link",
       "report_link_placeholder": "Enter the report link if applicable",
-      "bill_link": "Bill Link",
-      "bill_link_placeholder": "Enter the bill link if applicable"
+      "bill_link": "Invoice Link",
+      "bill_link_placeholder": "Enter the invoice link if applicable"
     },
     "history_accordion": {
       "title": "History",

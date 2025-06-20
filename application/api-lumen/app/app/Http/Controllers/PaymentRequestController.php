@@ -61,7 +61,7 @@ class PaymentRequestController extends BaseController
                     $q->select('id', 'name', 'email', 'photo');
                 },
                 'payment_request_details'
-            ])->get();
+            ])->orderBy('id', 'desc')->get();
 
             return new Response(['response' => $rows]);
         } catch (Exception $e) {
