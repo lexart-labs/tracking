@@ -53,7 +53,7 @@ class WeeklyhoursController extends BaseController
     public function update(Request $request)
     {
         $this->validate($request, [
-            "idUser" => "required|numeric|exists:Users,id|unique:WeeklyHours",
+            "idUser" => "required|numeric|exists:Users,id|unique:WeeklyHours,idUser," . $request->id,
             "userName" => "required",
             "costHour" => "required|numeric",
             "workLoad" => "required|numeric",
