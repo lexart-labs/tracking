@@ -37,11 +37,12 @@
         });
     });
 
-    Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices) {
+    Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', '$filter', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices, $filter) {
 
         $scope.thisHide = false;
         $scope.userToolsActive = false;
         $rootScope.inprogress = false;
+        $rootScope.sidebarItems = [];
 
         $rootScope.toggleActive = function () {
             $scope.userToolsActive = !$scope.userToolsActive;
@@ -528,43 +529,6 @@
             }
         };
 
-        // Check for defined session values
-        if (!$window.localStorage[TOKEN_KEY]) {
-            $log.error('You are not logged in');
-            $state.go('login');
-        } else {
-            $rootScope.showTrackTooltip = true;
-            $rootScope.showManualTrackTooltip = false;
-            $log.info('Welcome back', $window.localStorage["userName"]);
-            $rootScope.userId = $window.localStorage["userId"];
-            $rootScope.userName = $window.localStorage["userName"];
-            $rootScope.userEmail = $window.localStorage["userEmail"];
-            $rootScope.userRole = $window.localStorage["userRole"];
-            $rootScope.isAdmin = $window.localStorage["isAdmin"];
-            $rootScope.isClient = $window.localStorage["isClient"];
-            if ($rootScope.isClient == 'true') {
-                $rootScope.userIdClient = $window.localStorage["idUserClient"];
-            }
-            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
-                if (!err) {
-                    if (track) {
-                        console.log('track', track);
-                        if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
-
-                            //Update current track
-                            $rootScope.currentTrack = track;
-                            $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
-                            var now = new Date().getTime(); //Fecha actual millisegundos
-                            var start = new Date(track.startTime).getTime(); //Fecha de track en millisegundos
-                            var ms = now - start;
-                            $scope.toggleTimer(ms); //Iniciamos el clock con el tiempo corrido
-                        }
-                    }
-                }
-            });
-        }
-
-
         $rootScope.topBar = {};
         $rootScope.topBar.filterTask = '';
         $rootScope.topBar.filterTasks = [];
@@ -590,6 +554,203 @@
 
 
         };
+
+        $rootScope.generateSidebarContent = function () {
+            $rootScope.sidebarItems = [
+                {
+                    uisref: 'app.dashboard',
+                    icon: 'ri-home-line',
+                    name: 'Dashboard',
+                    label: $filter('translate')('navigation.dashboard'),
+                    access: true
+                },
+                {
+                    uisref: 'app.paymentRequestsAdmin',
+                    icon: 'ri-bank-line',
+                    name: 'PaymentRequests',
+                    label: $filter('translate')('navigation.payment_requests'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.users',
+                    icon: 'ri-user-line',
+                    name: 'Users',
+                    label: $filter('translate')('navigation.users'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.clients',
+                    icon: 'ri-user-shared-line',
+                    name: 'Clients',
+                    label: $filter('translate')('navigation.clients'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.projects',
+                    icon: 'ri-briefcase-line',
+                    name: 'Projects',
+                    label: $filter('translate')('navigation.projects'),
+                    access: true
+                },
+
+                {
+                    uisref: 'app.calendar',
+                    icon: 'ri-calendar-line',
+                    name: 'Calendar',
+                    label: $filter('translate')('navigation.calendar'),
+                    access: true
+                },
+
+                {
+                    uisref: '',
+                    icon: 'ri-task-line',
+                    name: 'Tasks',
+                    label: $filter('translate')('navigation.tasks'),
+                    access: true,
+                    submenus: [
+                        {
+                            uisref: 'app.tasks',
+                            name: 'Tasks Manuales',
+                            label: 'Tareas Manuales',
+                            access: true
+                        },
+                        // {
+                        //     uisref: 'app.tasks_automatic',
+                        //     name: 'Tasks Automatic',
+                        //     label: $filter('translate')('navigation.tasks_automatic'),
+                        //     access: true
+                        // },
+                        {
+                            uisref: 'app.tasks_trello',
+                            name: 'Tasks Trello',
+                            label: $filter('translate')('navigation.tasks_trello'),
+                            access: true
+                        },
+                        // {
+                        //     uisref: 'app.jira',
+                        //     name: 'Tasks Jira',
+                        //     label: $filter('translate')('navigation.jira'),
+                        //     access: true
+                        // },
+                        // {
+                        //     uisref: 'app.taskManager',
+                        //     name: 'Task Manager',
+                        //     label: $filter('translate')('navigation.taskManager'),
+                        //     access: true
+                        // }
+                    ]
+                },
+                // PROFILE
+                {
+                    uisref: `app.userEdit({id:${$rootScope.userId}})`,
+                    icon: 'ri-user-settings-line',
+                    name: 'Profile',
+                    label: $filter('translate')('navigation.my-profile'),
+                    access: $rootScope.userRole == 'developer'
+                },
+                
+                
+                
+                {
+                    uisref: 'app.reports',
+                    icon: 'ri-bar-chart-line',
+                    name: 'Reports',
+                    label: 'Reportes',
+                    access: true
+                },
+                {
+                    uisref: 'app.weeklyHours',
+                    icon: 'ri-calendar-2-line',
+                    name: 'weeklyHour',
+                    label: $filter('translate')('navigation.weeklyHour'),
+                    access: $rootScope.userRole == 'admin'
+                },
+                // {
+                //     uisref: '',
+                //     icon: 'ri-folder-open-line',
+                //     name: 'CRM',
+                //     label: 'CRM',
+                //     access: $rootScope.userRole == 'admin',
+                //     submenus: [
+                //         {
+                //             uisref: 'app.banks',
+                //             name: 'Bank',
+                //             label: $filter('translate')('navigation.bank'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.finances',
+                //             name: 'Finances',
+                //             label: $filter('translate')('navigation.finance'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.sales',
+                //             name: 'Sales',
+                //             label: $filter('translate')('navigation.sale'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.weeklyHours',
+                //             name: 'weeklyHour',
+                //             label: $filter('translate')('navigation.weeklyHour'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.reports',
+                //             name: 'Reportes',
+                //             label: 'Reportes',
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.evaluate',
+                //             name: 'Evaluaciones',
+                //             label: 'Evaluaciones',
+                //             access: true
+                //         }
+
+                //     ]
+                // },
+
+            ]
+        };
+
+        // Check for defined session values
+        if (!$window.localStorage[TOKEN_KEY]) {
+            $log.error('You are not logged in');
+            $state.go('login');
+        } else {
+            $rootScope.showTrackTooltip = true;
+            $rootScope.showManualTrackTooltip = false;
+            $log.info('Welcome back', $window.localStorage["userName"]);
+            $rootScope.userId = $window.localStorage["userId"];
+            $rootScope.userName = $window.localStorage["userName"];
+            $rootScope.userEmail = $window.localStorage["userEmail"];
+            $rootScope.userRole = $window.localStorage["userRole"];
+            $rootScope.isAdmin = $window.localStorage["isAdmin"];
+            $rootScope.isClient = $window.localStorage["isClient"];
+            if ($rootScope.isClient == 'true') {
+                $rootScope.userIdClient = $window.localStorage["idUserClient"];
+            }
+            $rootScope.generateSidebarContent();
+            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
+                if (!err) {
+                    if (track) {
+                        console.log('track', track);
+                        if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
+
+                            //Update current track
+                            $rootScope.currentTrack = track;
+                            $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
+                            var now = new Date().getTime(); //Fecha actual millisegundos
+                            var start = new Date(track.startTime).getTime(); //Fecha de track en millisegundos
+                            var ms = now - start;
+                            $scope.toggleTimer(ms); //Iniciamos el clock con el tiempo corrido
+                        }
+                    }
+                }
+            });
+        }
 
 
     }]);
