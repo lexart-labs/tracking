@@ -18,7 +18,7 @@ app/bower_components/
 
 dist/
 bower_components/
-application/app/package-lock.json
+app/package-lock.json
 application/app/package-lock.json
 
 # Node artifact files
