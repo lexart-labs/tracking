@@ -48,6 +48,20 @@
 							RestClient.put(endpoint, data, function (err, result) {
 								cb(err, result);
 							});
+						},
+						uploadFile: function (paymentRequestId, file, cb) {
+							const endpoint = `${model}/${paymentRequestId}/upload`;
+							const reader = new FileReader();
+
+							reader.onloadend = function () {
+									const base64data = reader.result;
+									RestClient.customPost(endpoint, {
+											file: base64data
+									}, function (err, result) {
+											cb(err, result);
+									});
+							};
+							reader.readAsDataURL(file);
 						}
         };
 

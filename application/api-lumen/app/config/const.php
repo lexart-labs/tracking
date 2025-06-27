@@ -19,5 +19,10 @@ define("MISSING_WEEKLY_HOURS", "The user does not have an associated hourly cost
 define("UPDATED", "Successfully updated");
 define("NOTHING_TO_UPDATE", "Nothing to Update");
 define("INVALID_DATA", "Invalid data");
+define("ACCESSES_FAILED", "Access Denied");
+define("INVALID_FILE", "Invalid file");
+define("UNSUPPORTED_FILE", "Unsupported file type. Only .pdf, .doc, and .docx are allowed.");
+define("ERROR_DECODED", "Base64 decode failed");
+define("NO_FILE_PROVIDED", "No file data provided");
 
 

@@ -127,6 +127,11 @@
 								<td>
 										<i class="ri-pencil-line" ng-click="editPaymentRequest(paymentRequest)"></i>
 								</td>
+								<td ng-if="paymentRequest.status === 'Approved'">
+									<button class="lexart-btn lexart-btn--darkest lexart-btn__right" ng-click="openUploadDialog(paymentRequest.id)">
+											{{ 'payment_requests.upload_file' | translate }}
+									</button>
+								</td>
 							</div>
 						</tr>
 					</tbody>

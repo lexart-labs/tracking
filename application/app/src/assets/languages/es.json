@@ -539,11 +539,13 @@
     "url"         : "URL"
   },
   "payment_requests": {
+		"upload_file": "Upload File",
 		"amount" : "Amount",
 		"concept_description": "Description",
 		"save":"Save",
     "title": "Payment Requests",
     "error_messages": {
+			"error_to_upload_file": "There was an error uploading the file",
       "status_update": "Payment request update error",
       "null_values": "All form fields are mandatory",
       "amount_greater_than_zero": "The amount field must be greater than zero",
@@ -667,7 +669,8 @@
       "pending": "Pending",
       "canceled": "Cancelled",
       "approved": "Approved",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+			"paid": "Paid"
     },
     "table_accordion": {
       "title": "List"

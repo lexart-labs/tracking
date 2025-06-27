@@ -322,5 +322,6 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('{user_id}', 'PaymentRequestController@getUserHistory');
         Route::get('closure/{user_id}', 'PaymentRequestController@getBalanceSinceLastClosure');
         Route::put('{payment_request_id}/update_detail', 'PaymentRequestController@updateConceptDescription');
+        Route::post('{id}/upload', 'PaymentRequestController@uploadFile');
     });
 });
