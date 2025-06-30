@@ -57,10 +57,10 @@
 				Rejected: $translate.instant("payment_requests.status.rejected"),
 			};
 			$scope.statusColors = {
-				Pending: 'imm-tag-info',
-				Canceled: 'imm-tag-zafran',
-				Approved: 'imm-tag-lime',
-				Rejected: 'imm-tag-danger'
+				Pending: 'tracking-tag-info',
+				Canceled: 'tracking-tag-zafran',
+				Approved: 'tracking-tag-lime',
+				Rejected: 'tracking-tag-danger'
 			};
 
 			$scope.concepts = Object.keys($scope.conceptTexts);

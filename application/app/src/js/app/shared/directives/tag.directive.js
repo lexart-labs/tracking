@@ -6,8 +6,8 @@
 
 	Module.directive('trackingTag', function () {
 		//Example of invocation:
-		// Color options (imm-tag-info, imm-tag-zafran, imm-tag-lime)
-		// <imm-tag text="Texto a mostrar" color="imm-tag-info"></group-button>
+		// Color options (tracking-tag-info, tracking-tag-zafran, tracking-tag-lime)
+		// <tracking-tag text="Texto a mostrar" color="tracking-tag-info"></group-button>
 
 		return {
 			restrict: 'E',

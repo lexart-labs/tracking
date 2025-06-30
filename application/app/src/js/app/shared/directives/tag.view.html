@@ -1,62 +1,66 @@
-<div class="imm-promo-tag {{color}}">
+<div class="tracking-promo-tag {{color}}">
 	<span ng-bind-html="text"></span>
 </div>
 <style>
-	.imm-promo-tag {
+	.tracking-promo-tag {
 		padding: 6px 12px;
 		border-radius: 4px;
 		font-weight: 500;
 		width: fit-content;
 		letter-spacing: .4px;
 	}
-
-	.imm-tag-info {
+	.tracking-promo-tag span {
+		display: flex; 
+		align-items: center; 
+		gap: .4rem;
+ 	}
+	.tracking-tag-info {
 		color: #0048AD;
 		background: #CAE3FC;
 	}
 
-	.imm-tag-info-outlined {
+	.tracking-tag-info-outlined {
 		color: #0048AD;
 		background: white;
 	}
 
-	.imm-tag-zafran {
+	.tracking-tag-zafran {
 		color: #B24D00 !important;
 		background: #FFE3D4 !important;
 	}
 
-	.imm-tag-zafran-outlined {
+	.tracking-tag-zafran-outlined {
 		color: #B24D00 !important;
 		background: white !important;
 	}
 
-	.imm-tag-lime {
+	.tracking-tag-lime {
 		color: #52C41A !important;
 		background: #F6FFED !important;
 	}
 
-	.imm-tag-lime-outlined {
+	.tracking-tag-lime-outlined {
 		background: #52C41A !important;
 		color: #F6FFED !important;
 	}
 
-	.imm-tag-default {
+	.tracking-tag-default {
 		color: darkgrey;
 		background: white;
 		border: 1px solud darkgray;
 	}
 
-	.imm-tag-default-outlined {
+	.tracking-tag-default-outlined {
 		color: white;
 		background: darkgray;
 	}
 
-	.imm-tag-danger {
+	.tracking-tag-danger {
 		color: #FF4D4F;
 		background: #FFF1F0;
 	}
 
-	.imm-tag-danger-outlined {
+	.tracking-tag-danger-outlined {
 		color: #FF4D4F;
 		background: white;
 		border: 1px solid #FF4D4F;

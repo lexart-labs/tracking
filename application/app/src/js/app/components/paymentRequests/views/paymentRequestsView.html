@@ -52,7 +52,7 @@
                     </label>
                 </div>
             </div>
-            <div class="lexart-frm__fldgrp" ng-if="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'CLOSURE'">
+            <div class="lexart-frm__fldgrp" ng-if="paymentRequest.concept && paymentRequest.concept.toUpperCase() == 'CLOSURE' || paymentRequest.concept.toUpperCase() == 'EXTERNAL'">
                 <div class="lexart-frm__fld">
                     <label class="lexart-frm__lbl" for="start-date">
                         <span class="lexart-frm__lbl-name">
@@ -127,8 +127,8 @@
         <header>
             <h1><b>{{ 'payment_requests.form_accordion.request_table_title' | translate }}</b></h1>
             <tracking-tag
-                color="imm-tag-info"
-                text="{{ 'payment_requests.form_accordion.request_table_subtitle' | translate }}"
+                color="tracking-tag-info"
+                text="<b><i class='ri-information-line'></i></b> {{ 'payment_requests.form_accordion.request_table_subtitle' | translate }}"
             ></tracking-tag><br>
         </header>
         
