@@ -23,7 +23,7 @@
 				let endpoint = `${model}/all`;
 				if (query) {
 					const params = new URLSearchParams();
-					if (query.status) params.append('status', query.status);
+					if (query.status && query.status != 'All') params.append('status', query.status);
 					if (query.concept) params.append('concept', query.concept);
 					if (query.user) params.append('user', query.user);
 					if (query.currency) params.append('currency', query.currency);
@@ -37,9 +37,9 @@
 					cb(err, result);
 				});
 			},
-            updateStatus: function (paymentRequestId, status, cb) {
+            updateStatus: function (paymentRequestId, { status, reply }, cb) {
                 var endpoint = `${model}/update/${paymentRequestId}`;
-                RestClient.put(endpoint, { status: status }, function (err, result) {
+                RestClient.put(endpoint, { status, reply }, function (err, result) {
                     cb(err, result);
                 });
             },

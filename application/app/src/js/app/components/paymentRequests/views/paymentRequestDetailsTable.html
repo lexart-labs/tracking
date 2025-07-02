@@ -1,7 +1,7 @@
-<table class="lexart-table">
+<table class="lexart-table" style="width: 100%;">
     <thead>
         <tr>
-            <th>{{ 'payment_requests.form_accordion.id_table_header' | translate  }}</th>
+            <!-- <th>{{ 'payment_requests.form_accordion.id_table_header' | translate  }}</th> -->
             <th>{{ 'payment_requests.form_accordion.concept_table_header' | translate  }}</th>
             <th>{{ 'payment_requests.form_accordion.amount_table_header' | translate  }}</th>
             <th>{{ 'payment_requests.form_accordion.observation_table_header' | translate  }}</th>
@@ -11,7 +11,7 @@
     <tbody>
         {{ $ctrl.detailsToShow }}
         <tr ng-repeat="paymentRequest in detailsToShow">
-            <td>{{paymentRequest.id}}</td>
+            <!-- <td>{{paymentRequest.id}}</td> -->
             <td>{{conceptTexts[paymentRequest.concept]}}</td>
             <td>{{paymentRequest.amount.toFixed(2)}}</td>
             <td>{{paymentRequest.concept_description}}</td>

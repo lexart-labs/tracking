@@ -154,28 +154,6 @@
 					<h2 class="payment-user-name">{{ paymentRequest.user.name }}</h2>
 					<span class="payment-user-mail">{{ paymentRequest.user.email }}</span>
 				</div>
-				<!-- <div class="payment-dropdown-container">
-					<div class="dropdown">
-						<button class="dropbtn">
-							<i class="ri-more-2-fill"></i>
-						</button>
-						<div class="dropdown-content">
-							<button ng-click="editPaymentRequest(paymentRequest)">
-								<i class="ri-edit-line"></i> Edit
-							</button>
-							<button ng-click="showPaymentRequestDetailsDialog(paymentRequest)">
-								<i class="ri-check-line"></i> Approve
-							</a>
-							<button ng-click="showPaymentRequestDetailsDialog(paymentRequest)">
-								<i class="ri-close-line"></i> Reject
-							</a>
-							<button ng-click="showPaymentRequestDetailsDialog(paymentRequest)">
-								<i class="ri-eye-line"></i> Details
-							</a>
-						</div> 
-					</div>
-				
-				</div> -->
 				<div class="payment-actions">
 					<button class="payment-action-btn" ng-click="editPaymentRequest(paymentRequest)" title="Edit">
 						<i class="ri-edit-line"></i>
@@ -183,15 +161,6 @@
 					<button class="payment-action-btn" ng-click="showPaymentRequestDetailsDialog(paymentRequest)" title="Approve">
 						<i class="ri-tools-line"></i>
 					</button>
-					<!-- <button class="payment-action-btn" ng-click="showPaymentRequestDetailsDialog(paymentRequest)" title="Approve">
-						<i class="ri-check-line"></i>
-					</button>
-					<button class="payment-action-btn" ng-click="showPaymentRequestDetailsDialog(paymentRequest)" title="Reject">
-						<i class="ri-close-line"></i>
-					</button>
-					<button class="payment-action-btn" ng-click="showPaymentRequestDetailsDialog(paymentRequest)" title="Details">
-						<i class="ri-eye-line"></i>
-					</button> -->
 				</div>
 			</header>
 			<main>
@@ -321,9 +290,14 @@
 		width: calc(33.333% - 1rem);
 		transition: all 0.2s ease-in-out;
 	}
+
 	.payment-card:hover {
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 		transform: scale(1.05);
+	}
+
+	.payments-card-container:has(.payment-card:hover) .payment-card:not(:hover){
+		opacity: 0.4;
 	}
 
 	.payment-card header {

@@ -68,19 +68,29 @@
 					<td>{{concept.amount}}</td>
 					<td>{{concept.concept_description}}</td>
 					<td>
-						<a class="external-link" href="{{concept.bill_link}}" target="_blank">
+						<a class="external-link" ng-href="{{concept.bill_link}}" target="_blank">
 							{{ concept.bill_link | truncateTail: true: 30: '...' }}
 						</a>
 					</td>
 					<td>
-						<a class="external-link" href="{{concept.report_link}}" target="_blank">
+						<a class="external-link" ng-href="{{concept.report_link}}" target="_blank">
 							{{ concept.report_link | truncateTail: true: 30: '...' }}
 						</a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+		<!-- Text area for rejection/approve -->
+		<hr style="margin: 20px 0;">
+		<label class="lexart-frm__lbl" for="observation">
+			<span class="lexart-frm__lbl-name">
+				<b>Observation</b>
+			</span>
+			<textarea ng-model="paymentRequestObservation" class="lexart-input lexart-input--textarea" style="width:100%" placeholder="Observation"></textarea>
+		</label>
 	</div>
+
+	
 
 	<div class="lexart-modal__footer">
 		<div class="lexart-modal__actions" style="float: right;">

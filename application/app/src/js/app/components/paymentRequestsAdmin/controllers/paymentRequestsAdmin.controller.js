@@ -51,6 +51,7 @@
 				UYU: $translate.instant("payment_requests.currency.uyu")
 			};
 			$scope.statusTexts = {
+				All: 'All',
 				Pending: $translate.instant("payment_requests.status.pending"),
 				Canceled: $translate.instant("payment_requests.status.canceled"),
 				Approved: $translate.instant("payment_requests.status.approved"),
@@ -100,7 +101,8 @@
 					controller: ['$scope', function ($scope) {
             			$scope.updatePaymentRequestStatus = function (status) {
 							const paymentRequest = $scope.ngDialogData.paymentRequests;
-							PaymentRequestsServiceAdmin.updateStatus(paymentRequest.id, status, function (err, result) {
+							console.log("🚀  --> $scope.paymentRequestObservation:", $scope.paymentRequestObservation)
+							PaymentRequestsServiceAdmin.updateStatus(paymentRequest.id, { status, reply: $scope.paymentRequestObservation }, function (err, result) {
 								ngDialog.close();
 								if (err) return $rootScope.showToaster($translate.instant("payment_requests.error_messages.error_to_update_status"),"error");
 								getAllPaymentRequests();
@@ -163,6 +165,17 @@
 							r.start_date_display = r.payment_request_details.find(detail => detail.start_date)?.start_date ? moment(r.payment_request_details.find(detail => detail.start_date).start_date).format('MMM DD, YYYY') : '';
 							r.end_date_display = r.payment_request_details.find(detail => detail.end_date)?.end_date ? moment(r.payment_request_details.find(detail => detail.end_date).end_date).format('MMM DD, YYYY') : '';
 							r.status_display = $scope.statusTexts[r.status];
+							// Add http if not present
+							r.payment_request_details.forEach(detail => {
+
+								if (detail.bill_link && !/^https?:\/\//.test(detail.bill_link)) {
+									detail.bill_link = 'https://' + detail.bill_link;
+								}
+								if (detail.report_link && !/^https?:\/\//.test(detail.report_link)) {
+									detail.report_link = 'https://' + detail.report_link;
+								}
+
+							});
 							r.total = r.payment_request_details.reduce((acc, curr) => {
 								return acc += curr.amount;
 							}, 0);

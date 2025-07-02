@@ -58,7 +58,7 @@
                         <span class="lexart-frm__lbl-name">
                             <b>{{ 'payment_requests.start-date' | translate }}</b>
                         </span>
-                        <div moment-picker="paymentRequest.start_date" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                        <div moment-picker="paymentRequest.start_date" format="YYYY-MM-DD" change='handleCheckAmount()' min-date="minDateAllowed">
                             <input type='text' ng-model='paymentRequest.start_date'>        
                         </div>
                     </label>
@@ -68,7 +68,7 @@
                         <span class="lexart-frm__lbl-name">
                             <b>{{ 'payment_requests.end-date' | translate }}</b>
                         </span>
-                        <div moment-picker="paymentRequest.end_date" format="YYYY-MM-DD" change='handleCheckAmount()'>
+                        <div moment-picker="paymentRequest.end_date" format="YYYY-MM-DD" change='handleCheckAmount()' min-date="paymentRequest.start_date">
                             <input type='text' ng-model='paymentRequest.end_date'>
                         </div>
                     </label>
@@ -142,11 +142,11 @@
             >
             </payment-request-details-table>
         </main>
-        <aside style="padding: 1rem 0; display: flex; justify-content: flex-end;">
+        <div style="float: right;">
             <button class="lexart-btn" type="button" style="margin-right: 0;" ng-click="savePaymentRequest()">
                 {{ 'payment_requests.form_accordion.save_request_button_text' | translate }}
             </button>
-        </aside>
+        </div>
     </div>
 </details>
 <details style="margin-top: 1rem;">
@@ -160,9 +160,9 @@
         <table class="lexart-table">
             <thead>
                 <tr>
-                    <th>{{ 'payment_requests.history_accordion.id_table_header' | translate  }}</th>
+                    <!-- <th>{{ 'payment_requests.history_accordion.id_table_header' | translate  }}</th> -->
                     <th>{{ 'payment_requests.history_accordion.date_table_header' | translate  }}</th>
-                    <th>{{ 'payment_requests.history_accordion.currency_table_header' | translate  }}</th>
+                    <!-- <th>{{ 'payment_requests.history_accordion.currency_table_header' | translate  }}</th> -->
                     <th>{{ 'payment_requests.history_accordion.total_table_header' | translate  }}</th>
                     <th>{{ 'payment_requests.history_accordion.status_table_header' | translate  }}</th>
                     <th style="width: 100px;">{{ 'payment_requests.history_accordion.actions_table_header' | translate  }}</th>
@@ -170,19 +170,24 @@
             </thead>
             <tbody>
                 <tr ng-repeat="paymentRequest in paymentRequests">
-                    <td>{{paymentRequest.id}}</td>
-                    <td>{{paymentRequest.created_at}}</td>
-                    <td>{{paymentRequest.currency}}</td>
-                    <td>{{paymentRequest.amount}}</td>
-                    <td>{{statusTexts[paymentRequest.status]}}</td>
+                    <!-- <td>{{paymentRequest.id}}</td> -->
+                    <td>{{paymentRequest.created_at_display}}</td>
+                    <!-- <td>{{paymentRequest.currency}}</td> -->
+                    <td>{{paymentRequest.currency}} {{paymentRequest.amount}}</td>
+                    <td>
+                        <tracking-tag
+                            color="{{statusColors[paymentRequest.status]}}"
+                            text="{{statusTexts[paymentRequest.status]}}">
+                        </tracking-tag>
+                    </td>
                     <td class="lexart-table__action-cell">
                         <i 
-                            class="ri-information-fill"
+                            class="ri-information-line"
                             ng-click="showPaymentRequestDetailsDialog($index)">
                         </i>
                         <i 
                             ng-if="paymentRequest.status == 'Pending'"
-                            class="ri-close-line lexart-remove-button"
+                            class="ri-close-circle-line lexart-remove-button"
                             ng-click="showCancelPaymentRequestDialog(paymentRequest.id)">
                         </i>
                     </td>

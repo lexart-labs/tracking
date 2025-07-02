@@ -159,6 +159,7 @@ class PaymentRequestController extends BaseController
 
             $target = PaymentRequest::findOrFail($payment_request);
             $target->status = $request->status;
+            $target->reply = $request->reply;
             $target->save();
 
             return response()->json(['response' => UPDATED], 200);

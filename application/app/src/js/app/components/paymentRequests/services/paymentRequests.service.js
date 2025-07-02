@@ -12,7 +12,7 @@
                     cb(err, result);
                 });
             },
-            getUserPaymentRequests: function ({ userId, startDate, endDate }, cb) {
+            getUserPaymentRequests: function (userId, cb) {
                 RestClient.get(`${model}/${userId}`, function (err, result) {
                     cb(err, result);
                 });
