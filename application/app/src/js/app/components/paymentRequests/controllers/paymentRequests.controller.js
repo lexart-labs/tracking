@@ -198,14 +198,17 @@
 			});
 		};
 
-		$scope.showPaymentRequestDetailsDialog = function(paymentRequestIndex) {
+		$scope.showPaymentRequestDetailsDialog = function (paymentRequestIndex) {
+			console.log($scope.paymentRequests[paymentRequestIndex])
 			ngDialog.open({
 				template: '/app/components/paymentRequests/views/showPaymentRequestDetails.modal.html',
 				scope: $scope,
 				disableAnimation: true,
 				data: {
 					paymentRequestDetails: $scope.paymentRequests[paymentRequestIndex].payment_request_details,
-					conceptTexts: $scope.conceptTexts
+					conceptTexts: $scope.conceptTexts,
+					reply: $scope.paymentRequests[paymentRequestIndex].reply,
+					status: $scope.paymentRequests[paymentRequestIndex].status,
 				}
 			});
 		};
