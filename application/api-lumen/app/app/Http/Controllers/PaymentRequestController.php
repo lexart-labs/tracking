@@ -370,7 +370,10 @@ class PaymentRequestController extends BaseController
                 return new Response(["Error" => INVALID_NUMERIC_ID, "Operation" => $operation], 400);
             }
 
-            $history = PaymentRequest::with("payment_request_details")->where("user_id", $user_id)->get();
+            $history = PaymentRequest::with("payment_request_details")
+                ->where("user_id", $user_id)
+                ->orderBy("created_at", "desc")
+                ->get();
 
             return new Response(['response' => $history], 200);
         } catch (Exception $e) {
