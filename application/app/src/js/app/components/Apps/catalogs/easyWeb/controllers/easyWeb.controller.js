@@ -209,7 +209,6 @@
             if (err) {
                 console.log("error", err);
                 $scope.error = err.message || err.error.message || err.error || err;
-                $sendingData = false;
             } else {
                 $state.go('app.easyWebs');
             }

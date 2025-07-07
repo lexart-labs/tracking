@@ -449,7 +449,7 @@
                             counter = parseInt(counter) + parseInt(1);
                           }
                         });
-                        changetasknumber = counter + "/" + changetasknumber[1];
+                        var changetasknumber = counter + "/" + changetasknumber[1];
                         $scope.project.count = changetasknumber;
                       }
                     })

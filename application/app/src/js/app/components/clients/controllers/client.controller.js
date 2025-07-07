@@ -35,8 +35,7 @@
                 if (err) {
                     console.log("error", err);
                     $rootScope.showToaster(err.message || err.error.message || err.error || err, 'error');
-                    // $scope.error = err.message || err.error.message || err.error || err;
-                    $sendingData = false;
+                    $scope.sendingData = false;
                 } else {
                     $state.go('app.clients');
                 }
