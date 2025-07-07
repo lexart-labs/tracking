@@ -160,7 +160,7 @@
                 }]
                 }
             })
-            
+
             .state('app.reports', {
                 url: '/reports',
                 templateUrl: 'app/components/reports/views/reportsView.html',
@@ -344,22 +344,6 @@
                 url: '/bot/edit/:id',
                 templateUrl: 'app/components/Apps/catalogs/bots/views/botFormView.html',
                 controller: 'BotCtrl'
-            })
-            // APPS EASYWEB
-            .state('app.easyWebs', {
-                url: '/easywebs',
-                templateUrl: 'app/components/Apps/catalogs/easyWeb/views/easyWebsView.html',
-                controller: 'EasyWebsCtrl'
-            })
-            .state('app.easyWebNew', {
-                url: '/easyWeb/new',
-                templateUrl: 'app/components/Apps/catalogs/easyWeb/views/easyWebFormView.html',
-                controller: 'EasyWebCtrl'
-            })
-            .state('app.easyWebEdit', {
-                url: '/easyWeb/edit/:id',
-                templateUrl: 'app/components/Apps/catalogs/easyWeb/views/easyWebFormView.html',
-                controller: 'EasyWebCtrl'
             })
             // APPS Min-SOFTWARE
             .state('app.minsoftwares', {
