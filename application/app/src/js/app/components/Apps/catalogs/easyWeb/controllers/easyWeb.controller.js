@@ -20,7 +20,7 @@
     $scope.footer = [];
     $scope.footerTable = [];
     $scope.web.idUser = $window.localStorage["userId"];
-    var API_POOL  = "http://pool.lexartlabs.uy/alltypes.php";
+    var API_POOL  = "https://pool.lexartlabs.uy/alltypes.php";
     $scope.imagen = [];
     $scope.imagenBase64_slider = undefined;
     $scope.img_slider = {};
@@ -119,7 +119,7 @@
               $scope.slider_img_loading = false;
               console.log(res.data.url);
             });
-                
+
         };
     }
 
@@ -136,7 +136,7 @@
               $scope.section_img_loading = false;
               console.log(res.data.url);
             });
-                
+
         };
     }
 
