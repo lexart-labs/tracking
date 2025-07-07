@@ -8,7 +8,6 @@
     var idProject = $stateParams.id;
     console.log(idProject);
     var idUser = angular.copy($rootScope.userId);
-    $scope.count;
     console.log(idUser);
 
     $scope.chart = function () {
