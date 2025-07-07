@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use WeeklyHour;
 use Illuminate\Validation\Rule;
 use App\Helpers\FileHelper;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends BaseController
 {
@@ -28,8 +29,8 @@ class UserController extends BaseController
         ]);
 
         $email = $request->input('email');
-        $password = md5($request->input('password'));
-        
+        $password = $request->input('password');
+
         try {
 
             $user = User::where('email', $email)->where('status', 1)->first();
@@ -38,7 +39,22 @@ class UserController extends BaseController
                 return (new Response(array("Error" => INVALID_LOGIN, "Operation" => "login"), 400));
             }
 
-            if ($user->password !== $password) {
+            // Try bcrypt first, then fallback to MD5 for legacy passwords
+            $passwordValid = false;
+
+            if (Hash::check($password, $user->password)) {
+                $passwordValid = true;
+            } elseif ($user->password === md5($password)) {
+                // Fallback to MD5 for legacy passwords
+                $passwordValid = true;
+
+                // Upgrade the password to bcrypt
+                User::where('id', $user->id)->update([
+                    'password' => Hash::make($password)
+                ]);
+            }
+
+            if (!$passwordValid) {
                 return (new Response(array("Error" => INVALID_LOGIN, "Operation" => "login"), 400));
             }
 
@@ -61,7 +77,7 @@ class UserController extends BaseController
 
         $name = $request->input('name');
         $email = $request->input('email');
-        $password = md5($request->input('password')); //REVER O METODO DE ENCRYPT
+        $password = Hash::make($request->input('password')); // Use bcrypt instead of MD5
         $role = $request->input('role');
 
         $user = $request->only(["name", "email", "password", "role", "idSlack"]);
@@ -202,8 +218,25 @@ class UserController extends BaseController
 
         try{
             $user = User::where('id', $request->id)->first();
-            if($user->password != $request->input('password')) {
-                $update['password'] = md5($request->input('password'));
+
+            // Only update password if it's provided and different
+            if($request->has('password') && !empty($request->input('password'))) {
+                $newPassword = $request->input('password');
+
+                $passwordChanged = false;
+                // check new psw hashing
+                if (Hash::check($newPassword, $user->password)) {
+                    $passwordChanged = false;
+                // check old psw hashing
+                } elseif ($user->password === md5($newPassword)) {
+                    $passwordChanged = false;
+                } else {
+                    $passwordChanged = true;
+                }
+
+                if ($passwordChanged) {
+                    $update['password'] = Hash::make($newPassword);
+                }
             }
 
             $image_base= $request->input('image_base');
