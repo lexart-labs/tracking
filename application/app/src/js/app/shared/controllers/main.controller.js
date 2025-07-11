@@ -26,10 +26,8 @@
             }
 
             $rootScope.userProfile = $rootScope.url + "/#/app/user/edit/" + $rootScope.userId;
-            console.log('$state', $state);
             if ($state.current.name == "app.userEdit" && $rootScope.userRole == 'developer') {
                 if ($state.params.id != $rootScope.userId) {
-                    console.log('$state if', $state);
                     window.localStorage.clear();
                     $state.go('login');
                 }
@@ -38,21 +36,20 @@
         });
     });
 
-    Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices) {
+    Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', '$filter', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices, $filter) {
 
         $scope.thisHide = false;
         $scope.userToolsActive = false;
         $rootScope.inprogress = false;
+        $rootScope.sidebarItems = [];
 
         $rootScope.toggleActive = function () {
             $scope.userToolsActive = !$scope.userToolsActive;
-            console.log('$scope.userToolsActive', $scope.userToolsActive);
         };
 
         $scope.hideItems = function () {
             $scope.thisHide = !$scope.thisHide;
             $rootScope.shohSwitchTooltip = false;
-            console.log('$scope.thisHide', $scope.thisHide);
         };
 
         var clock;
@@ -71,7 +68,6 @@
         }
 
         $scope.toggleSelectUsers = function (event) {
-            console.log("event", event.target.innerText);
             if (event.target.innerText == "-") {
                 event.target.innerText = "+";
                 document.querySelectorAll('.toggleSelectUsers')[0].style.display = 'none';
@@ -149,6 +145,7 @@
         };
 
         $rootScope.startTrack = function (task, fromDashboard) {
+            
             if (!task) return
             return new Promise(resolve => {
                 WeeklyHourServices.find($scope.currentPage, $scope.query, function (err, weeklyHours, countItems) {
@@ -168,7 +165,6 @@
                             console.log('Update Status::', err, result);
                         })
                     }
-                    console.log("TTT::", task);
                     // Already tracking, stop and then start
                     if ($rootScope.currentTrack.id) {
                         $rootScope.currentTrack.endTime = getCurrentDate();
@@ -185,12 +181,11 @@
                             projectName: task.projectName,
                             startTime: getCurrentDate(),
                             endTime: undefined,
-                            idProyecto: task.idProject || task.projectId,
+                            idProyecto: task.idProject || task.projectId || task.idProyecto,
                             typeTrack: task.typeTrack || task.type,
                             currency: $scope.currency
 
                         };
-                        console.log("🚀  --> $rootScope.currentTrack ", $rootScope.currentTrack)
                         TracksServices.create($rootScope.currentTrack, function (err, result) {
                             if (!err) {
                                 result = result[0];
@@ -211,14 +206,12 @@
         };
 
         $scope.startTrackAuto = function (task_automatic) {
-            console.log("ID proyecto automatico", task_automatic);
             // Already tracking, stop and then start
             if (task_automatic.idProyecto && task_automatic.idProyecto != null && task_automatic.idProyecto != 0) {
                 if ($rootScope.currentTrack.id) {
                     $rootScope.currentTrack.endTime = getCurrentDate();
                     TracksServices.update($rootScope.currentTrack, function (err, result) {
                         if (!err) {
-                            console.log('saved auto task', result);
                             $scope.toggleTimer();
                         }
                     });
@@ -234,9 +227,7 @@
                     };
 
                     TracksServices.createAutoTask($rootScope.currentTrack, function (err, result) {
-                        console.log("resultx::", result);
                         if (!err) {
-                            console.log('saved auto task', result);
                             $rootScope.currentTrack.id = result.id;
                             $scope.toggleTimer();
                         }
@@ -256,22 +247,18 @@
                                 if (!err) {
                                     $scope.getProjects = projects;
                                     $scope.selected = { value: $scope.getProjects };
-                                    console.log('Projects select::', $scope.getProjects, $scope.selected);
                                 }
                             })
                         },
                         confirm: function () {
-                            console.log('ID asociar proyecto', $scope.selected.value.id);
                             var obj = {
                                 'id': task_automatic.id,
                                 'idProyecto': $scope.selected.value.id,
                                 'error': task_automatic.error
                             }
-                            console.log(obj);
                             if ($scope.selected.value.id != undefined) {
                                 tasks_automaticServices.saveTask_Automatic(obj, function (err, result) {
                                     if (!err) {
-                                        console.log("Task automatic actualizada:", result);
                                         $rootScope.currentTrack = {
                                             idUser: $rootScope.userId,
                                             idTask: task_automatic.id,
@@ -283,9 +270,7 @@
                                         };
 
                                         TracksServices.createAutoTask($rootScope.currentTrack, function (err, result) {
-                                            console.log("resultx::", err, result);
                                             if (!err) {
-                                                console.log('saved auto task', result);
                                                 $rootScope.currentTrack.id = result.id;
                                                 $scope.toggleTimer();
                                                 $state.go('app.tasks_automatic');
@@ -339,7 +324,6 @@
                             projectName: tasks_trello.project
                         };
 
-                        console.log("TrelloTrack::", $rootScope.currentTrack);
                         TracksServices.createTrelloTask($rootScope.currentTrack, function (err, result) {
                             if (!err) {
                                 $rootScope.currentTrack.id = result[0].id;
@@ -351,7 +335,6 @@
                                 if (!$rootScope.topBar.taskscondition || $rootScope.topBar.taskscondition.lenght == 0) {
                                     $rootScope.topBar.taskscondition = [$rootScope.topBar.filterTask];
                                 }
-                                console.log(result[0]);
                                 //$rootScope.topBar.filterTask.projectName = "test"
                             }
                         });
@@ -368,12 +351,10 @@
                 $rootScope.currentTrack.endTime = getCurrentDate();
                 TracksServices.update($rootScope.currentTrack, function (err, result) {
                     if (!err) {
-                        console.log('saved jira task', result);
                         $scope.toggleTimer();
                     }
                 });
             } else {
-                console.log(jira);
                 $rootScope.currentTrack = {
                     idTask: jira.idTask,
                     idUser: $rootScope.userId,
@@ -385,13 +366,10 @@
                     typeTrack: "jira"
                 };
 
-                console.log("jiraTrack::", $rootScope.currentTrack);
                 TracksServices.createJiraTask($rootScope.currentTrack, function (err, result) {
-                    console.log("result jira::", result);
                     if (!err) {
                         $rootScope.currentTrack.id = result[0].id;
                         $scope.toggleTimer();
-                        console.log('saved id jiratask', $rootScope.currentTrack.id);
                     }
                 });
             }
@@ -418,7 +396,6 @@
                 s = '0' + s;
             };
             var finalTracked = h + ":" + m + ":" + s;
-            console.log("finaltracked", finalTracked);
             return finalTracked;
         }
 
@@ -429,13 +406,11 @@
             var seconds = parseFloat(time[2]) / 3600;
             var fraccionaria = minutes + seconds;
             var decimal = parseFloat(horas + fraccionaria);
-            console.log("Tiempo en decimal::", decimal);
             return decimal;
         }
 
         $scope.stopTrack = function () {
             var ms = 0;
-            console.log("stopTrack::", $rootScope.currentTrack, $rootScope.currentTrack.id);
 
             if ($rootScope.currentTrack && $rootScope.currentTrack.id) {
                 $rootScope.currentTrack.endTime = getCurrentDate();
@@ -446,51 +421,33 @@
                 var decimalTime = ConvertTimeToDecimal(convertTime(tracked));
                 // ms = tracked._milliseconds;
                 getTotalCost(decimalTime);
-                // console.log("currentTrack duracion::", $rootScope.currentTrack);
 
                 function getTotalCost(decimalTime) {
                     var idHourCost = $rootScope.userId;
-                    console.log(idHourCost);
                     WeeklyHourServices.find($scope.currentPage, $scope.query, function (err, weeklyHours, countItems) {
                         if (!err) {
-                            console.log(weeklyHours);
                             if (weeklyHours.length > 0) {
                                 var exist = false;
                                 angular.forEach(weeklyHours, function (value, key) {
                                     if (value.idUser == $rootScope.userId) {
                                         exist = true;
-                                        console.log(value.costHour, 'costo hora idUser');
                                         var costo = parseInt(value.costHour);
-                                        console.log('costo', costo);
                                         if (value.currency == null || value.currency == '') {
                                             value.currency = '$'
                                         }
                                         $rootScope.currentTrack.currency = value.currency;
-
-                                        console.log(value.currency)
-                                        // console.log(ms,'ms');
-                                        // var result = (ms/3600/1000) * costo;
                                         var result = decimalTime * costo;
-                                        console.log('total cost', result);
-                                        //result = Math.ceil(result);
-                                        //console.log(result);
                                         getCost(result);
-                                        console.log($rootScope.currentTrack)
                                     }
                                 });
-                                console.log(weeklyHours);
                                 if (exist === false) {
                                     TracksServices.update($rootScope.currentTrack, function (err, result) {
-                                        console.log($rootScope.currentTrack)
-                                        console.log("Track actualizado con exito 1");
                                         $rootScope.timerRunning = false;
                                         $scope.stopTimer();
                                     });
                                 }
                             } else {
                                 TracksServices.update($rootScope.currentTrack, function (err, result) {
-                                    console.log("Track actualizado con exito 2");
-                                    console.log($rootScope.currentTrack)
                                     $rootScope.timerRunning = false;
                                     $scope.stopTimer();
                                 });
@@ -508,25 +465,179 @@
                             var projUpd = moment.duration(newTrack).add(tracked);
                             $rootScope.currentTrack.totalTrack = convertTime(projUpd);
                             $rootScope.currentTrack.projCost = Number(proj.totalCost) + Number($rootScope.currentTrack.trackCost);
-                            console.log("PROJECT BY ID", proj.totalCost, $rootScope.currentTrack.trackCost);
                             TracksServices.update($rootScope.currentTrack, function (err, result) {
-                                console.log("Track actualizado con exito 3");
                                 $rootScope.timerRunning = false;
-                                console.log($rootScope.currentTrack)
-
                                 $scope.stopTimer();
                             });
                         })
                     } else {
                         TracksServices.update($rootScope.currentTrack, function (err, result) {
-                            console.log("Track actualizado con exito 4");
                             $rootScope.timerRunning = false;
-                            console.log($rootScope.currentTrack)
                             $scope.stopTimer();
                         });
                     }
                 }
             }
+        };
+
+        $rootScope.generateSidebarContent = function () {
+            $rootScope.sidebarItems = [
+                {
+                    uisref: 'app.dashboard',
+                    icon: 'ri-home-line',
+                    name: 'Dashboard',
+                    label: $filter('translate')('navigation.dashboard'),
+                    access: true
+                },
+                {
+                    uisref: 'app.paymentRequestsAdmin',
+                    icon: 'ri-bank-line',
+                    name: 'PaymentRequests',
+                    label: $filter('translate')('navigation.payment_requests'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.users',
+                    icon: 'ri-user-line',
+                    name: 'Users',
+                    label: $filter('translate')('navigation.users'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.clients',
+                    icon: 'ri-user-shared-line',
+                    name: 'Clients',
+                    label: $filter('translate')('navigation.clients'),
+                    access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
+                },
+                {
+                    uisref: 'app.projects',
+                    icon: 'ri-briefcase-line',
+                    name: 'Projects',
+                    label: $filter('translate')('navigation.projects'),
+                    access: true
+                },
+
+                {
+                    uisref: 'app.calendar',
+                    icon: 'ri-calendar-line',
+                    name: 'Calendar',
+                    label: $filter('translate')('navigation.calendar'),
+                    access: true
+                },
+
+                {
+                    uisref: '',
+                    icon: 'ri-task-line',
+                    name: 'Tasks',
+                    label: $filter('translate')('navigation.tasks'),
+                    access: true,
+                    submenus: [
+                        {
+                            uisref: 'app.tasks',
+                            name: 'Tasks Manuales',
+                            label: 'Tareas Manuales',
+                            access: true
+                        },
+                        // {
+                        //     uisref: 'app.tasks_automatic',
+                        //     name: 'Tasks Automatic',
+                        //     label: $filter('translate')('navigation.tasks_automatic'),
+                        //     access: true
+                        // },
+                        {
+                            uisref: 'app.tasks_trello',
+                            name: 'Tasks Trello',
+                            label: $filter('translate')('navigation.tasks_trello'),
+                            access: true
+                        },
+                        // {
+                        //     uisref: 'app.jira',
+                        //     name: 'Tasks Jira',
+                        //     label: $filter('translate')('navigation.jira'),
+                        //     access: true
+                        // },
+                        // {
+                        //     uisref: 'app.taskManager',
+                        //     name: 'Task Manager',
+                        //     label: $filter('translate')('navigation.taskManager'),
+                        //     access: true
+                        // }
+                    ]
+                },
+                // PROFILE
+                {
+                    uisref: `app.userEdit({id:${$rootScope.userId}})`,
+                    icon: 'ri-user-settings-line',
+                    name: 'Profile',
+                    label: $filter('translate')('navigation.my-profile'),
+                    access: $rootScope.userRole == 'developer'
+                },
+                
+                
+                
+                {
+                    uisref: 'app.reports',
+                    icon: 'ri-bar-chart-line',
+                    name: 'Reports',
+                    label: 'Reportes',
+                    access: true
+                },
+                {
+                    uisref: 'app.weeklyHours',
+                    icon: 'ri-calendar-2-line',
+                    name: 'weeklyHour',
+                    label: $filter('translate')('navigation.weeklyHour'),
+                    access: $rootScope.userRole == 'admin'
+                },
+                // {
+                //     uisref: '',
+                //     icon: 'ri-folder-open-line',
+                //     name: 'CRM',
+                //     label: 'CRM',
+                //     access: $rootScope.userRole == 'admin',
+                //     submenus: [
+                //         {
+                //             uisref: 'app.banks',
+                //             name: 'Bank',
+                //             label: $filter('translate')('navigation.bank'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.finances',
+                //             name: 'Finances',
+                //             label: $filter('translate')('navigation.finance'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.sales',
+                //             name: 'Sales',
+                //             label: $filter('translate')('navigation.sale'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.weeklyHours',
+                //             name: 'weeklyHour',
+                //             label: $filter('translate')('navigation.weeklyHour'),
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.reports',
+                //             name: 'Reportes',
+                //             label: 'Reportes',
+                //             access: true
+                //         },
+                //         {
+                //             uisref: 'app.evaluate',
+                //             name: 'Evaluaciones',
+                //             label: 'Evaluaciones',
+                //             access: true
+                //         }
+
+                //     ]
+                // },
+
+            ]
         };
 
         // Check for defined session values
@@ -546,10 +657,10 @@
             if ($rootScope.isClient == 'true') {
                 $rootScope.userIdClient = $window.localStorage["idUserClient"];
             }
+            $rootScope.generateSidebarContent();
             TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
                 if (!err) {
                     if (track) {
-                        console.log('track', track);
                         if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
 
                             //Update current track
@@ -572,24 +683,12 @@
         $rootScope.topBar.tasks = []
 
         $rootScope.searchTasks = function (text) {
-
-            console.log("🚀  --> topBar.filterTask", $rootScope.topBar.filterTask)
-
             if (text) {
                 $rootScope.topBar.filterTasks = { filter: [{ "name": text }], limit: 100, offset: 0 };
-                console.log("🚀  --> TEXT", $rootScope.topBar.filterTasks)
                 TasksServices.findByFilter($rootScope.topBar.filterTasks, function (err, tasks, countItems) {
-                    if (!err) {
-                        console.log('TEXT dsadsa tasks', tasks, countItems);
-                        $rootScope.topBar.tasks = tasks;
-                        console.log("🚀  --> TEXT $scope.topBar.tasks", $rootScope.topBar.tasks)
-                        // $scope.tasks = tasks.slice(0, PAGE_SIZE - 1);
-                        // $scope.total = countItems;
-                    }
+                    if (!err) $rootScope.topBar.tasks = tasks;
                 });
             }
-
-
         };
 
 
