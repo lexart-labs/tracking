@@ -4,7 +4,7 @@
 
     var Module = ng.module('LexTracking');
 
-    Module.controller('UserCtrl', ['$scope', '$state', '$stateParams', '$filter', 'UserServices','ClientServices', 'ngDialog', 'EvaluateServices','TracksServices', 'WeeklyHourServices', '$rootScope', '$http', '$timeout', function($scope, $state, $stateParams, $filter, UserServices, ClientServices,ngDialog, EvaluateServices, TracksServices, WeeklyHourServices, $rootScope, $http, $timeout) {
+    Module.controller('UserCtrl', ['$scope', '$state', '$stateParams', '$filter', 'UserServices','ClientServices', 'ngDialog', 'EvaluateServices','TracksServices', 'WeeklyHourServices', '$rootScope', '$http', '$timeout', '$element', function($scope, $state, $stateParams, $filter, UserServices, ClientServices,ngDialog, EvaluateServices, TracksServices, WeeklyHourServices, $rootScope, $http, $timeout, element) {
 
         $scope.user         = {};
         $scope.sendingData  = false;
@@ -20,7 +20,11 @@
         $scope.imageHandler = {
           dataURL: "",
         };
-        
+        $scope.iframeOptions = {
+            license: "GPLv3",
+            log: 'collapsed',
+            waitForLoad: true,
+        };
 
         if(idUser) {
             if(window.localStorage.isDeveloper == "true") {

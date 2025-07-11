@@ -8,6 +8,7 @@
 
         $rootScope.BASEURL = BASE_URL;
         $rootScope.url = window.location.origin;
+        $rootScope.TRACKING_REACT = TRACKING_REACT;
 
         $rootScope.$on('$stateChangeSuccess', function (evt, toState, toParams, fromState, fromParams) {
             evt.preventDefault();

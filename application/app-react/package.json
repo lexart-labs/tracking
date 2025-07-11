@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@iframe-resizer/child": "^5.4.6",
     "@tailwindcss/vite": "^4.0.14",
+    "primereact": "^10.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.3.0",

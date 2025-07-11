@@ -5,5 +5,6 @@ var FILES_BASE = ""
 // var BASE_URL = "https://dev.api.lextracking.com/api/"
 // var BASE_URL = "http://localhost:8081/api/"
 var BASE_URL = "http://165.227.176.9:82/api/"
+var TRACKING_REACT = "http://165.227.176.9:5173"
 //PD
 // var BASE_URL = "https://api.lextracking.com/api/"

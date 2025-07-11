@@ -18,6 +18,23 @@ services:
     expose:
       - 9090
 
+  react-app:
+      restart: always
+      container_name: react
+      image: node:24
+      working_dir: /app-react
+      volumes:
+        - .:/app-react
+      command: [sh, -c, "cd application/app-react && npm install && npm run dev"]
+      ports:
+        - 5173:5173
+      environment:
+        - NODE_ENV=development
+      # depends_on:
+      #   - bower
+      expose:
+        - 5173
+
   # bower:
   #   restart: always
   #   container_name: bower
@@ -97,7 +114,9 @@ services:
     depends_on:
       - db
     ports:
-      - ${ADMINER_PORT}:8080
+      - 9900:8080
+    expose: 
+      - 9900
 
   cache:
     container_name: cache
