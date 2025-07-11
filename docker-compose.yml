@@ -30,8 +30,6 @@ services:
         - 5173:5173
       environment:
         - NODE_ENV=development
-      # depends_on:
-      #   - bower
       expose:
         - 5173
 
