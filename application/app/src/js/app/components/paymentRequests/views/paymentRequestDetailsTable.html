@@ -16,8 +16,8 @@
             <td>{{paymentRequest.amount.toFixed(2)}}</td>
             <td>{{paymentRequest.concept_description}}</td>
             <td ng-if="showActions" class="lexart-table__action-cell">
-                <i 
-                    class="ri-close-line lexart-remove-button" 
+                <i
+                    class="ri-close-line lexart-remove-button"
                     ng-click="removePaymentRequestFromList(paymentRequest.id)">
                 </i>
             </td>
@@ -25,8 +25,8 @@
     </tbody>
     <tfoot ng-if="showFooter">
         <tr>
-            <th colspan="{{ showActions ? 4 : 3 }}">{{ 'payment_requests.form_accordion.total_table_footer' | translate  }}</th>
-            <td colspan="1">{{ totalAmount.toFixed(2) }}</td>
+            <th scope="col" colspan="{{ showActions ? 4 : 3 }}">{{ 'payment_requests.form_accordion.total_table_footer' | translate  }}</th>
+            <td scope="col" colspan="1">{{ totalAmount.toFixed(2) }}</td>
         </tr>
     </tfoot>
 </table>

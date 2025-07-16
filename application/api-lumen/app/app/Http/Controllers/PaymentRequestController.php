@@ -108,7 +108,12 @@ class PaymentRequestController extends BaseController
 
     public function create(Request $request)
     {
-        header('Access-Control-Allow-Origin: *');
+        $whiteListedOrigins = [
+            'localhost',
+            'tracking.lexart.tech'
+        ];
+
+        header('Access-Control-Allow-Origin: ' . implode(', ', $whiteListedOrigins));
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         $operation = "Create payment request";
 

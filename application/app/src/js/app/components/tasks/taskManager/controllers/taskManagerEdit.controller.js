@@ -8,7 +8,6 @@
     var idProject = $stateParams.id;
     console.log(idProject);
     var idUser = angular.copy($rootScope.userId);
-    $scope.count;
     console.log(idUser);
 
     $scope.chart = function () {
@@ -449,7 +448,7 @@
                             counter = parseInt(counter) + parseInt(1);
                           }
                         });
-                        changetasknumber = counter + "/" + changetasknumber[1];
+                        var changetasknumber = counter + "/" + changetasknumber[1];
                         $scope.project.count = changetasknumber;
                       }
                     })
