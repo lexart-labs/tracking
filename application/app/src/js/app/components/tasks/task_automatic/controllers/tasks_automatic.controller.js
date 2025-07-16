@@ -276,10 +276,6 @@
 
               sendEmail($scope.task_automatic,$scope.review.user)
 
-
-
-              error
-
               ngDialog.close(windowIDs[1]);
             },
             cancel: function() {

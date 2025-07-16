@@ -17,6 +17,7 @@ RUN chmod u+s /usr/bin/crontab
 RUN chown -R www-data:www-data /var/www
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
-#RUN composer install --no-dev --optimize-autoloader
 
-#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
+RUN mkdir -p /var/www/html && chown -R www-data:www-data /var/www/html
+
+USER www-data

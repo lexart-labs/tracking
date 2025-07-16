@@ -40,22 +40,22 @@ lextrackingDebug = function(error) {
         console.log("Archive Error:: ", archiveError);
         }
 
-        obj = {
+        var obj = {
             error: errorMessage,
             url: captureUrl,
-            origin: captureOrigin, 
-            line: lineError, 
+            origin: captureOrigin,
+            line: lineError,
             column: columnError,
             file: archiveError
-        }; 
+        };
 
-        Jobj = JSON.stringify(obj);
+        var Jobj = JSON.stringify(obj);
 
         console.log("xhr:: ", Jobj);
         var xhr = new XMLHttpRequest();
         xhr.open("POST", 'http://localhost/lextracking-api/taskAutomatic/new', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(Jobj); 
+        xhr.send(Jobj);
 
     return lextrackingDebug;
 
@@ -63,4 +63,4 @@ lextrackingDebug = function(error) {
 
 
 
-   
+

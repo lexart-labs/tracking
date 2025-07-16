@@ -51,7 +51,7 @@
       $scope.totalHours = [];
       $scope.totalHours2 = [];
       $scope.totalHoursTrello = [];
-      $scope.excelName;
+      $scope.excelName = undefined;
       $scope.totalcost = 0;
       $scope.totalcost2 = 0;
       $scope.totalcost3 = 0;
@@ -187,7 +187,7 @@
         //           //$scope.CurrTotalCost = value.currency;
         //           var costo = value.costHour;
         //           var result = (ms / 3600 / 1000) * costo;
-                  
+
         //           $scope.arrSubtotal.push(result);
         //           // $scope.totalcost = result;
         //           var cost = { value: result };
@@ -216,7 +216,7 @@
         //       angular.forEach(weeklyHours, function (value, key) {
         //         if (value.idUser == mss.idUser) {
         //           var costo = (value.costHour);
-        //           var result = (mss.mss / 3600 / 1000) * costo;                  
+        //           var result = (mss.mss / 3600 / 1000) * costo;
         //           $scope.subTotalCost.push(result);
         //           //proyectSubTotal($scope.subTotalCost);
         //         }
@@ -531,7 +531,7 @@
             var tempTotal = 0;
             tracks.forEach(function (track) {
               if(!track.currency){
-                track.currency == '$'
+                track.currency = '$'
               }
               tempTotal += (track.trackCost ? track.trackCost : 0);
               $scope.totalcost = tempTotal;
@@ -548,7 +548,7 @@
                   //         if(value.currency == null || value.currency == ''){
                   //           track.currency = '$'
                   //         }
-                          
+
                   //         return track.idUser == value.idUser;
                   //       });
                   //       // track.currency = object.currency;
@@ -692,7 +692,7 @@
                 }
               }
               if(track.currency == null || track.currency == ''){
-                track.currency == '$'
+                track.currency = '$'
               }
               if(track.currency == '$'){
                 $scope.totalCostManualPesos += track.trackCost
@@ -1156,7 +1156,7 @@
               } else {
                 if ($scope.tableTrackTrello.length < 1) {
                   $scope.tableTrackTrello.push({
-                    idProyecto: track.idUser,
+                    idUser: track.idUser,
                     idProyecto: track.idProyecto,
                     clientName: track.client,
                     duration: track.duration,
@@ -1510,7 +1510,7 @@
         //   }
         // });
       };
-      
+
       var sumTotalcost = function (value) {
         $scope.arrCost += value;
       };
@@ -2027,7 +2027,7 @@
         document.body.appendChild(link);
 
         link.click();
-      };      
+      };
     },
   ]);
 })(angular);

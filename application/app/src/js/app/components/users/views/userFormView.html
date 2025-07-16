@@ -95,7 +95,7 @@
       </label>
     </div>
     <div class="lexart-frm__fld">
-      
+
     </div>
 
   </div>
@@ -117,15 +117,15 @@
         <div class="lexart-frm__fldgrp">
           <div class="lexart-frm__fld">
             <label class="lexart-frm__lbl">
-                <b class="lexart-frm__lbl-name">{{'Año'}}</b>  
-                <input  moment-picker="date.year" 
-                        placeholder="Seleccionar año" 
-                        start-view="decade" 
-                        format="YYYY" 
-                        min-date="date.minDate" 
-                        max-date="date.maxDate" 
-                        max-view="decade" 
-                        start-date="date.startDate" 
+                <b class="lexart-frm__lbl-name">{{'Año'}}</b>
+                <input  moment-picker="date.year"
+                        placeholder="Seleccionar año"
+                        start-view="decade"
+                        format="YYYY"
+                        min-date="date.minDate"
+                        max-date="date.maxDate"
+                        max-view="decade"
+                        start-date="date.startDate"
                         ng-model="date.year"
                         >
             </label>
@@ -142,10 +142,10 @@
       <table class="lexart-table">
         <thead>
             <tr>
-              <th>{{ 'users.month' | translate }}</th>
-              <th>{{ 'users.year' | translate }}</th>
-              <th>{{ 'users.salary' | translate }}</th>
-              <th>{{ 'users.costhour' | translate }}</th>
+              <th scope="col">{{ 'users.month' | translate }}</th>
+              <th scope="col">{{ 'users.year' | translate }}</th>
+              <th scope="col">{{ 'users.salary' | translate }}</th>
+              <th scope="col">{{ 'users.costhour' | translate }}</th>
             </tr>
         </thead>
         <tbody ng-if="identify == true">
@@ -162,16 +162,16 @@
                 <td>{{month.costHour}}</td>
             </tr>
             <tr ng-click="moreMonths(); show='false'" ng-init="show='true'">
-              <th style="cursor: pointer;" ng-if="show=='true'">Mostrar meses anteriores <i style="margin-left: 10px;">▼</i></th>
-              <th ng-if="show=='true'"></th>
-              <th ng-if="show=='true'"></th>
-              <th ng-if="show=='true'"></th>
+              <th scope="col" style="cursor: pointer;" ng-if="show=='true'">Mostrar meses anteriores <i style="margin-left: 10px;">▼</i></th>
+              <th scope="col" ng-if="show=='true'"></th>
+              <th scope="col" ng-if="show=='true'"></th>
+              <th scope="col" ng-if="show=='true'"></th>
             </tr>
             <tr ng-repeat="month in performance.moreMonths" ng-if="show=='false'">
                 <td>{{month.month}}</td>
                 <td>{{month.year}}</td>
                 <td>{{month.salary}}</td>
-                <td>{{month.costHour}}</td>             
+                <td>{{month.costHour}}</td>
               </tr>
             </tbody>
       </table>

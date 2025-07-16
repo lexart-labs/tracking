@@ -20,7 +20,7 @@
         $scope.imageHandler = {
           dataURL: "",
         };
-        
+
 
         if(idUser) {
             if(window.localStorage.isDeveloper == "true") {
@@ -30,8 +30,8 @@
                         : '';
                     $scope.user = result;
                 });
-                
-                
+
+
             }  else {
                 UserServices.findById(idUser, function (err, result) {
                     $scope.imageHandler.dataURL = result.photo
@@ -70,7 +70,7 @@
                 if (err) {
                     console.log("error", err);
                     $scope.error = err.message || err.error.message || err.error || err;
-                    $sendingData = false;
+                    $scope.sendingData = false;
                     console.log('dale');
                 } else {
                     try{
@@ -105,7 +105,7 @@
                          UserServices.remove($scope.user.id, function(err, result) {
                             if (err) {
                                 $scope.error = err.message || err.error.message || err.error || err;
-                                $sendingData = false;
+                                $scope.sendingData = false;
                             } else {
                                 $state.go('app.users');
                             }
@@ -124,9 +124,9 @@
             var actualMonth = moment().month();
             var pastMonth   = moment().month()-1;
             var allMonths   = ['Enero','Febrero','Mayo','Abril','Marzo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-            
-            $scope.date.minDate   = moment().subtract(6, 'year'); 
-            $scope.date.maxDate   = moment().add(0, 'year'); 
+
+            $scope.date.minDate   = moment().subtract(6, 'year');
+            $scope.date.maxDate   = moment().add(0, 'year');
             $scope.date.startDate = moment().subtract(1, 'year');
             $scope.date.year      = moment().year();
             $scope.performance.actual    = {};
@@ -137,7 +137,7 @@
 
             $scope.performance.actual.month = {
                 'idMonth': actualMonth+1,
-                'month'  : allMonths[actualMonth],                
+                'month'  : allMonths[actualMonth],
                 //'idUser' : idUser,
                 'year'   : moment().year()
             }
@@ -157,14 +157,14 @@
                     $scope.performance.actual.month.salary = Object.values(result[0])[0];
                     WeeklyHourServices.currentUser(idUser, function(err, result){
                         $scope.performance.actual.month.costHour = result[0].costHour;
-    
+
                         console.log(result[0])
                         UserServices.saveCurrentPerformance($scope.performance.actual.month, function(err, result){
                             console.log('save performance', err, result);
                         })
                     })
                 })
-    
+
                 UserServices.getPerformanceCurrent($scope.performance.past.month, function(err,result){
                     console.log('Result past month', result, err);
                     $scope.performance.past.month = result[0];
@@ -174,14 +174,14 @@
                     $scope.performance.actual.month.salary = Object.values(result[0])[0];
                     WeeklyHourServices.findByIdUser(idUser, function(err, result){
                         $scope.performance.actual.month.costHour = result[0].costHour;
-    
+
                         console.log(result[0])
                         UserServices.savePerformance($scope.performance.actual.month, idUser, function(err, result){
                             console.log('save performance', err, result);
                         })
                     })
                 })
-                
+
                 UserServices.getPerformanceById($scope.performance.past.month, idUser, function(err,result){
                     console.log('Result past month', result, err);
                     $scope.performance.past.month = result[0];
@@ -201,14 +201,14 @@
                     if (!err) {
                         $scope.performance.moreMonths = result;
                     }
-                })      
+                })
             }
 
             $scope.filterYear = function(year){
                 $scope.performance.allMonths = {};
                 $scope.performance.allMonths.idUser = idUser;
                 $scope.identify = false;
-                $scope.performance.allMonths.year = moment(year).year(); 
+                $scope.performance.allMonths.year = moment(year).year();
                 console.log('$scope.performance::', $scope.performance);
                 $scope.performance.allMonths.actMonth = '';
                 $scope.performance.allMonths.pastMonth = '';
@@ -253,7 +253,7 @@
 
                             }
                           }
-                        }); 
+                        });
                     }
                 }
             }
@@ -271,7 +271,7 @@
             $scope.imageLoading = true;
             const reader = new FileReader($scope.imageSrc);
             reader.onloadend = () => {
-                $scope.imageHandler.dataURL = reader.result;                
+                $scope.imageHandler.dataURL = reader.result;
                 $scope.user.image_base = $scope.imageHandler.dataURL;
 
                 $timeout(() => $scope.imageLoading = false, 0);
