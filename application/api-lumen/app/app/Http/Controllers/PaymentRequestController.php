@@ -105,6 +105,71 @@ class PaymentRequestController extends BaseController
         }
     }
 
+    public function uploadFile(Request $request, $id)
+    {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        try {
+            $operation = "Upload file Payment Request.";
+
+            if (!$request->has('file')) {
+                return response()->json(['Error' => NO_FILE_PROVIDED, "Operation" => $operation], 400);
+            }
+            if (!is_numeric($id)) {
+                return response()->json(["Error" => INVALID_NUMERIC_ID, "Operation" => $operation], 422);
+            }
+            $base64data = $request->input('file');
+            if (preg_match('/^data:([^;]+);base64,(.*)$/', $base64data, $matches)) {
+                $type = $matches[1];
+                $data = base64_decode($matches[2]);
+
+                if ($data === false) {
+                    return response()->json(['Error' => ERROR_DECODED, 'Operation' => $operation], 400);
+                }
+
+
+                $extension = '';
+                switch ($type) {
+                    case 'application/pdf':
+                        $extension = 'pdf';
+                        break;
+                    case 'application/msword':
+                        $extension = 'doc';
+                        break;
+                    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                        $extension = 'docx';
+                        break;
+                    default:
+                        return response()->json(['Error' => UNSUPPORTED_FILE, 'Operation' => $operation], 400);
+                }
+
+                $filename = "payment-request-{$id}." . $extension;
+                $directoryPath = storage_path('uploads/payment-requests');
+
+                if (!file_exists($directoryPath)) {
+                    mkdir($directoryPath, 0755, true);
+                }
+
+                $path = $directoryPath . '/' . $filename;
+
+                file_put_contents($path, $data);
+                $paymentRequest = PaymentRequest::find($id);
+
+                $paymentRequest->status = 'Paid';
+                $paymentRequest->save();
+                return response()->json(['response' => UPDATED, 'Operation' => $operation], 201);
+            } else {
+                return response()->json(['Error' => INVALID_FILE, 'Operation' => $operation], 400);
+            }
+
+        } catch (ModelNotFoundException $ex) {
+            return response()->json(['Error' => PAYMENT_REQUEST_NOT_FOUND, 'Operation' => $operation], 404);
+        } catch (ValidationException $ex) {
+            return response()->json(['Error' => INVALID_DATA, 'Operation' => $operation], 422);
+        } catch (Exception $ex) {
+            return response()->json(['Error' => INTERNAL_SERVER_ERROR, 'Operation' => $operation], 500);
+        }
+    }
 
     public function create(Request $request)
     {

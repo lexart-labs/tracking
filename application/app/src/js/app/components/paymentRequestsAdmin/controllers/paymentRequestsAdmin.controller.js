@@ -55,6 +55,7 @@
 				Canceled: $translate.instant("payment_requests.status.canceled"),
 				Approved: $translate.instant("payment_requests.status.approved"),
 				Rejected: $translate.instant("payment_requests.status.rejected"),
+				Paid: $translate.instant("payment_requests.status.paid"),
 			};
 			$scope.concepts = Object.keys($scope.conceptTexts);
 			$scope.statuses = Object.keys($scope.statusTexts);
@@ -169,6 +170,32 @@
 						}
 				});
 		  };
+			$scope.openUploadDialog = function(paymentRequestId) {
+
+				const fileInput = document.createElement('input');
+				fileInput.type = 'file';
+				fileInput.accept = '.pdf,.doc,.docx';
+
+				fileInput.onchange = function(event) {
+						const file = event.target.files[0];
+						if (file) {
+								PaymentRequestsServiceAdmin.uploadFile(paymentRequestId, file, function (err, result) {
+										if (err && err.Error) {
+												$translate.instant("payment_requests.error_messages.error_to_upload_file",),
+												"error"
+										} else {
+												getAllPaymentRequests();
+												$rootScope.showToaster(
+													$translate.instant("payment_requests.success_messages.status_updated"),
+													"success"
+												);
+										}
+								});
+						}
+				};
+
+				fileInput.click();
+			};
 		},
 	]);
 })(angular);
