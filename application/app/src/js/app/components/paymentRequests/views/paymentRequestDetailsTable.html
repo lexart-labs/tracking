@@ -1,17 +1,17 @@
-<table class="lexart-table" style="width: 100%;">
+<table class="lexart-table">
     <thead>
         <tr>
-            <!-- <th>{{ 'payment_requests.form_accordion.id_table_header' | translate  }}</th> -->
-            <th>{{ 'payment_requests.form_accordion.concept_table_header' | translate  }}</th>
-            <th>{{ 'payment_requests.form_accordion.amount_table_header' | translate  }}</th>
-            <th>{{ 'payment_requests.form_accordion.observation_table_header' | translate  }}</th>
-            <th ng-if="showActions" style="width: 100px;">{{ 'payment_requests.form_accordion.actions_table_header' | translate  }}</th>
+            <th scope="col">{{ 'payment_requests.form_accordion.id_table_header' | translate  }}</th>
+            <th scope="col">{{ 'payment_requests.form_accordion.concept_table_header' | translate  }}</th>
+            <th scope="col">{{ 'payment_requests.form_accordion.amount_table_header' | translate  }}</th>
+            <th scope="col">{{ 'payment_requests.form_accordion.observation_table_header' | translate  }}</th>
+            <th scope="col" ng-if="showActions" style="width: 100px;">{{ 'payment_requests.form_accordion.actions_table_header' | translate  }}</th>
         </tr>
     </thead>
     <tbody>
         {{ $ctrl.detailsToShow }}
         <tr ng-repeat="paymentRequest in detailsToShow">
-            <!-- <td>{{paymentRequest.id}}</td> -->
+            <td>{{paymentRequest.id}}</td>
             <td>{{conceptTexts[paymentRequest.concept]}}</td>
             <td>{{paymentRequest.amount.toFixed(2)}}</td>
             <td>{{paymentRequest.concept_description}}</td>

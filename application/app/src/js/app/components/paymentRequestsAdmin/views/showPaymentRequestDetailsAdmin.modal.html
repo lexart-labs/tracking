@@ -1,116 +1,63 @@
-<div class="lexart-modal lexart-modal--big">
+<div class="lexart-modal lexart-modal--medium">
 
 	<div class="lexart-modal__header">
-		<h1 class="lexart-modal__title">{{ 'payment_requests.show_request_details_dialog.title' | translate }}</h1>
+			<h1 class="lexart-modal__title">{{ 'payment_requests.show_request_details_dialog.title' | translate }}</h1>
 	</div>
 
 	<div class="lexart-modal__cnt">
-		<div class="lexart-frm__fldgrp">
-			<div class="lexart-frm__fld">
-				<label class="lexart-frm__lbl" for="start-date">
-					<span class="lexart-frm__lbl-name">
-						<b>{{ 'payment_requests.all-table.user_table_header' | translate }}</b>
-					</span>
-					<input type="text" ng-disabled="true" ng-value="ngDialogData.paymentRequests.user.name" class="lexart-input lexart-input--date">
-				</label>
-			</div>
-		
-			<div class="lexart-frm__fld">
-				<label class="lexart-frm__lbl" for="end-date">
-					<span class="lexart-frm__lbl-name">
-						<b>{{ 'payment_requests.all-table.date_table_header' | translate }}</b>
-					</span>
-					<input type="text" ng-disabled="true" ng-value="ngDialogData.paymentRequests.created_at" class="lexart-input lexart-input--date">
-				</label>
-			</div>
-			<div class="lexart-frm__fld">
-				<label class="lexart-frm__lbl" for="end-date">
-					<span class="lexart-frm__lbl-name">
-						<b>{{ 'payment_requests.all-table.total_table_header' | translate }}</b>
-					</span>
-					<input type="text" ng-disabled="true" ng-value="ngDialogData.paymentRequests.currency + ' ' + ngDialogData.paymentRequests.total" class="lexart-input lexart-input--date">
-				</label>
-			</div>
-		
-		</div>
-		<!-- <table class="lexart-table">
-			<thead>
-				<tr>
-					<th>{{ 'payment_requests.all-table.user_table_header' | translate  }}</th>
-					<th>{{ 'payment_requests.all-table.date_table_header' | translate  }}</th>
-					<th>{{ 'payment_requests.all-table.total_table_header' | translate  }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>{{ngDialogData.paymentRequests.user.name}}</td>
-					<td>{{ngDialogData.paymentRequests.created_at}}</td>
-					<td>{{ngDialogData.paymentRequests.currency}} {{ngDialogData.paymentRequests.total}}</td>
-				</tr>
-			</tbody>
-		</table> -->
+			<table class="lexart-table">
+					<thead>
+							<tr>
+									<th>{{ 'payment_requests.all-table.user_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.date_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.total_table_header' | translate  }}</th>
+							</tr>
+					</thead>
+					<tbody>
+							<tr>
+									<td>{{ngDialogData.paymentRequests.user.name}}</td>
+									<td>{{ngDialogData.paymentRequests.created_at}}</td>
+									<td>{{ngDialogData.paymentRequests.currency}} {{ngDialogData.paymentRequests.total}}</td>
+							</tr>
+					</tbody>
+			</table>
 	</div>
 
-	<div class="lexart-modal__cnt lexart-wa__cnt">
-		<table class="lexart-table">
-			<thead>
-				<tr>
-					<th>{{ 'payment_requests.all-table.concept_table_header' | translate  }}</th>
-					<th>{{ 'payment_requests.all-table.amount_table_header' | translate  }}</th>
-					<th>{{ 'payment_requests.all-table.observation_table_header' | translate  }}</th>
-					<th>Invoice Link</th>
-					<th>Report Link</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="concept in ngDialogData.paymentRequests.payment_request_details">
-					<td>{{concept.concept}}</td>
-					<td>{{concept.amount}}</td>
-					<td>{{concept.concept_description}}</td>
-					<td>
-						<a class="external-link" ng-href="{{concept.bill_link}}" target="_blank">
-							{{ concept.bill_link | truncateTail: true: 30: '...' }}
-						</a>
-					</td>
-					<td>
-						<a class="external-link" ng-href="{{concept.report_link}}" target="_blank">
-							{{ concept.report_link | truncateTail: true: 30: '...' }}
-						</a>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<!-- Text area for rejection/approve -->
-		<hr style="margin: 20px 0;">
-		<label class="lexart-frm__lbl" for="observation">
-			<span class="lexart-frm__lbl-name">
-				<b>Observation</b>
-			</span>
-			<textarea ng-model="paymentRequestObservation" maxlength="255" class="lexart-input lexart-input--textarea" style="width:100%" placeholder="Observation"></textarea>
-		</label>
+	<div class="lexart-modal__header">
+			<h1 class="lexart-modal__title">{{ 'payment_requests.concepts.request_concepts' | translate }}</h1>
 	</div>
 
-	
+	<div class="lexart-modal__cnt">
+			<table class="lexart-table">
+					<thead>
+							<tr>
+									<th>{{ 'payment_requests.all-table.concept_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.amount_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.observation_table_header' | translate  }}</th>
+							</tr>
+					</thead>
+					<tbody>
+							<tr ng-repeat="concept in ngDialogData.paymentRequests.payment_request_details">
+									<td>{{concept.concept}}</td>
+									<td>{{concept.amount}}</td>
+									<td>{{concept.concept_description}}</td>
+							</tr>
+					</tbody>
+			</table>
+	</div>
 
 	<div class="lexart-modal__footer">
-		<div class="lexart-modal__actions" style="float: right;">
-			<button class="lexart-btn" ng-click="closeThisDialog()">
-				{{ 'shared.modal.close' | translate }}
-			</button>
-			<button class="lexart-btn lexart-btn--darkest" ng-click="updatePaymentRequestStatus('Rejected')">
-				{{ 'payment_requests.all-table.button_rejected' | translate }}
-			</button>
-			<button class="lexart-btn" ng-click="updatePaymentRequestStatus('Approved')">
-				{{ 'payment_requests.all-table.button_approved' | translate }}
-			</button>
-		</div>
+			<div class="lexart-modal__actions" style="float: left;">
+					<button class="lexart-btn" ng-click="updatePaymentRequestStatus('Approved')">
+							{{ 'payment_requests.all-table.button_approved' | translate }}
+					</button>
+					<button class="lexart-btn lexart-btn--darkest" ng-click="updatePaymentRequestStatus('Rejected')">
+							{{ 'payment_requests.all-table.button_rejected' | translate }}
+					</button>
+					<button class="lexart-btn" ng-click="closeThisDialog()">
+							{{ 'shared.modal.close' | translate }}
+					</button>
+			</div>
 	</div>
 
 </div>
-
-<style>
-.external-link{
-	color: #4a90e2;
-	text-decoration: underline;
-}
-</style>

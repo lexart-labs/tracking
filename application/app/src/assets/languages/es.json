@@ -603,11 +603,7 @@
       "amount_table_header": "Amount",
       "observation_table_header": "Observation",
       "actions_table_header": "Actions",
-      "total_table_footer": "Total",
-      "report_link": "Report Link",
-      "report_link_placeholder": "Enter the report link if applicable",
-      "bill_link": "Invoice Link",
-      "bill_link_placeholder": "Enter the invoice link if applicable"
+      "total_table_footer": "Total"
     },
     "history_accordion": {
       "title": "History",
@@ -637,14 +633,7 @@
       "closure": "Closure",
       "benefits": "Benefits",
       "compensation": "Compensation",
-      "request_concepts": "Request Concepts",
-      "external_closure": "External Closure"
-    },
-    "concepts_explanation": {
-      "closure": "Amount will be automatically filled based on the internal tracks between the selected dates.",
-      "benefits": "Fill amount based on the bank transfer comission.",
-      "compensation": "Fill the amount based on any compensation you need.",
-      "external_closure": "Fill the the amount and provide the link of the external report (EG: Jira, clockify)."
+      "request_concepts": "Request Concepts"
     },
 		"currency": {
 			"clp": "CLP",
