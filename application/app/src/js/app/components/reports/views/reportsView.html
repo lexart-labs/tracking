@@ -8,16 +8,17 @@
 <div class="lexart-frm__fld">
   <ul class="lexart-tabs" ng-init="tabReport = 1">
     <li class="lexart-tabs__item" ng-click="tabReport = 1" ng-class="{'lexart-tabs__item--selected' : tabReport == 1}">
-      Reportes Tareas
+      Reports
     </li>
     <!-- <li class="lexart-tabs__item" ng-click="tabReport = 2" ng-class="{'lexart-tabs__item--selected' : tabReport == 2}">
       Reportes Proyectos
     </li> -->
     <li class="lexart-tabs__item" ng-click="tabReport = 3" ng-class="{'lexart-tabs__item--selected' : tabReport == 3}">
-      Petición de pago
+      Payment Requests
     </li>
   </ul>
 </div>
+<!-- REPORTS TAB -->
 <div ng-if="tabReport == 1">
   <div class="lexart-wa__cnt">
     <div class="lexart-frm__fldgrp">
@@ -834,36 +835,46 @@
         </table>
       </div>
     </div>
-    <!-- <div ng-if="itemTab == 1">
-        <div
-          ng-if="tableTrack.length > 0 || tableTrackAuto.length > 0 || tableTrackTrello.length > 0 || tableTrackJira.length > 0"
-          style="
-            text-align: left;
-            background-color: rgba(16, 192, 0, 0.4);
-            margin-top: 2%;
-            font-weight: bold;
-            padding-left: 73%;
-            padding-top: 6px;
-            font-size: 11px;
-          "
-        >
-          TOTAL HORAS: {{finalHour}}
-        </div>
-        <div
-          ng-if="tableTrack.length > 0 || tableTrackAuto.length > 0 || tableTrackTrello.length > 0 || tableTrackJira.length > 0"
-          style="
-            text-align: left;
-            background-color: rgba(16, 192, 0, 0.4);
-            font-weight: bold;
-            padding-left: 73%;
-            padding-bottom: 5px;
-            font-size: 11px;
-          "
-        >
-          TOTAL COSTO: $ {{(arrCost).toFixed(2)}}
-        </div>
-
-      </div> -->
+    <div ng-if="userRole == 'admin'">
+      <table class="lexart-table">
+        <tr>
+          <th>Cliente</th>
+          <th>Horas Desarollo</th>
+          <th>Cliente Budget</th>
+          <th>Diferencia</th>
+        </tr>
+        <tr ng-repeat="(key, value) in clientTotalDev">
+          <td>{{ key }}</td>
+          <td>
+            {{ value.totalDolares | currency:"USD$" }}
+            <br>
+            {{ value.totalReales | currency:"R$" }}
+            <br>
+            {{ value.totalPesos | currency:"$" }}
+          </td>
+          <td>
+            {{ (clientTotals[key].totalDolares || 0) | currency:"USD$" }}
+            <br>
+            {{ (clientTotals[key].totalReales || 0) | currency:"R$" }}
+            <br>
+            {{ (clientTotals[key].totalPesos || 0) | currency:"$" }}
+          </td>
+          <td>
+            {{
+            (clientTotals[key].totalDolares || 0) - value.totalDolares | currency:"USD$"
+            }}
+            <br>
+            {{
+            (clientTotals[key].totalReales || 0) - value.totalReales | currency:"R$"
+            }}
+            <br>
+            {{
+            (clientTotals[key].totalPesos || 0) - value.totalPesos | currency:"$"
+            }}
+          </td>
+        </tr>
+      </table>
+      </div>
 
     <div class="lexart-cstm__grid-90">
       <div ng-if="itemTab == 2">
@@ -920,7 +931,7 @@
   </div>
 </div>
 </div>
-
+<!-- UNUSED TAB -->
 <div ng-if="tabReport == 2">
   <div class="lexart-wa__hdr lexart-flex" style="margin-top: 10px">
     <div class="lexart-flex-5">
@@ -932,6 +943,7 @@
       </button>
     </div>
   </div>
+  <!--  -->
   <div class="lexart-wa__cnt">
     <div class="lexart-flex">
       <table ng-if="projectsTab.length">
@@ -985,48 +997,8 @@
     show-prev-next="true" show-first-last="true" scroll-top="true" paging-action="pager(page)">
   </paging>
 </div>
-
+<!-- PAYMENT REQUEST TAB -->
 <div ng-if="tabReport == 3">
   <div ng-include="'/app/components/paymentRequests/views/paymentRequestsView.html'" ng-controller="PaymentRequestsCtrl"></div>
 </div>
 
-<div ng-if="userRole == 'admin'">
-  <table class="lexart-table">
-    <tr>
-      <th>Cliente</th>
-      <th>Horas Desarollo</th>
-      <th>Cliente Budget</th>
-      <th>Diferencia</th>
-    </tr>
-    <tr ng-repeat="(key, value) in clientTotalDev">
-      <td>{{ key }}</td>
-      <td>
-        {{ value.totalDolares | currency:"USD$" }}
-        <br>
-        {{ value.totalReales | currency:"R$" }}
-        <br>
-        {{ value.totalPesos | currency:"$" }}
-      </td>
-      <td>
-        {{ (clientTotals[key].totalDolares || 0) | currency:"USD$" }}
-        <br>
-        {{ (clientTotals[key].totalReales || 0) | currency:"R$" }}
-        <br>
-        {{ (clientTotals[key].totalPesos || 0) | currency:"$" }}
-      </td>
-      <td>
-        {{
-          (clientTotals[key].totalDolares || 0) - value.totalDolares | currency:"USD$"
-        }}
-        <br>
-        {{
-          (clientTotals[key].totalReales || 0) - value.totalReales | currency:"R$"
-        }}
-        <br>
-        {{
-          (clientTotals[key].totalPesos || 0) - value.totalPesos | currency:"$"
-        }}
-      </td>
-    </tr>
-  </table>
-</div>
