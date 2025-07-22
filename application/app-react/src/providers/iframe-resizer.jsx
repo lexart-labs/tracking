@@ -1,26 +1,25 @@
 import React, { createContext } from "react";
 import '@iframe-resizer/child'
+import sessionStore from "@/stores/session";
 
-const resizerContext = createContext()
+export const resizerContext = createContext()
 
-function ResizerProvider({children}) {
-    const [userId, setUserId] = React.useState()
-
+function ResizerProvider({ children }) {
+    const { setUser, setToken, user, token } = sessionStore()
+    
     window.iFrameResizer = {
         onMessage: (event) => {
-            setUserId(event)
+            setUser(event.user || {})
+            setToken(event.token || '')
         }
     }
-
-    if(!userId) {
-        return
-    }
+    if(!user || !token) return null
 
     return (
-        <resizerContext.Provider value={{userId}}>
+        <resizerContext.Provider value={{ user, token }}>
             {children}
         </resizerContext.Provider>
     )
-} 
+}
 
-export { resizerContext, ResizerProvider }
+export default ResizerProvider

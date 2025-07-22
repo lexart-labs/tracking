@@ -1,12 +1,14 @@
 import { useContext } from "react"
-import { resizerContext } from "../../providers/iframe-resizer"
+import { resizerContext } from "@/providers/iframe-resizer"
+import BreadCrumbs from "@/components/shared/BreadCrumbs"
 
 export function Dashboard() {
-    const {userId} = useContext(resizerContext)    
+    const { user } = useContext(resizerContext)    
 
     return (
         <div>
-            <h1 className="text-black">{userId}</h1>
+            <BreadCrumbs />
+            <h1 className="text-black">{user?.userId}</h1>
         </div>
     )
 }

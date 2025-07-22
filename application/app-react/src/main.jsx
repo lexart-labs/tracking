@@ -1,11 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from "react-router";
-import './index.css'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Dashboard } from './application/dashboard'
-import '@iframe-resizer/child'
-import { ResizerProvider } from './providers/iframe-resizer';
+import { User } from '@/application/pages/user/form/User'
+import ResizerProvider from '@/providers/iframe-resizer';
 import { PrimeReactProvider } from 'primereact/api';
+import Layout from "@/application/Layout"
+import '@iframe-resizer/child'
+import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,9 +15,12 @@ createRoot(document.getElementById('root')).render(
       <ResizerProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="/user/:userId?" element={<User />} />
+            </Route>
           </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
       </ResizerProvider>
     </PrimeReactProvider>
   </StrictMode>,

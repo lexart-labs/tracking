@@ -25,22 +25,22 @@
             <table class="lexart-table">
                 <thead>
                     <tr>
-                        <th colspan="5" style="text-align:center">Lista Cards</th>
-                        <th></th>
-                        <th></th>
+                        <th scope="col" colspan="5" style="text-align:center">Lista Cards</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                     <tr>
-                        <th>{{ 'tasks_trello.id' | translate }}</th>
-                        <th>{{ 'tasks_trello.task' | translate }}</th>
-                        <th style="width: 30px;" >{{ 'tasks_trello.status' | translate }} </th>
-                        <th style="width: 120px">
-                         <ui-select 
+                        <th scope="col">{{ 'tasks_trello.id' | translate }}</th>
+                        <th scope="col">{{ 'tasks_trello.task' | translate }}</th>
+                        <th scope="col" style="width: 30px;" >{{ 'tasks_trello.status' | translate }} </th>
+                        <th scope="col" style="width: 120px">
+                         <ui-select
                             ng-model="labels.selected"
                             class="lexart-selectFilter lexart-selectFilter--input"
                             theme="selectize"
-                            append-to-body="true" 
-                            ng-disabled="disabled" 
-                            
+                            append-to-body="true"
+                            ng-disabled="disabled"
+
                             >
                             <ui-select-match>
                                 {{$select.selected.name}}
@@ -51,14 +51,14 @@
                             </ui-select-choices>
                         </ui-select>
                         </th>
-                        <th style="width: 30px;">Lista</th>
-                        <th style="width: 120px">
-                        <ui-select 
+                        <th scope="col" style="width: 30px;">Lista</th>
+                        <th scope="col" style="width: 120px">
+                        <ui-select
                             ng-model="selectedList.selected"
                             class="lexart-selectFilter lexart-selectFilter--input"
                             theme="selectize"
-                            append-to-body="true" 
-                            ng-disabled="disabled" 
+                            append-to-body="true"
+                            ng-disabled="disabled"
                             >
                             <ui-select-match>
                                 {{$select.selected.name}}
@@ -69,10 +69,10 @@
                             </ui-select-choices>
                         </ui-select>
                         </th>
-                        <th class="lexart-cstm__grid-5"></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th scope="col" class="lexart-cstm__grid-5"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,7 +96,7 @@
                             <div ng-if="tasks_trello.isPlayable">
                                 <div ng-if="!tasks_trello.status.includes('Done') && !tasks_trello.includes('In-Review') && isClient=='false' ">
                                     <a href ng-click="stopTrack()" ng-if="currentTrack.idTask == tasks_trello.id"><i class="ri-pause-line"></i></a>
-                                    <a href ng-click="startTrackTrello(tasks_trello)" ng-disabled="inprogress" ng-if="currentTrack.idTask != tasks_trello.id"><i class="ri-play-line"></i></a>    
+                                    <a href ng-click="startTrackTrello(tasks_trello)" ng-disabled="inprogress" ng-if="currentTrack.idTask != tasks_trello.id"><i class="ri-play-line"></i></a>
                                 </div>
                             </div>
                         </td>

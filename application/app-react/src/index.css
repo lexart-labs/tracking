@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@import 'primeicons/primeicons.css';
+/* import soho theme */
 
+@import "primereact/resources/themes/soho-light/theme.css";
+/* @import "primereact/resources/themes/soho-dark/theme.css"; */
 :root {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: .9rem;
 }

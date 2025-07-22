@@ -270,7 +270,7 @@
             // if ($scope.task.hour == null || $scope.task.mins == null || $scope.task.secs == null || $scope.task.name == null && $scope.task.hour == undefined || $scope.task.mins == undefined || $scope.task.secs == undefined || $scope.task.name == undefined) {
             //   if ($scope.task.hour == null || $scope.task.mins == null || $scope.task.secs == null || $scope.task.name == null && $scope.task.hour == undefined || $scope.task.mins == undefined || $scope.task.secs == undefined) {
             //     var msg = "El campo Duración no puede estar vacio."
-            //   } else 
+            //   } else
 
               if ($scope.task.name === undefined) {
                 var msg = "El campo Nombre no puede estar vacio."
@@ -533,7 +533,7 @@
     ProjectsServices.save($scope.project, function (err, result) {
       if (err) {
         console.log("error", err);
-        $sendingData = false;
+        $scope.sendingData = false;
       } else {
         console.log("TASKs",$scope.tasks);
         angular.forEach($scope.tasks,function (task,index) {

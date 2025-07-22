@@ -5,7 +5,7 @@
 
   var Module = ng.module('LexTracking');
 
-  Module.directive('iframeResizer', ["$timeout", "$rootScope", function($timeout, $rootScope) {  
+  Module.directive('iframeResizer', ["$timeout", "$rootScope", "$window", function($timeout, $rootScope, $window) {  
       return { 
         restrict: 'A',
         scope: {
@@ -19,7 +19,7 @@
               log: false,
               checkOrigin: false,
               license: "GPLv3",
-            scrolling: "omit",
+              scrolling: "omit",
               onResized: function(data) {
                 console.log('Iframe resized:', data.height);
               },
@@ -28,7 +28,15 @@
                   scope.$applyAsync(function() {
                     scope.onReady({ iframe: iframeEl });
                   });
-                  iframeEl.iframeResizer.sendMessage($rootScope.userId, '*');
+                let user = {
+                  userId: $rootScope.userId,
+                  userName: $rootScope.userName,
+                  userRole: $rootScope.userRole,
+                  isAdmin: $rootScope.isAdmin,
+                  userPhoto: $rootScope.userPhoto,
+                  userEmail: $rootScope.userEmail
+                }
+                  iframeEl.iframeResizer.sendMessage({ user, token: $window.localStorage[TOKEN_KEY] }, '*');
               }
             }, element[0]);
           }

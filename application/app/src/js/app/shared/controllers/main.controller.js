@@ -8,7 +8,9 @@
 
         $rootScope.BASEURL = BASE_URL;
         $rootScope.url = window.location.origin;
-        $rootScope.TRACKING_REACT = TRACKING_REACT;
+        $rootScope.trackingReactUrl = TRACKING_REACT_URL;
+        $rootScope.showIframe = TRACKING_REACT_ON == 1;
+        console.log("🚀  --> $rootScope.showIframe:", $rootScope.showIframe)
 
         $rootScope.$on('$stateChangeSuccess', function (evt, toState, toParams, fromState, fromParams) {
             evt.preventDefault();

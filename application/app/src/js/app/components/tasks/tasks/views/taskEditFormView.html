@@ -83,7 +83,7 @@
                 <textarea rows="7" cols="50" ng-model="task.description">
 
                 </textarea>
-                <b class="lexart-frm__lbl-name">{{ 'tasks.description' | translate }} <span class="required">*</span></b> 
+                <b class="lexart-frm__lbl-name">{{ 'tasks.description' | translate }} <span class="required">*</span></b>
             </label>
         </div>
 
@@ -96,12 +96,12 @@
               <table ng-show="comments.length>0">
             <thead>
               <tr>
-                <th>#</th>
-                <th>{{ 'Usuario'}}</th>
+                <th scope="col">#</th>
+                <th scope="col">{{ 'Usuario'}}</th>
 
-                <th>{{ 'projects.comments' | translate }}</th>
-                <th></th>
-                <th></th>
+                <th scope="col">{{ 'projects.comments' | translate }}</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
@@ -130,18 +130,18 @@
       <table rows="7">
         <thead>
           <tr>
-            <th>{{ 'projects.id' | translate }}</th>
-            <th>{{ 'projects.name' | translate }}</th>
-            <th>{{ 'projects.assign' | translate }}</th>
-            <th ng-click="toggleSelectUsers($event)" class="toggleSelectUsersCursor">-</th>
+            <th scope="col">{{ 'projects.id' | translate }}</th>
+            <th scope="col">{{ 'projects.name' | translate }}</th>
+            <th scope="col">{{ 'projects.assign' | translate }}</th>
+            <th scope="col" ng-click="toggleSelectUsers($event)" class="toggleSelectUsersCursor">-</th>
           </tr>
         </thead>
         <tbody class="">
           <tr>
-            <th></th>
-            <th style="width:100%;"><input class="field-filter" ng-model="search.name"></th>
-            <th></th>
-            <th></th>
+            <th scope="col"></th>
+            <th scope="col" style="width:100%;"><input class="field-filter" ng-model="search.name"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
           </tr>
           <tr ng-repeat="user in users | filter:search">
             <td>{{user.id}}</td>

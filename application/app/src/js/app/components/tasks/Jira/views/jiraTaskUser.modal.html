@@ -41,18 +41,18 @@
     <table rows="7">
       <thead>
         <tr>
-          <th>{{ 'projects.id' | translate }}</th>
-          <th>{{ 'projects.name' | translate }}</th>
-          <th>{{ 'projects.assign' | translate }}</th>
-          <th ng-click="toggleSelectUsers($event)" class="toggleSelectUsersCursor">-</th>
+          <th scope="col">{{ 'projects.id' | translate }}</th>
+          <th scope="col">{{ 'projects.name' | translate }}</th>
+          <th scope="col">{{ 'projects.assign' | translate }}</th>
+          <th scope="col" ng-click="toggleSelectUsers($event)" class="toggleSelectUsersCursor">-</th>
         </tr>
       </thead>
       <tbody class="">
         <tr>
-          <th></th>
-          <th style="width:100%;"><input class="field-filter" ng-model="search.name"></th>
-          <th></th>
-          <th></th>
+          <th scope="col"></th>
+          <th scope="col" style="width:100%;"><input class="field-filter" ng-model="search.name"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
         </tr>
         <tr ng-repeat="user in users | filter:search">
           <td>{{user.id}}</td>
