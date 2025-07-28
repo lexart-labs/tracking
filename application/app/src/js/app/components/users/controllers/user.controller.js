@@ -6,10 +6,12 @@
 
     Module.controller('UserCtrl', ['$scope', '$state', '$stateParams', '$filter', 'UserServices','ClientServices', 'ngDialog', 'EvaluateServices','TracksServices', 'WeeklyHourServices', '$rootScope', '$http', '$timeout', '$element', '$sce', function($scope, $state, $stateParams, $filter, UserServices, ClientServices,ngDialog, EvaluateServices, TracksServices, WeeklyHourServices, $rootScope, $http, $timeout, element, $sce) {
 
-        let env_react_url = $rootScope.trackingReactUrl + '/user/' + $stateParams.id;
+        let userParam = $stateParams.id || 'NEW';
+        console.log("🚀  --> userParam:", userParam)
+        let env_react_url = $rootScope.trackingReactUrl + '/user/' + userParam;
+        console.log("🚀  --> env_react_url:", env_react_url)
         //convert URL to trsuted URL
         $scope.env_react_url = $sce.trustAsResourceUrl(env_react_url);
-        console.log("🚀  --> Module.controller --> $scope.env_react_url:", $scope.env_react_url)
         if ($rootScope.showIframe) return false;
         // if ($rootScope.showIframe) {
         //     $rootScope.showLoader();

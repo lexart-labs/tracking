@@ -82,7 +82,7 @@ api-lumen/Homestead.json
 api-lumen/Homestead.yaml
 api-lumen/.env
 api-lumen/.phpunit.result.cache
-api-lumen/public/files
+# api-lumen/public/files
 
 #IGNORE APP REACT
 application/app-react/node_modules/

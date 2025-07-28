@@ -9,6 +9,9 @@ export class UserService {
 
     async createUser(userData) {
         try {
+            delete userData.id
+            delete userData.imagePreview
+            delete userData.photo
             const response = await this.api.post(`${USERS_ENDPOINT}/register`, userData)
             return response.data
         } catch (error) {

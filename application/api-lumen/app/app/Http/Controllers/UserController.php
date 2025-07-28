@@ -84,6 +84,11 @@ class UserController extends BaseController
 
         try {
             $user["password"] = $password;
+            $image_base= $request->input('image_base');
+            if(!empty($image_base)){
+                $photoSaved = FileHelper::saveFile($image_base);
+                $user['photo'] = $photoSaved;
+            }
             $user = User::create($user);
             $id = $user->id;
 
