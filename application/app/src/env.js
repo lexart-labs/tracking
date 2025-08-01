@@ -7,5 +7,6 @@ var FILES_BASE = ""
 var BASE_URL = "http://localhost:82/api/"
 var TRACKING_REACT_URL = "http://localhost:5173"
 var TRACKING_REACT_ON = 1
+var TRACKING_REACT_CHATBOT_ON = 1
 //PD
 // var BASE_URL = "https://api.lextracking.com/api/"

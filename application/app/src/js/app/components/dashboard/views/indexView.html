@@ -70,14 +70,14 @@
     </div>
 </details>
 <br><br>
-<details ng-if="userRole != 'developer' && tracks.length">
+<details ng-if="userRole != 'developer'">
     <summary>
         <span class="summary-title">{{ 'dashboard.current_tracks' | translate }}</span>
         <div class="summary-chevron-up">
 			<i class="ri-arrow-right-s-line feather feather-chevron-down"></i>
 		</div>
     </summary>
-    <div class="lexart-wa__cnt summary-content">    
+    <div class="lexart-wa__cnt summary-content" ng-if="tracks.length">    
         <!-- <h1 ng-if="userRole != 'developer' && tracks.length">{{ 'dashboard.current_tracks' | translate }}</h1> -->
         <table>
             <thead>
@@ -105,6 +105,9 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div ng-if="!tracks.length" style="padding-left: 2rem; padding-bottom:1rem;">
+        No tracks found
     </div>
     <div class="summary-chevron-down">
         <i class="ri-arrow-down-s-line feather feather-chevron-up"></i>

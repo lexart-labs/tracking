@@ -4,13 +4,19 @@
 
     var Module = ng.module('LexTracking');
 
-    Module.run(function ($rootScope, $state, $window) {
+    Module.run(function ($rootScope, $state, $window, $sce) {
 
         $rootScope.BASEURL = BASE_URL;
         $rootScope.url = window.location.origin;
         $rootScope.trackingReactUrl = TRACKING_REACT_URL;
         $rootScope.showIframe = TRACKING_REACT_ON == 1;
-        console.log("🚀  --> $rootScope.showIframe:", $rootScope.showIframe)
+        $rootScope.showChatbot = TRACKING_REACT_CHATBOT_ON == 1;
+
+        let env_react_url = $rootScope.trackingReactUrl + '/chatbot';
+        //convert URL to trsuted URL
+        $rootScope.chatbot_env_react_url = $sce.trustAsResourceUrl(env_react_url);
+
+        
 
         $rootScope.$on('$stateChangeSuccess', function (evt, toState, toParams, fromState, fromParams) {
             evt.preventDefault();
@@ -39,7 +45,7 @@
     });
 
     Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', '$filter', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices, $filter) {
-
+        
         $scope.thisHide = false;
         $scope.userToolsActive = false;
         $rootScope.inprogress = false;

@@ -8,6 +8,7 @@ import { PrimeReactProvider } from 'primereact/api';
 import Layout from "@/application/Layout"
 import '@iframe-resizer/child'
 import './index.css'
+import ChatBotWidget from '@/application/pages/chatbot/ChatBotWidget.tsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,7 +19,10 @@ createRoot(document.getElementById('root')).render(
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="/user/:userId?" element={<User />} />
+
+              {/* BOT */}
             </Route>
+            <Route path="/chatbot" element={<ChatBotWidget />} />
           </Routes>
         </BrowserRouter>
       </ResizerProvider>
