@@ -19,7 +19,7 @@ RUN npm install
 RUN bower install --allow-root --force
 
 COPY . .
-COPY env_files/env.prod.js src/env.js
+COPY env_files/env.dev.js src/env.js
 
 RUN grunt build
 
