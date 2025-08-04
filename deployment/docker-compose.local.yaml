@@ -8,7 +8,7 @@ services:
       context: ../services/frontend
       dockerfile: Dockerfile.local
     ports:
-      - "9090:8000"
+      - "9080:8000"
       - "35729:35729"
     env_file:
       - ../env_files/.env.local
@@ -23,7 +23,7 @@ services:
       volumes:
         - ../services/app-react/src:/app/src
       ports:
-        - 5173:5173
+        - 5180:5173
 
   nginx:
     build:
@@ -49,7 +49,7 @@ services:
       - ../services/backend/app:/var/www/html
       - vendor_data:/var/www/html/vendor
     ports:
-      - "9000:9000"
+      - "9080:9000"
     expose: 
         - 9000
   
@@ -63,7 +63,7 @@ services:
     volumes:
       - ../services/chatbot/src:/app/src
     ports:
-      - "3000:3000"
+      - "3080:3000"
     expose: 
         - 3000
 
