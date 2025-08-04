@@ -1,0 +1,55 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      #- main
+      - develop
+  pull_request:
+    branches:
+      #- main
+      - develop
+jobs:
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      #-- CODIGO CUSTOM --#
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies for all services
+        run: |
+          for service_dir in services/*/; do
+            echo "--- Checking dependencies for ${service_dir} ---"
+            if [ -f "${service_dir}requirements.txt" ]; then
+              echo "Found requirements.txt, installing Python dependencies."
+              pip install -r "${service_dir}requirements.txt"
+            elif [ -f "${service_dir}package.json" ]; then
+              echo "Found package.json, installing Node.js dependencies."
+              npm ci --prefix "${service_dir}"
+            else
+              echo "No dependency file found, skipping."
+            fi
+          done
+          echo "--- Finished installing dependencies. ---"
+      #-- FIN CODIGO CUSTOM --#
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

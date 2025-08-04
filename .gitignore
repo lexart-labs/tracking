@@ -1,7 +1,25 @@
+env_files/.env.dev
+env_files/.env.local
+env_files/.env.prod
+env_files/.env.prod
+services/frontend/env_files/env.local.js
+services/frontend/env_files/env.dev.js
+services/frontend/env_files/env.prod.js
+
+node_modules
+
+/build
+
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 .idea
 .env
-./application/app/dist
-./application/app/bower_components
+./services/app/dist
+./services/app/bower_components
 .vscode/
 
 # app/bower_components
@@ -14,21 +32,21 @@
 
 # Node artifact files
 
-app/bower_components/
+services/app/bower_components/
 
 dist/
 bower_components/
-app/package-lock.json
-application/app/package-lock.json
+services/app/package-lock.json
+services/app/package-lock.json
 
 # Node artifact files
 
-app/dist/
-app/bower_components/
-app/src/env.js
-application/app/dist/
-application/app/bower_components/
-application/app/src/env.js
+services/app/dist/
+services/app/bower_components/
+services/app/src/env.js
+services/app/dist/
+services/app/bower_components/
+services/app/src/env.js
 # API
 api/config/conn.php
 # Compiled Java class files
@@ -76,10 +94,10 @@ Thumbs.db
 api/conn.php
 
 # IGNORE LUMEN
-api-lumen/vendor
-api-lumen/.idea
-api-lumen/Homestead.json
-api-lumen/Homestead.yaml
-api-lumen/.env
-api-lumen/.phpunit.result.cache
-api-lumen/public/files
+services/api-lumen/vendor
+services/api-lumen/.idea
+services/api-lumen/Homestead.json
+services/api-lumen/Homestead.yaml
+services/api-lumen/.env
+services/api-lumen/.phpunit.result.cache
+services/api-lumen/public/files

@@ -1,0 +1,29 @@
+<div class="lexart-modal lexart-modal--medium">
+
+		<div class="lexart-modal__header">
+				<h1 class="lexart-modal__title">{{ 'payment_requests.show_request_edit_dialog.title' | translate }}</h1>
+		</div>
+		<div class="lexart-modal__cnt">
+				<div>
+						<label>{{ 'payment_requests.amount' | translate }}</label>
+						<input type="number" ng-model="ngDialogData.editableRequest.payment_request_details[0].amount" class="lexart-input">
+				</div>
+				<div>
+						<label>{{ 'payment_requests.concept_description' | translate }}</label>
+						<input type="text" ng-model="ngDialogData.editableRequest.payment_request_details[0].concept_description" class="lexart-input">
+				</div>
+		</div>
+
+
+		<div class="lexart-modal__footer">
+			<div class="lexart-modal__actions" style="float: left;">
+					<button class="lexart-btn lexart-btn--primary" ng-click="savePaymentRequest()">
+						{{ 'payment_requests.save' | translate }}
+					</button>
+					<button class="lexart-btn" ng-click="closeThisDialog()">
+							{{ 'shared.modal.close' | translate }}
+					</button>
+			</div>
+		</div>
+</div>
+
