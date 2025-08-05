@@ -49,7 +49,7 @@ services:
       - ../services/backend/app:/var/www/html
       - vendor_data:/var/www/html/vendor
     ports:
-      - "9080:9000"
+      - "3085:9000"
     expose: 
         - 9000
   
