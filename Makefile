@@ -116,21 +116,21 @@ monitor:
 clean-local:
 	@echo "==> Stopping and removing Local environment containers..."
 	@docker compose --env-file $(ENV_FILE_LOCAL) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_LOCAL) down -v --remove-orphans && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_LOCAL) down --remove-orphans && \
 		echo "Local environment cleaned successfully." || \
 		(echo "Error cleaning local environment or some resources might still exist."; exit 1)
 
 clean-dev:
 	@echo "==> Stopping and removing Development environment containers..."
 	@docker compose --env-file $(ENV_FILE_DEV) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_DEV) down -v --remove-orphans && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_DEV) down --remove-orphans && \
 		echo "Development environment cleaned successfully." || \
 		(echo "Error cleaning development environment or some resources might still exist."; exit 1)
 
 clean-prod:
 	@echo "==> Stopping and removing Production environment containers..."
 	@docker compose --env-file $(ENV_FILE_PROD) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_PROD) down -v --remove-orphans && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_PROD) down --remove-orphans && \
 		echo "Production environment cleaned successfully." || \
 		(echo "Error cleaning Production environment or some resources might still exist."; exit 1)
 
@@ -174,7 +174,7 @@ clean-swarm-prod:
 
 clean-monitor:
 	@echo "==> Stopping and removing Monitoring environment containers..."
-	@docker compose -f $(COMPOSE_MONITOR) down -v --remove-orphans && \
+	@docker compose -f $(COMPOSE_MONITOR) down --remove-orphans && \
 		echo "Monitoring environment cleaned successfully." || \
 		(echo "Error cleaning monitoring environment or some resources might still exist."; exit 1)
 
