@@ -23,6 +23,8 @@ services:
       build:
         context: ../services/app-react
         dockerfile: Dockerfile.local
+        args:
+          - VITE_BASE_URL=${VITE_BASE_URL}
       volumes:
         - ../services/app-react/src:/app/src
       ports:
