@@ -2,9 +2,9 @@
 // This file would be created in this env_files directory.
 var Trello_Key = "";
 var Trello_Token = "";
-var FILES_BASE = "http://{url_base_backend}:{port}/files/"
+var FILES_BASE = "http://localhost:82/files/"
 
-var BASE_URL = "http://{url_base_backend}:{port}/api/"
+var BASE_URL = "http://localhost:82/api/"
 var TRACKING_REACT_URL = "http://localhost:5173"
 var TRACKING_REACT_ON = 1
 var TRACKING_REACT_CHATBOT_ON = 1
