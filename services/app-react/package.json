@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "serve -s dist -l 3000"
+    "start": "serve -s dist -l 5173"
   },
   "dependencies": {
     "@iframe-resizer/child": "^5.4.6",

@@ -12,7 +12,6 @@ RUN npm run build
 # ---- Fase 3: Producción Final (Runner) ----
 FROM node:24-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV=production
 
 # ¡CORRECCIÓN AQUÍ! Copiamos ambos archivos: package.json Y package-lock.json
 COPY --from=builder /app/package*.json ./
@@ -26,8 +25,6 @@ COPY --from=builder /app/dist ./dist
 # Creamos y usamos un usuario no-root por seguridad
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
-
-EXPOSE 3000
 
 # Asegúrate de tener el script "start" en tu package.json: "serve -s dist -l 3000"
 CMD [ "npm", "start" ]
