@@ -11,11 +11,6 @@ services:
       - "9082:80"
     env_file:
       - ../env_files/.env.prod
-    volumes:
-      - ../services/frontend/src/assets:/app/src/assets
-      - ../services/frontend/src/js:/app/src/js
-      - ../services/frontend/src/less:/app/src/less
-      - ../services/frontend/src/index.html:/app/src/index.html
 
   app-react:
       restart: always
