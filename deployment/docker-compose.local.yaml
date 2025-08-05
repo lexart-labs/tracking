@@ -13,7 +13,10 @@ services:
     env_file:
       - ../env_files/.env.local
     volumes:
-      - ../services/frontend/src:/app/src
+      - ../services/frontend/src/assets:/app/src/assets
+      - ../services/frontend/src/js:/app/src/js
+      - ../services/frontend/src/less:/app/src/less
+      - ../services/frontend/src/index.html:/app/src/index.html
   
   app-react:
       restart: always
