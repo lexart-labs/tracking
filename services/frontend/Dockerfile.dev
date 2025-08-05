@@ -19,11 +19,12 @@ RUN npm install
 RUN bower install --allow-root --force
 
 COPY . .
-COPY env_files/env.dev.js /usr/share/nginx/html/env.js
 
 RUN grunt build
 
 FROM nginx:1.21-alpine
+
+COPY env_files/env.dev.js /usr/share/nginx/html/env.js
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
