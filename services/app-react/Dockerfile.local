@@ -1,0 +1,22 @@
+FROM node:24
+
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
+ARG VITE_BASE_PHOTO
+ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
+
+RUN echo "VITE_BASE_URL=${VITE_BASE_URL}" > .env
+RUN echo "VITE_BASE_PHOTO=${VITE_BASE_PHOTO}" >> .env
+RUN cat .env
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+ENV NODE_ENV=development
+
+CMD ["npm", "run", "dev"]
