@@ -4,8 +4,12 @@ COPY package*.json ./
 RUN npm ci
 
 FROM builder-base AS builder
+
 ARG VITE_BASE_URL
 ENV VITE_BASE_URL=$VITE_BASE_URL
+ARG VITE_BASE_PHOTO
+ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
+
 WORKDIR /app
 COPY . .
 RUN npm run build
@@ -15,6 +19,8 @@ WORKDIR /app
 
 ARG VITE_BASE_URL
 ENV VITE_BASE_URL=$VITE_BASE_URL
+ARG VITE_BASE_PHOTO
+ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
 
 COPY --from=builder /app/package*.json ./
 
