@@ -96,7 +96,7 @@ export function User() {
     setError(null)
     if (!form.name) return setError('Name is required')
     if (!form.email) return setError('Email is required')
-    if (!form.password) return setError('Password is required')
+    if (!form.password && isNewUser) return setError('Password is required')
     if (!form.role) return setError('Role is required')
     if(form.password.length < 8) return setError('Password must be at least 8 characters long')
     // e.preventDefault()
