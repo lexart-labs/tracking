@@ -25,6 +25,7 @@ services:
         dockerfile: Dockerfile.local
         args:
           - VITE_BASE_URL=${VITE_BASE_URL}
+          - VITE_BASE_PHOTO=${VITE_BASE_PHOTO}
       volumes:
         - ../services/app-react/src:/app/src
       ports:
