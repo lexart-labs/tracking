@@ -28,6 +28,10 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
+RUN echo "VITE_BASE_URL=${VITE_BASE_URL}" > dist/.env
+RUN echo "VITE_BASE_PHOTO=${VITE_BASE_PHOTO}" >> dist/.env
+RUN cat dist/.env
+
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
