@@ -26,6 +26,6 @@ FROM nginx:1.21-alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY env_files/env.dev.js /usr/share/nginx/html/env.js
+COPY env_files/env.prod.js /usr/share/nginx/html/env.js
 
 EXPOSE 80
