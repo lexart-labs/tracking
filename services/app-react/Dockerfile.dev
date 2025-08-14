@@ -1,0 +1,38 @@
+FROM node:24-alpine AS builder-base
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+
+FROM builder-base AS builder
+
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+ARG VITE_BASE_PHOTO
+ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
+
+WORKDIR /app
+COPY . .
+RUN npm run build
+
+FROM node:24-alpine AS runner
+WORKDIR /app
+
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+ARG VITE_BASE_PHOTO
+ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
+
+COPY --from=builder /app/package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
+RUN echo "VITE_BASE_URL=${VITE_BASE_URL}" > dist/.env
+RUN echo "VITE_BASE_PHOTO=${VITE_BASE_PHOTO}" >> dist/.env
+RUN cat dist/.env
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+CMD [ "npm", "start" ]

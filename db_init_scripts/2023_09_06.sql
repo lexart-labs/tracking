@@ -1,1 +1,0 @@
-INSERT INTO lextracking.`Users` (`id`, `name`, `email`, `password`, `role`, `jiraToken`, `idSlack`, `status`, `photo`, `created_at`, `updated_at`, `deleted_at`) VALUES (NULL, 'Administrator', 'admin@lextracking.com', '21232f297a57a5a743894a0e4a801fc3', 'admin', NULL, NULL, '1', NULL, '2022-08-19 13:16:40', '2022-09-02 12:22:31', NULL)
