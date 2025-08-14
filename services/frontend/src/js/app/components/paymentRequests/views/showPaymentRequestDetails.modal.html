@@ -1,0 +1,20 @@
+<div class="lexart-modal lexart-modal--medium">
+
+    <div class="lexart-modal__header">
+        <h1 class="lexart-modal__title">{{ 'payment_requests.show_request_details_dialog.title' | translate }}</h1>
+    </div>
+
+    <div class="lexart-modal__cnt">
+        <payment-request-details-table 
+            details-to-show="ngDialogData.paymentRequestDetails" 
+            concept-texts="ngDialogData.conceptTexts"
+            show-actions="false"
+            show-footer="false"
+        >
+        </payment-request-details-table>
+    </div>
+
+    <div class="lexart-modal__actions">
+        <a class="lexart-btn" ng-click="closeThisDialog()">{{ 'shared.modal.close' | translate }}</a>
+    </div>
+</div>
