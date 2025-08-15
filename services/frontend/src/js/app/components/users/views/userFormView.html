@@ -1,0 +1,223 @@
+<div ng-cloak ng-if="env_react_url && showIframe">
+  <iframe
+    iframe-resizer
+    options="iframeOptions"
+    on-ready="onIframeReady($event)"
+    on-initialized="guardarResizer(resizer, iframe)"
+    style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+    sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+    src="{{env_react_url}}">
+  </iframe>
+</div>
+<div ng-if="!env_react_url && !showIframe">
+  <div class="lexart-wa__hdr lexart-flex">
+    <div class="lexart-flex-5">
+      <h1 class="lexart-wa__tit">
+        <a class="lexart-bc-item" ui-sref="app.users" ng-if="isAdmin == 'true'">{{ 'users.title' | translate }}</a>
+        <a class="lexart-bc-item" ng-if="isAdmin == 'false'">{{ 'users.my-profile' | translate }}</a>
+      </h1>
+      <div class="lexart-bc" ng-if="isAdmin == 'true'">
+        <a class="lexart-bc-item">{{ 'users.user' | translate }}</a>
+      </div>
+      <div class="lexart-bc" ng-if="user.name">
+        <span class="lexart-bc-item lexart-bc--head">{{user.name}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lexart-wa__cnt">
+    <form class="lexart-frm lexart-frm--center">
+      <div class="lexart-frm__fldgrp">
+        <div class="lexart-frm__fld" ng-if="user.id">
+          <label class="lexart-frm__lbl">
+            <input type="text" ng-value="user.id" readonly />
+            <b class="lexart-frm__lbl-name">{{ 'ID' }}</b>
+          </label>
+        </div>
+        <div class="lexart-frm__fld">
+          <label class="lexart-frm__lbl">
+            <input type="text" ng-model="user.name" />
+            <b class="lexart-frm__lbl-name">{{ 'Name'}} <span class="required">*</span></b>
+          </label>
+        </div>
+
+        <div class="lexart-frm__fld">
+          <label class="lexart-frm__lbl">
+            <input type="text" ng-model="user.email" />
+            <b class="lexart-frm__lbl-name">{{ 'Email' }} <span class="required">*</span></b>
+          </label>
+        </div>
+      </div>
+      <div class="lexart-frm__fldgrp">
+        <div class="lexart-frm__fld">
+          <label class="lexart-frm__lbl">
+            <input type="password" ng-model="user.password" />
+            <b class="lexart-frm__lbl-name">{{ 'Password' }}</b>
+          </label>
+        </div>
+        <div class="lexart-frm__fld" ng-if="isAdmin == 'true'">
+          <label class="lexart-frm__lbl">
+            <select name="mySelect" id="mySelect"
+              ng-options="option for option in ['developer','client','admin','arquitect','pm' ] track by option"
+              ng-model="user.role"></select>
+            <b class="lexart-frm__lbl-name">{{'Rol'}}</b>
+          </label>
+        </div>
+        <div class="lexart-frm__fld" ng-if="userRole == 'developer'">
+          <label class="lexart-frm__lbl">
+            <input ng-model="user.role" readonly="">
+            <b class="lexart-frm__lbl-name">{{'Rol'}}</b>
+          </label>
+        </div>
+        <div class="lexart-frm__fld">
+          <label class="lexart-frm__lbl">
+            <input type="text" ng-model="user.idSlack" />
+            <b class="lexart-frm__lbl-name">{{ 'Slack ID' }}</b>
+          </label>
+        </div>
+      </div>
+      <div class="lexart-frm__fld visualizer">
+        <label class="lexart-frm__lbl">
+          <input type="file" file-model="imageSrc" id="prof-input">
+          <b class="lexart-frm__lbl-name">Imagen de perfil</b>
+        </label>
+        <img ng-show="!imageLoading" ng-src="{{imageHandler.dataURL}}" />
+      </div>
+      <div class="lexart-frm__fldgrp" ng-if="user.role=='client'">
+        <div class="lexart-frm__fld">
+
+          <label class="lexart-frm__lbl">
+            <ui-select
+              ng-model="user.idClient"
+              class="lexart-select lexart-select--input"
+              theme="selectize"
+              append-to-body="true">
+              <ui-select-match>
+                {{$select.selected.name}}
+              </ui-select-match>
+              <ui-select-choices repeat="client.id as client in clients | filter: { name: $select.search }">
+                <div ng-bind-html="client.name | highlight: $select.selected.name"></div>
+              </ui-select-choices>
+            </ui-select>
+            <b class="lexart-frm__lbl-name">{{'Cliente'}}</b>
+          </label>
+        </div>
+        <div class="lexart-frm__fld">
+
+        </div>
+
+      </div>
+    </form>
+    <div ng-if="user.id" style="margin-top: 1.8rem">
+      <div class="lexart-frm__fld">
+        <ul class="lexart-tabs">
+          <li class="lexart-tabs__item" ng-init="tabUser = 1; tab1()" ng-click="tabUser = 1; tab1()"
+            ng-class="{'lexart-tabs__item--selected' : tabUser == 1}">Mi rendimiento</li>
+          <li class="lexart-tabs__item" ng-click="tabUser = 2; tab2()"
+            ng-class="{'lexart-tabs__item--selected' : tabUser == 2}">Integraciones</li>
+          <li class="lexart-tabs__item">
+            <a href="http://cube.lexartlabs.com/#/lexart_labs/login" target="_blank"
+              rel="noopener noreferrer">Evaluaciones</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="lexart-wa__cnt" ng-if="tabUser == 1">
+        <div class="lexart-frm lexart-frm--center">
+          <div class="lexart-frm__fldgrp">
+            <div class="lexart-frm__fld">
+              <label class="lexart-frm__lbl">
+                <b class="lexart-frm__lbl-name">{{'Año'}}</b>
+                <input moment-picker="date.year"
+                  placeholder="Seleccionar año"
+                  start-view="decade"
+                  format="YYYY"
+                  min-date="date.minDate"
+                  max-date="date.maxDate"
+                  max-view="decade"
+                  start-date="date.startDate"
+                  ng-model="date.year">
+              </label>
+            </div>
+            <div class="lexart-frm__fld">
+              <div class="lexart-frm__lbl">
+                <button class="lexart-btn" ng-click="filterYear(date.year)">{{ 'reports.search' | translate }}</button>
+              </div>
+            </div>
+            <div class="lexart-frm__fld">
+            </div>
+          </div>
+        </div>
+        <table class="lexart-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'users.month' | translate }}</th>
+              <th scope="col">{{ 'users.year' | translate }}</th>
+              <th scope="col">{{ 'users.salary' | translate }}</th>
+              <th scope="col">{{ 'users.costhour' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody ng-if="identify == true">
+            <tr ng-repeat="month in performance.actual" style="background-color: #B8EBD0;">
+              <td>{{month.month}}</td>
+              <td>{{month.year}}</td>
+              <td>{{month.salary}}</td>
+              <td>{{month.costHour}}</td>
+            </tr>
+            <tr ng-repeat="month in performance.past" style="background-color: #89BBFE;">
+              <td>{{month.month}}</td>
+              <td>{{month.year}}</td>
+              <td>{{month.salary}}</td>
+              <td>{{month.costHour}}</td>
+            </tr>
+            <tr ng-click="moreMonths(); show='false'" ng-init="show='true'">
+              <th scope="col" style="cursor: pointer;" ng-if="show=='true'">Mostrar meses anteriores <i
+                  style="margin-left: 10px;">▼</i></th>
+              <th scope="col" ng-if="show=='true'"></th>
+              <th scope="col" ng-if="show=='true'"></th>
+              <th scope="col" ng-if="show=='true'"></th>
+            </tr>
+            <tr ng-repeat="month in performance.moreMonths" ng-if="show=='false'">
+              <td>{{month.month}}</td>
+              <td>{{month.year}}</td>
+              <td>{{month.salary}}</td>
+              <td>{{month.costHour}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div ng-if="tabUser == 2" class="lexart-wa__cnt" style="text-align: left; margin-right: 70%;">
+        <p style="font-size: 14px; font-weight: bold">Integrar con:</p>
+        <div class="lexart-frm__fldgrp">
+          <div class="lexart-frm__fld" ng-if="user.id">
+            <label class="lexart-frm__lbl">
+              <img src="/assets/images/icons/trello-icon.png"
+                style="width: 60px; height: 60px;cursor: not-allowed"></img>
+              <b class="lexart-frm__lbl-name">{{ 'Trello' }}</b>
+            </label>
+          </div>
+          <div class="lexart-frm__fld">
+            <label class="lexart-frm__lbl">
+              <img src="/assets/images/icons/teamwork-icon.png"
+                style="width: 60px; height: 60px;cursor: not-allowed"></img>
+              <b class="lexart-frm__lbl-name">{{ 'Teamwork' }}</b>
+            </label>
+          </div>
+          <div class="lexart-frm__fld" ng-click="jiraInt()">
+            <label class="lexart-frm__lbl">
+              <img src="/assets/images/Jira-PBXDom.png" style="width: 90px; height: 60px"></img>
+              <b class="lexart-frm__lbl-name">{{ 'Jira' }}</b>
+            </label>
+            <p ng-if="vinculate == true" style="font-size: 10px; color: red">*Usuario ya vinculado</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="lexart-wa__actions">
+    <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
+    <button class="lexart-btn lexart-btn--alt" ui-sref="app.users">{{ 'users.back' | translate }}</button>
+    <button class="lexart-btn" ng-disabled="sendingData" ng-click="save(user)">{{ 'users.save' | translate }}</button>
+  </div>
+</div>

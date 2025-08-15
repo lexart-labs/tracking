@@ -1,0 +1,64 @@
+// Acordeons
+
+details {
+  width: 100%;
+  background: @color-white;
+  border-radius: 5px;
+  position: relative;
+}
+details .summary-title {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 1.3rem;
+  margin-left: 2rem;
+}
+details:hover {
+  cursor: pointer;
+}
+details summary {
+  list-style: none;
+  padding: 1rem;
+}
+details summary:focus {
+  outline: none;
+}
+details summary:hover .summary-chevron-up svg {
+  opacity: 1;
+}
+details .summary-chevron-up svg {
+  opacity: 0.5;
+}
+details .summary-chevron-up,
+details .summary-chevron-down {
+  pointer-events: none;
+  position: absolute;
+  top: 0.75em;
+  left: 1em;
+  background: #f9f9f9;
+  font-size: 1.3rem;
+}
+details .summary-chevron-up svg,
+details .summary-chevron-down svg {
+  display: block;
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] summary~* {
+  animation: sweep .5s ease-in-out;
+}
+
+@keyframes sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px)
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0)
+  }
+}

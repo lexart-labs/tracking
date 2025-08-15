@@ -1,0 +1,63 @@
+<div class="lexart-modal lexart-modal--medium">
+
+	<div class="lexart-modal__header">
+			<h1 class="lexart-modal__title">{{ 'payment_requests.show_request_details_dialog.title' | translate }}</h1>
+	</div>
+
+	<div class="lexart-modal__cnt">
+			<table class="lexart-table">
+					<thead>
+							<tr>
+									<th>{{ 'payment_requests.all-table.user_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.date_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.total_table_header' | translate  }}</th>
+							</tr>
+					</thead>
+					<tbody>
+							<tr>
+									<td>{{ngDialogData.paymentRequests.user.name}}</td>
+									<td>{{ngDialogData.paymentRequests.created_at}}</td>
+									<td>{{ngDialogData.paymentRequests.currency}} {{ngDialogData.paymentRequests.total}}</td>
+							</tr>
+					</tbody>
+			</table>
+	</div>
+
+	<div class="lexart-modal__header">
+			<h1 class="lexart-modal__title">{{ 'payment_requests.concepts.request_concepts' | translate }}</h1>
+	</div>
+
+	<div class="lexart-modal__cnt">
+			<table class="lexart-table">
+					<thead>
+							<tr>
+									<th>{{ 'payment_requests.all-table.concept_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.amount_table_header' | translate  }}</th>
+									<th>{{ 'payment_requests.all-table.observation_table_header' | translate  }}</th>
+							</tr>
+					</thead>
+					<tbody>
+							<tr ng-repeat="concept in ngDialogData.paymentRequests.payment_request_details">
+									<td>{{concept.concept}}</td>
+									<td>{{concept.amount}}</td>
+									<td>{{concept.concept_description}}</td>
+							</tr>
+					</tbody>
+			</table>
+	</div>
+
+	<div class="lexart-modal__footer">
+			<div class="lexart-modal__actions" style="float: left;">
+					<button class="lexart-btn" ng-click="updatePaymentRequestStatus('Approved')">
+							{{ 'payment_requests.all-table.button_approved' | translate }}
+					</button>
+					<button class="lexart-btn lexart-btn--darkest" ng-click="updatePaymentRequestStatus('Rejected')">
+							{{ 'payment_requests.all-table.button_rejected' | translate }}
+					</button>
+					<button class="lexart-btn" ng-click="closeThisDialog()">
+							{{ 'shared.modal.close' | translate }}
+					</button>
+			</div>
+	</div>
+
+</div>
