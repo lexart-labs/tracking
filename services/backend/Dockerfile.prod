@@ -1,0 +1,44 @@
+FROM php:8.1.9-fpm-alpine3.16 AS builder
+
+RUN apk add --no-cache --update \
+    $PHPIZE_DEPS \
+    zlib-dev \
+    libmemcached-dev \
+    cyrus-sasl-dev
+
+RUN docker-php-ext-install mysqli pdo_mysql \
+    && pecl install memcached \
+    && docker-php-ext-enable memcached
+
+COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY app/composer.json app/composer.lock ./
+
+RUN composer install --no-dev --no-interaction --prefer-dist \
+    && composer dump-autoload --no-dev --optimize
+
+COPY app/. .
+
+FROM php:8.1.9-fpm-alpine3.16
+
+RUN addgroup -g 1000 -S www && \
+    adduser -u 1000 -S www -G www
+
+RUN apk add --no-cache --update \
+    libmemcached-libs \
+    zlib
+
+COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+
+WORKDIR /var/www/html
+
+COPY --from=builder --chown=www:www /var/www/html /var/www/html
+
+USER www
+
+EXPOSE 9000
+
+CMD ["php-fpm"]

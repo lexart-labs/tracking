@@ -24,8 +24,7 @@ jobs:
           script: | 
             cd ${{ secrets.DEVELOP_PATH }}
             git pull
-            docker restart php
-            docker restart angular
+            make dev
 
       - name: Execute remote SSH commands using SSH key for Production
         if: github.ref == 'refs/heads/master'
@@ -38,5 +37,4 @@ jobs:
           script: | 
             cd ${{ secrets.PRODUCTION_PATH }}
             git pull
-            docker restart php-prod
-            docker restart angular-prod
+            make prod
