@@ -1,38 +1,55 @@
 <style>
-    .lexart-session-blk{
-        width: 50%;
-        margin: 50% auto !important;
-        max-width: 600px;
+    .lexart-wa--session {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
     }
-    .lexart-login-container{
-        box-sizing: content-box;
+    .lexart-frm__fldgrp {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
     }
-    @media (max-width: 600px) {
-        .lexart-session-img {
-            display: none;
-        }
+    .lexart-session-img {
+        flex: 1;
+        text-align: center;
+    }
+    .lexart-session-img img {
+        max-width: 100%;
+        height: auto;
+    }
+    .lexart-session-blk {
+        flex: 1;
+        max-width: 400px;
+        margin: 15% auto !important;
+    }
+    @media (max-width: 768px) {
         .lexart-session-blk{
-            width: 55%;
-            margin: 10% 5% !important;
+            /* padding: 1rem; */
+            margin-top: 10% !important;
+            margin-left: 1% !important;
+            max-width: 40%;
+        }
+        .lexart-session-blk__wrp{
+            max-width: 400px;
+        }
+        .lexart-session-blk__hdr{
+            padding: 12px;
         }
     }
-    
 </style>
 
 <div class="lexart-session">
-    <div class="lexart-login-container lexart-wa lexart-wa--session">
+    <div class="">
         <div class="lexart-session-blk-wrp">
-             <div class="lexart-frm__fldgrp">
-                
-                <div class="lexart-session-img lexart-frm__fld">
-                    <div class="login-img-container">
-                        <img src="/assets/images/login_ilustration.svg" title="LexTracking" style="margin: 25vh 25%; width: 70%;">
-                    </div>
-                </div>
-               
-                <div class="lexart-frm__fld">
-                    <div class="lexart-session-blk">
+            <div class="">
+                <!-- <div class="lexart-session-img">
+                    <img src="/assets/images/login_ilustration.svg" alt="LexTracking Illustration">
+                </div> -->
+                <div class="lexart-session-blk">
+                    <div class="lexart-session-blk__wrp">
                         <header class="lexart-session-blk__hdr">
+                            <img src="/assets/images/login_ilustration.svg" alt="LexTracking Illustration" style="width: 80%; margin-left: 10%;">
                             <h1 class="lexart-session-blk__logo">
                                 <img src="/assets/logo/lextracking-logo.svg" title="LexTracking" style="margin: 0 auto; width: 85%;">
                             </h1>
