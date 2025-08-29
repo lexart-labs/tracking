@@ -4,19 +4,31 @@
 				<h1 class="lexart-modal__title">{{ 'payment_requests.show_request_edit_dialog.title' | translate }}</h1>
 		</div>
 		<div class="lexart-modal__cnt">
-				<div>
-						<label>{{ 'payment_requests.amount' | translate }}</label>
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
+					<label class="lexart-frm__lbl" for="start-date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.amount' | translate }}</b>
+						</span>
 						<input type="number" ng-model="ngDialogData.editableRequest.payment_request_details[0].amount" class="lexart-input">
+					</label>
 				</div>
-				<div>
-						<label>{{ 'payment_requests.concept_description' | translate }}</label>
-						<input type="text" ng-model="ngDialogData.editableRequest.payment_request_details[0].concept_description" class="lexart-input">
+				<div class="lexart-frm__fld">
+					<label class="lexart-frm__lbl" for="start-date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.concept_description' | translate }}</b>
+						</span>
+						<input type="text" ng-model="ngDialogData.editableRequest.payment_request_details[0].concept_description"
+							class="lexart-input">
+
+					</label>
 				</div>
+			</div>
 		</div>
 
 
 		<div class="lexart-modal__footer">
-			<div class="lexart-modal__actions" style="float: left;">
+			<div class="lexart-modal__actions" style="float: right;">
 					<button class="lexart-btn lexart-btn--primary" ng-click="savePaymentRequest()">
 						{{ 'payment_requests.save' | translate }}
 					</button>
@@ -26,4 +38,3 @@
 			</div>
 		</div>
 </div>
-

@@ -1,0 +1,68 @@
+<div class="tracking-promo-tag {{color}}">
+	<span ng-bind-html="text"></span>
+</div>
+<style>
+	.tracking-promo-tag {
+		padding: 6px 12px;
+		border-radius: 4px;
+		font-weight: 500;
+		width: fit-content;
+		letter-spacing: .4px;
+	}
+	.tracking-promo-tag span {
+		display: flex; 
+		align-items: center; 
+		gap: .4rem;
+ 	}
+	.tracking-tag-info {
+		color: #0048AD;
+		background: #CAE3FC;
+	}
+
+	.tracking-tag-info-outlined {
+		color: #0048AD;
+		background: white;
+	}
+
+	.tracking-tag-zafran {
+		color: #B24D00 !important;
+		background: #FFE3D4 !important;
+	}
+
+	.tracking-tag-zafran-outlined {
+		color: #B24D00 !important;
+		background: white !important;
+	}
+
+	.tracking-tag-lime {
+		color: #52C41A !important;
+		background: #F6FFED !important;
+	}
+
+	.tracking-tag-lime-outlined {
+		background: #52C41A !important;
+		color: #F6FFED !important;
+	}
+
+	.tracking-tag-default {
+		color: darkgrey;
+		background: white;
+		border: 1px solud darkgray;
+	}
+
+	.tracking-tag-default-outlined {
+		color: white;
+		background: darkgray;
+	}
+
+	.tracking-tag-danger {
+		color: #FF4D4F;
+		background: #FFF1F0;
+	}
+
+	.tracking-tag-danger-outlined {
+		color: #FF4D4F;
+		background: white;
+		border: 1px solid #FF4D4F;
+	}
+</style>
