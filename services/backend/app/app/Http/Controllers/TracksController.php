@@ -145,7 +145,6 @@ class TracksController extends BaseController
 
     public function new(Request $request)
     {
-
         $user_id = AuthController::current()->id;
 
         if(!empty($user_id)){
@@ -170,6 +169,7 @@ class TracksController extends BaseController
         $startTime = $request->input("startTime");
         $endTime = $request->input("endTime");
         $typeTrack = $request->input("typeTrack");
+        $trackCost = null;
 
         try {
             if ($typeTrack == "manual") {
@@ -184,7 +184,27 @@ class TracksController extends BaseController
                 }
             }
 
+            // Calculate track cost if endTime is provided
+            if (!empty($endTime)) {
+                $duracion = $this->duracionDiff($startTime, $endTime);
+                $costHour = Weeklyhours::where('idUser', $idUser)->value('costHour');
+                
+                if ($costHour && $duracion) {
+                    $timeParts = explode(':', $duracion);
+                    $hours = (int)$timeParts[0];
+                    $minutes = (int)$timeParts[1];
+                    $seconds = (int)$timeParts[2];
+                    $totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
+                    $trackCost = round($totalHours * $costHour, 2);
+                }
+            }
+
             $track = $this->arrayTracks($currency, $idProyecto, $idTask, $idUser, $name, $startTime, $typeTrack, $endTime);
+            
+            // Add trackCost to the track data if it was calculated
+            if ($trackCost !== null) {
+                $track['trackCost'] = $trackCost;
+            }
 
             return array("response" => array(Tracks::create($track)));
         } catch (Exception $e) {

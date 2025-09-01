@@ -10,6 +10,9 @@
 		"ngDialog",
 		"PaymentRequestsServiceAdmin",
 		function ($scope, $rootScope, $translate, ngDialog, PaymentRequestsServiceAdmin) {
+
+			console.log("YEREERERE")
+
 			const INITIAL_STATE_FILTERS = {
 				concept: null,
 				status: "Pending",
@@ -25,6 +28,7 @@
 				Closure: $translate.instant("payment_requests.concepts.closure"),
 				Benefits: $translate.instant("payment_requests.concepts.benefits"),
 				Compensation: $translate.instant("payment_requests.concepts.compensation"),
+				External: $translate.instant("payment_requests.concepts.external_closure")
 			};
 			$scope.currencyTexts = {
 				CLP: $translate.instant("payment_requests.currency.clp"),
