@@ -5,98 +5,119 @@
 			</h1>
 	</div>
 </div>
-
-<div class="lexart-wa__cnt summary-content">
-	<form class="lexart-frm lexart-frm--inline" ng-submit="submitForm()">
-			<div class="lexart-frm__fld">
+<details style="margin-top: 1rem;">
+	<summary>
+		<span class="summary-title">Filters</span>
+		<div class="summary-chevron-up">
+			<i class="ri-arrow-right-s-line feather feather-chevron-down"></i>
+		</div>
+	</summary>
+	<div class="lexart-wa__cnt summary-content">
+		<form class="lexart-frm lexart-frm--inline" ng-submit="submitForm()">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="user-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.user_input.label' | translate }}</b>
-							</span>
-							<ui-select id="user-select" ng-model="paymentRequestFilters.user" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.user_input.placeholder' | translate }}">
-											{{$select.selected.name}}
-									</ui-select-match>
-									<ui-select-choices repeat="user in users | filter: $select.search">
-											<div ng-bind-html="user.name | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.user_input.label' | translate }}</b>
+						</span>
+						<ui-select id="user-select" ng-model="paymentRequestFilters.user"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.user_input.placeholder' | translate }}">
+								{{$select.selected.name}}
+							</ui-select-match>
+							<ui-select-choices repeat="user in users | filter: $select.search">
+								<div ng-bind-html="user.name | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="status-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.status_input.label' | translate }}</b>
-							</span>
-							<ui-select id="status-select" ng-model="paymentRequestFilters.status" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.status_input.placeholder' | translate }}">
-											{{statusTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="status in statuses | filter: $select.search">
-											<div ng-bind-html="statusTexts[status] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.status_input.label' | translate }}</b>
+						</span>
+						<ui-select id="status-select" ng-model="paymentRequestFilters.status"
+							class="lexart-select lexart-select--input"
+							theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.status_input.placeholder' | translate }}">
+								{{statusTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="status in statuses | filter: $select.search">
+								<div ng-bind-html="statusTexts[status] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
+				</div>
 			</div>
-
-			<div class="lexart-frm__fld">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="concept-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.form_accordion.filters.concept_input.label' | translate }}</b>
-							</span>
-							<ui-select id="concept-select" ng-model="paymentRequestFilters.concept" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="{{ 'payment_requests.form_accordion.filters.concept_input.placeholder' | translate }}">
-											{{conceptTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="concept in concepts | filter: $select.search">
-											<div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.form_accordion.filters.concept_input.label' | translate }}</b>
+						</span>
+						<ui-select id="concept-select" ng-model="paymentRequestFilters.concept"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match
+								placeholder="{{ 'payment_requests.form_accordion.filters.concept_input.placeholder' | translate }}">
+								{{conceptTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="concept in concepts | filter: $select.search">
+								<div ng-bind-html="conceptTexts[concept] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+	
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="currency-select">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.currency-label' | translate }}</b>
-							</span>
-							<ui-select id="currency-select" ng-model="paymentRequestFilters.currency" class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
-									<ui-select-match placeholder="Select currency">
-											{{currencyTexts[$select.selected]}}
-									</ui-select-match>
-									<ui-select-choices repeat="currency in currencies | filter: $select.search">
-											<div ng-bind-html="currencyTexts[currency] | highlight: $select.search"></div>
-									</ui-select-choices>
-							</ui-select>
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.currency-label' | translate }}</b>
+						</span>
+						<ui-select id="currency-select" ng-model="paymentRequestFilters.currency"
+							class="lexart-select lexart-select--input" theme="selectize" append-to-body="true">
+							<ui-select-match placeholder="Select currency">
+								{{currencyTexts[$select.selected]}}
+							</ui-select-match>
+							<ui-select-choices repeat="currency in currencies | filter: $select.search">
+								<div ng-bind-html="currencyTexts[currency] | highlight: $select.search"></div>
+							</ui-select-choices>
+						</ui-select>
 					</label>
+				</div>
 			</div>
-
-			<div class="lexart-frm__fld">
+			<div class="lexart-frm__fldgrp">
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="start-date">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.start-date' | translate }}</b>
-							</span>
-							<input type="date" id="start-date" ng-model="paymentRequestFilters.startDate" class="lexart-input lexart-input--date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.start-date' | translate }}</b>
+						</span>
+						<input type="date" id="start-date" ng-model="paymentRequestFilters.startDate"
+							class="lexart-input lexart-input--date">
 					</label>
-			</div>
-
-			<div class="lexart-frm__fld">
+				</div>
+	
+				<div class="lexart-frm__fld">
 					<label class="lexart-frm__lbl" for="end-date">
-							<span class="lexart-frm__lbl-name">
-									<b>{{ 'payment_requests.end-date' | translate }}</b>
-							</span>
-							<input type="date" id="end-date" ng-model="paymentRequestFilters.endDate" class="lexart-input lexart-input--date">
+						<span class="lexart-frm__lbl-name">
+							<b>{{ 'payment_requests.end-date' | translate }}</b>
+						</span>
+						<input type="date" id="end-date" ng-model="paymentRequestFilters.endDate"
+							class="lexart-input lexart-input--date">
 					</label>
+				</div>
+	
 			</div>
-
 			<div class="lexart-frm__fld">
-					<button class="lexart-btn lexart-btn--darkest lexart-btn__right" type="submit" style="margin-right: 0;">
-						{{ 'payment_requests.filter' | translate }}
-					</button>
+				<button class="lexart-btn lexart-btn--round lexart-btn__right" type="submit" style="margin-right: 0;">
+					{{ 'payment_requests.filter' | translate }}
+				</button>
 			</div>
-	</form>
-</div>
+		</form>
+	</div>
+</details>
+
 
 <details style="margin-top: 1rem;">
     <summary>
@@ -105,32 +126,275 @@
             <i class="ri-arrow-right-s-line feather feather-chevron-down"></i>
         </div>
     </summary>
-    <div class="lexart-wa__cnt summary-content">
+
+	<div class="summary-content payments-card-container">
+		<div class="history-item__title_container tooltip-container">
+			<div class="history-item__title_tracked_time">
+				<span>View</span>
+			</div>
+			<div class="history-item__title__tabs">
+				<ul class="lexart-tabs" ng-init="itemTab = 1" style='width: 100%; margin: 0px; border-bottom:0px'>
+					<li class="lexart-tabs__item text-center" ng-click="itemTab = 1" ng-class="{'lexart-tabs__item--selected' : itemTab == 1}">
+						<i class="ri-notification-badge-line"></i>
+					</li>
+					<li class="lexart-tabs__item text-center" ng-click="itemTab = 2" ng-class="{'lexart-tabs__item--selected' : itemTab == 2}">
+						<i class="ri-table-line"></i>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- CARD DISPLAY -->
+		<div ng-if="itemTab == 1" class="payment-card" ng-repeat="paymentRequest in allPaymentRequests">
+			<header>
+				<div class="payment-img-container">
+					<img ng-src="{{ FILES_BASE + paymentRequest.user.photo }}" alt="profile picture" class="usr-photo" onerror="this.src='/assets/images/user-placeholder.png';">
+					<!-- <img src="/assets/images/user-placeholder.png" alt="{{ paymentRequest.user.name }}"> -->
+				</div>
+				<div class="payment-name-container">
+					<h2 class="payment-user-name">{{ paymentRequest.user.name }}</h2>
+					<span class="payment-user-mail">{{ paymentRequest.user.email }}</span>
+				</div>
+				<div class="payment-actions">
+					<button class="payment-action-btn" ng-click="editPaymentRequest(paymentRequest)" title="Edit">
+						<i class="ri-edit-line"></i>
+					</button>
+					<button class="payment-action-btn" ng-click="showPaymentRequestDetailsDialog(paymentRequest)" title="Approve">
+						<i class="ri-tools-line"></i>
+					</button>
+				</div>
+			</header>
+			<main>
+				<div class="payment-price-container">
+					<h2>{{paymentRequest.currency}} {{paymentRequest.total}}</h2>
+					<tracking-tag
+						color="{{statusColors[paymentRequest.status]}}"
+						text="{{statusTexts[paymentRequest.status]}}">
+					</tracking-tag>
+				</div>
+				<div class="payment-dates-container">
+					<p>
+						<i class="ri-time-line"></i>
+						Requested: <span> {{ paymentRequest.created_at_display }}</span><br>
+						<i class="ri-calendar-check-line"></i>
+						Period: <span> {{ paymentRequest.start_date_display }} - {{ paymentRequest.end_date_display}}</span><br>
+
+					</p>
+				</div>
+			</main>
+			<footer>
+				{{concept.description}}
+			</footer>
+		</div>
+		<!-- TABLE DISPLAY -->
+		<div ng-if="itemTab == 2" class="lexart-wa__cnt summary-content" style="width: 100%;">
 			<table class="lexart-table">
-					<thead>
-						<tr>
-							<th>{{ 'payment_requests.all-table.user_table_header' | translate }}</th>
-							<th>{{ 'payment_requests.all-table.date_table_header' | translate }}</th>
-							<th>{{ 'payment_requests.all-table.total_table_header' | translate }}</th>
-							<th>{{ 'payment_requests.all-table.info_table_header' | translate }}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="paymentRequest in allPaymentRequests">
-							<td>{{paymentRequest.user.name}}</td>
-							<td>{{paymentRequest.created_at}}</td>
-							<td>{{paymentRequest.currency}} {{paymentRequest.total}}</td>
-							<div class="lexart-table__action-cell">
-								<td>
-									<i class="ri-information-line" ng-click="showPaymentRequestDetailsDialog(paymentRequest)"></i>
-								</td>
-								<td>
-										<i class="ri-pencil-line" ng-click="editPaymentRequest(paymentRequest)"></i>
-								</td>
-							</div>
-						</tr>
-					</tbody>
+				<thead>
+					<tr>
+						<th>{{ 'payment_requests.all-table.user_table_header' | translate }}</th>
+						<th>{{ 'payment_requests.all-table.date_table_header' | translate }}</th>
+						<th>{{ 'payment_requests.all-table.total_table_header' | translate }}</th>
+						<th>Status</th>
+						<th>{{ 'payment_requests.all-table.info_table_header' | translate }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="paymentRequest in allPaymentRequests">
+						<td>{{paymentRequest.user.name}}</td>
+						<td>{{paymentRequest.created_at}}</td>
+						<td>{{paymentRequest.currency}} {{paymentRequest.total}}</td>
+						<td>
+							<tracking-tag
+								color="{{statusColors[paymentRequest.status]}}"
+								text="{{statusTexts[paymentRequest.status]}}">
+							</tracking-tag>
+						</td>
+						<td>
+							<button class="lexart-btn lexart-btn--alt"
+								ng-click="showPaymentRequestDetailsDialog(paymentRequest)">
+								<i class="ri-information-line"></i>
+							</button>
+							<button class="lexart-btn lexart-btn--primary" ng-click="editPaymentRequest(paymentRequest)">
+								<i class="ri-pencil-line"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
+	</div>
 
+
+    
 </details>
+
+<style>
+	.payments-card-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		padding: 20px;
+
+		.dropdown {
+			position: relative;
+			display: inline-block;
+		}
+		.dropbtn{
+			padding: 4px;
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			opacity: 1;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: transparent;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			background: white;
+			z-index: 1;
+		}
+			
+
+		.dropdown-content button {
+			color: black;
+			padding: 6px 8px;
+			text-decoration: none;
+			display: block;
+			width: 100%;
+			text-align: left;
+			background: white;
+			cursor: pointer;
+		}
+
+		.dropdown-content button:hover {
+			background-color: #ddd;
+		}
+
+		.dropdown:hover .dropdown-content {
+			display: block;
+		}
+
+		.dropbtn:hover, .dropbtn:focus {
+			/* opacity: .8; */
+		}
+	}
+
+	.payment-card {
+		/* background-color: #fff; */
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		padding: 1rem;
+		width: calc(33.333% - 1rem);
+		transition: all 0.2s ease-in-out;
+	}
+
+	.payment-card:hover {
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		transform: scale(1.05);
+	}
+
+	.payments-card-container:has(.payment-card:hover) .payment-card:not(:hover){
+		opacity: 0.4;
+	}
+
+	.payment-card header {
+		display: flex;
+		align-items: center;
+	}
+
+	.payment-img-container img {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		margin-right: 1rem;
+	}
+
+	.payment-name-container h2 {
+		margin: 0;
+		font-size: 1.2rem;
+		font-weight: 400;
+	}
+
+	.payment-name-container span {
+		font-size: 0.9rem;
+		font-weight: 200;
+		/* color: #666; */
+	}
+
+	.payment-dropdown-container {
+		margin-left: auto;
+	}
+
+	tracking-tag {
+		margin-top: 0.5rem;
+	}
+	.payment-price-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.payment-price-container h2 {
+		margin: 0;
+		font-size: 1.5rem;
+		font-weight: 600;
+		letter-spacing: .7px;
+	}
+	.payment-dates-container p {
+		margin: 0;
+		font-size: 0.9rem;
+		font-weight: 200;
+		/* color: #666; */
+	}
+	.payment-dates-container i {
+		margin-right: 0.5rem;
+		/* color: #999; */
+	}
+	.payment-card footer {
+		margin-top: 1rem;
+		font-size: 0.9rem;
+		/* color: #333; */
+	}
+	.payment-card footer i {
+		margin-right: 0.5rem;
+		/* color: #999; */
+	}
+
+	.payment-actions {
+		display: flex;
+		gap: 0.5rem;
+		opacity: 0;
+		transition: opacity 0.2s ease-in-out;
+		margin-left: auto;
+		margin-top: -35px;
+	}
+
+	.payment-card:hover .payment-actions {
+		opacity: 1;
+	}
+
+	.payment-action-btn {
+		background: none;
+		border: none;
+		color: #7076FE;
+		cursor: pointer;
+		padding: 0.5rem;
+		border-radius: 50%;
+		transition: all 0.2s ease-in-out;
+	}
+
+	.payment-action-btn:hover {
+		/* background: #f0f0f0; */
+		/* color: #333; */
+		transform: scale(1.5);
+	}
+
+	.payment-action-btn i {
+		font-size: 1.1rem;
+	}
+	.payment-price-container .imm-promo-tag span{
+		font-weight: 400;
+	}
+</style>

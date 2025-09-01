@@ -7,8 +7,8 @@
         var model = "payment_requests";
 
         var factory = {
-            getAmountSinceLastClosure: function (userId, cb) {
-                RestClient.get(`${model}/closure/${userId}`, function (err, result) {
+            getAmountSinceLastClosure: function ({ userId, start_date, end_date }, cb) {
+                RestClient.get(`${model}/closure/${userId}/${start_date}/${end_date}`, function (err, result) {
                     cb(err, result);
                 });
             },
@@ -18,7 +18,7 @@
                 });
             },
             save: function (paymentRequests, cb) {
-                RestClient.customPost(`${model}/create`, { details: paymentRequests }, function (err, result) {
+                RestClient.post(`${model}/create`, { details: paymentRequests }, function (err, result) {
                     cb(err, result);
                 });
             },
