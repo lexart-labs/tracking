@@ -63,7 +63,6 @@
 				Approved: 'tracking-tag-lime',
 				Rejected: 'tracking-tag-danger'
 			};
-
 			$scope.concepts = Object.keys($scope.conceptTexts);
 			$scope.statuses = Object.keys($scope.statusTexts);
 			$scope.currencies = Object.keys($scope.currencyTexts);
@@ -99,7 +98,7 @@
 						paymentRequests
 					},
 					controller: ['$scope', function ($scope) {
-            			$scope.updatePaymentRequestStatus = function (status) {
+              $scope.updatePaymentRequestStatus = function (status) {
 							const paymentRequest = $scope.ngDialogData.paymentRequests;
 							console.log("🚀  --> $scope.paymentRequestObservation:", $scope.paymentRequestObservation)
 							PaymentRequestsServiceAdmin.updateStatus(paymentRequest.id, { status, reply: $scope.paymentRequestObservation }, function (err, result) {

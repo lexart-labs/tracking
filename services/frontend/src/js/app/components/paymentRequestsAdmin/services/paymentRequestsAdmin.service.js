@@ -6,7 +6,6 @@
 	Module.factory("PaymentRequestsServiceAdmin", ["RestClient", function (RestClient) {
         var model = "payment_requests";
         var userModel = 'user';
-
 		function formatDateForBackend(date) {
 			if (!date) return null;
 			return new Date(date).toISOString().split("T")[0];
