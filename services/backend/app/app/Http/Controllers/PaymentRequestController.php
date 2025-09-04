@@ -312,9 +312,31 @@ class PaymentRequestController extends BaseController
                 return new Response(['Error' => MISSING_WEEKLY_HOURS, "Operation" => $operation], 422);
             }
     
-            // Get start_date and end_date from route parameters
-            $start_date = $request->route('start_date') . ' 00:00:00';
-            $end_date = $request->route('end_date') . ' 23:59:59';
+            // GET startDate and endDate from request
+            $inputStart = $request->input('start_date');
+            $inputEnd = $request->input('end_date');
+            
+            $inputStart = $request->route('start_date') . ' 00:00:00';
+            $inputEnd = $request->route('end_date') . ' 23:59:59';
+            
+            // If startDate is provided, use it; otherwise, get the last closure date
+            if ($inputStart) {
+                $start_date = date("Y-m-d 00:00:00", strtotime($inputStart));
+            } else {
+                $last_closure = PaymentRequest::latest()
+                    ->whereHas('payment_request_details', function ($query) {
+                        $query->where('concept', PaymentRequestDetailConcepts::Closure);
+                    })
+                    ->where('user_id', $user_id)
+                    ->first();
+    
+                $start_date = $last_closure ? $last_closure->created_at : date("Y-m-01 00:00:00");
+            }
+    
+            // Si no viene endDate, usar ahora
+            $end_date = $inputEnd
+                ? date("Y-m-d 23:59:59", strtotime($inputEnd))
+                : date("Y-m-d 23:59:59");
     
             $tracks = Tracks::join("Tasks", "Tracks.idTask", "=", "Tasks.id")
                 ->where("Tracks.idUser", $user_id)
@@ -336,8 +358,7 @@ class PaymentRequestController extends BaseController
                     'end_date' => $end_date,
                     'amount' => $amount,
                     'currency' => $weekly_hours->currency,
-                    'response' => 'Balance calculated successfully',
-                    'request' => $request
+                    'response' => 'Balance calculated successfully'
                 ]
             ], 200);
         } catch (Exception $e) {
