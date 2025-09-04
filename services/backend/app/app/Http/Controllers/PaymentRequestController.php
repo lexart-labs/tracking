@@ -315,7 +315,10 @@ class PaymentRequestController extends BaseController
             // GET startDate and endDate from request
             $inputStart = $request->input('start_date');
             $inputEnd = $request->input('end_date');
-    
+            
+            $inputStart = $request->route('start_date') . ' 00:00:00';
+            $inputEnd = $request->route('end_date') . ' 23:59:59';
+            
             // If startDate is provided, use it; otherwise, get the last closure date
             if ($inputStart) {
                 $start_date = date("Y-m-d 00:00:00", strtotime($inputStart));
