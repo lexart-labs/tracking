@@ -522,7 +522,8 @@ class TracksController extends BaseController
     public function calcCosto($tracks)
     {
         foreach ($tracks as $track) {
-            if ($track['trackCost'] === null) {
+            // Just calculate if it is null or 0
+            if ($track['trackCost'] === null || $track['trackCost'] === 0) {
                 $cost = $track['costHour'];
                 $costDecimal = $this->ConvertTimeToDecimal($track['durations'] ? $track['durations'] : $track['duration']);
                 $track['trackCost'] = round(round(($costDecimal * ($cost)), 2) ? round(($costDecimal * ($cost)), 2) : 0);
