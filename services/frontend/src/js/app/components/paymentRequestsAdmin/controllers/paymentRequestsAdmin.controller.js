@@ -11,8 +11,6 @@
 		"PaymentRequestsServiceAdmin",
 		function ($scope, $rootScope, $translate, ngDialog, PaymentRequestsServiceAdmin) {
 
-			console.log("YEREERERE")
-
 			const INITIAL_STATE_FILTERS = {
 				concept: null,
 				status: "Pending",
