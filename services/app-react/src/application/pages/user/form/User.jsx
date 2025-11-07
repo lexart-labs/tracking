@@ -52,9 +52,9 @@ export function User() {
   const loadUserData = async () => {
     try {
       const userData = await userService.getUser(userId)
-      
+
       const imagePreview = userData.photo || null
-      
+
       setForm(prev => ({
         ...prev,
         ...userData,
@@ -79,7 +79,7 @@ export function User() {
     // Convert to base64
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    
+
     reader.onloadend = () => {
       const base64Data = reader.result;
       setForm(prev => ({
@@ -98,7 +98,7 @@ export function User() {
     if (!form.email) return setError('Email is required')
     if (!form.password && isNewUser()) return setError('Password is required')
     if (!form.role) return setError('Role is required')
-    if(form.password && form.password.length < 8) return setError('Password must be at least 8 characters long')
+    if (form.password && form.password.length < 8) return setError('Password must be at least 8 characters long')
     // e.preventDefault()
     setSubmitted(true)
     setLoading(true)
@@ -117,7 +117,7 @@ export function User() {
       } else {
         await userService.updateUser(userId, formData)
       }
-      
+
       setSubmitted(false)
       setLoading(false)
       navigate(-1)
@@ -138,11 +138,11 @@ export function User() {
         <div className="grid grid-cols-2 gap-4">
           <div className="col">
             <FloatLabel className="w-full">
-              <InputText 
-                id="name" 
+              <InputText
+                id="name"
                 name="name"
-                value={form.name} 
-                onChange={handleChange} 
+                value={form.name}
+                onChange={handleChange}
                 required
                 className="p-inputtext-sm w-full"
               />
@@ -151,11 +151,11 @@ export function User() {
           </div>
           <div className="col">
             <FloatLabel className="w-full">
-              <InputText 
-                id="email" 
+              <InputText
+                id="email"
                 name="email"
-                value={form.email} 
-                onChange={handleChange} 
+                value={form.email}
+                onChange={handleChange}
                 required
                 className="p-inputtext-sm w-full"
                 inputstyle={{ width: '100%' }}
@@ -168,11 +168,11 @@ export function User() {
         <div className="grid grid-cols-2 gap-4">
           <div className="col">
             <FloatLabel className="w-full">
-              <Password 
-                id="password" 
+              <Password
+                id="password"
                 name="password"
-                value={form.password} 
-                onChange={handleChange} 
+                value={form.password}
+                onChange={handleChange}
                 className="p-inputtext-sm w-full"
                 inputClassName="w-full"
               />
@@ -181,10 +181,10 @@ export function User() {
           </div>
           <div className="col">
             <FloatLabel className="w-full">
-              <Dropdown 
-                id="role" 
+              <Dropdown
+                id="role"
                 name="role"
-                value={form.role} 
+                value={form.role}
                 options={roles}
                 onChange={(e) => handleChange({ target: { name: 'role', value: e.value } })}
                 disabled={userLogged.userRole !== 'admin'}
@@ -199,11 +199,11 @@ export function User() {
         <div className="grid grid-cols-2 gap-4">
           <div className="col">
             <FloatLabel className="w-full">
-              <InputText 
-                id="slackId" 
+              <InputText
+                id="slackId"
                 name="idSlack"
-                value={form.idSlack} 
-                onChange={handleChange} 
+                value={form.idSlack}
+                onChange={handleChange}
                 className="p-inputtext-sm w-full"
                 inputstyle={{ width: '100%' }}
               />
@@ -218,18 +218,18 @@ export function User() {
                 alt="Profile"
                 className="w-40 h-40 object-cover rounded-full mb-2"
               />
-              <FileUpload 
+              <FileUpload
                 mode="basic"
-                name="image" 
+                name="image"
                 onSelect={handleFileSelect}
                 accept="image/*"
                 maxFileSize={1000000}
                 className="w-full"
               />
               {form.imagePreview && (
-                <img 
-                  src={form.imagePreview} 
-                  alt="Profile preview" 
+                <img
+                  src={form.imagePreview}
+                  alt="Profile preview"
                   className="w-40 h-40 object-cover rounded-full mb-2"
                 />
               )}
@@ -240,10 +240,10 @@ export function User() {
         {form.role === 'client' && (
           <div className="col">
             <FloatLabel className="w-full">
-              <InputNumber 
-                id="clientId" 
+              <InputNumber
+                id="clientId"
                 name="idClient"
-                value={form.idClient} 
+                value={form.idClient}
                 onChange={(e) => setForm((prev) => ({ ...prev, idClient: e.value }))}
                 className="p-inputtext-sm w-full"
                 inputstyle={{ width: '100%' }}
@@ -260,16 +260,16 @@ export function User() {
         )}
 
         <div className="flex justify-between items-center">
-          <Button 
-            label="Back" 
+          <Button
+            label="Back"
             icon="pi pi-arrow-left"
             size="small"
             className="p-button-text"
             onClick={() => navigate(-1)}
           />
-          <Button 
-            type="submit" 
-            label={loading ? "Saving..." : isNewUser() ? "Save" : "Update"} 
+          <Button
+            type="submit"
+            label={loading ? "Saving..." : isNewUser() ? "Save" : "Update"}
             size="small"
             disabled={submitted || loading}
           />
