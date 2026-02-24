@@ -3,12 +3,11 @@ name: SonarQube Analysis
 on:
   push:
     branches:
-      #- main
       - develop
-  pull_request:
-    branches:
-      #- main
-      - develop
+      - feat/sonar-cube
+  # pull_request:
+  #   branches:
+  #     - main
 jobs:
   sonarqube:
     name: SonarQube Analysis
@@ -18,9 +17,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       #-- CODIGO CUSTOM --#
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
