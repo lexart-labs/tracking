@@ -1,12 +1,10 @@
-
 import React from 'react';
 import { BreadCrumb } from 'primereact/breadcrumb';
 
-export default function BasicDemo() {
-    const items = [{ label: 'Users', url: '/users' }, { label: 'User' }];
-    const home = { icon: 'pi pi-home', url: 'https://primereact.org' }
+export default function BreadCrumbs({ items = [] }) {
+    const home = { icon: 'pi pi-home', url: '/' }
 
     return (
-        <BreadCrumb model={items} home={home} />
+        <BreadCrumb model={items} home={home} className="mb-4" />
     )
 }

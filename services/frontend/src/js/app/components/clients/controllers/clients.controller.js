@@ -1,15 +1,21 @@
-(function(ng) {
+(function (ng) {
 
     'use strict';
 
     var Module = ng.module('LexTracking');
 
-    Module.controller('ClientsCtrl', ['$scope', '$timeout', 'ClientServices', 'ngDialog', function($scope, $timeout, ClientServices, ngDialog) {
+    /**
+     * Controller for the Clients list view.
+     * Manages the iframe loading for the React-based client list.
+     */
+    Module.controller('ClientsCtrl', ['$scope', '$timeout', 'ClientServices', 'ngDialog', '$sce', '$rootScope', function ($scope, $timeout, ClientServices, ngDialog, $sce, $rootScope) {
 
-        $scope.clients  = [];
-        $scope.filter   = {};
-        $scope.query    = "";
-        $scope.currentPage  = 0;
+        $scope.clients = [];
+        $scope.filter = {};
+        $scope.query = "";
+        $scope.currentPage = 0;
+
+        $scope.env_react_url = $sce.trustAsResourceUrl($rootScope.trackingReactUrl + '/#/clients');
 
         // var timeout;
         // $scope.$watch('filter', function() {
@@ -20,7 +26,7 @@
         // }, true);
 
         // function search() {
-            
+
         //     $scope.query = "";
 
         //     if ($scope.filter.id)
@@ -48,18 +54,18 @@
         //         }
         //     });
         // }
-        
-        ClientServices.find($scope.currentPage, $scope.query, function(err, clients, countItems) {
+
+        ClientServices.find($scope.currentPage, $scope.query, function (err, clients, countItems) {
             if (!err) {
                 console.log('clients', clients, countItems);
-                $scope.clients  = clients;
-                $scope.total    = countItems;
+                $scope.clients = clients;
+                $scope.total = countItems;
             }
         });
 
-        $scope.pager = function(page) {
+        $scope.pager = function (page) {
             var offset = PAGE_SIZE * (page - 1);
-            ClientServices.find(offset, $scope.query, function(err, clients, countItems){
+            ClientServices.find(offset, $scope.query, function (err, clients, countItems) {
                 console.log('clients', clients);
                 $scope.clients = clients;
             });

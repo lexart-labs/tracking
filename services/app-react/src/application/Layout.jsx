@@ -8,10 +8,10 @@ export default function Layout() {
 
 
   return (
-    <Card>
-      <div className="rounded">
+    <div className="lexart-flex">
+      <div className="lexart-wa w-full">
         <Outlet />
       </div>
-    </Card>
+    </div>
   )
 }

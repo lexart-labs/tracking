@@ -12,11 +12,11 @@
         $rootScope.showIframe = TRACKING_REACT_ON == 1;
         $rootScope.showChatbot = TRACKING_REACT_CHATBOT_ON == 1;
 
-        let env_react_url = $rootScope.trackingReactUrl + '/chatbot';
+        let env_react_url = $rootScope.trackingReactUrl + '/#/chatbot';
         //convert URL to trsuted URL
         $rootScope.chatbot_env_react_url = $sce.trustAsResourceUrl(env_react_url);
 
-        
+
 
         $rootScope.$on('$stateChangeSuccess', function (evt, toState, toParams, fromState, fromParams) {
             evt.preventDefault();
@@ -45,7 +45,7 @@
     });
 
     Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', '$filter', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices, $filter) {
-        
+
         $scope.thisHide = false;
         $scope.userToolsActive = false;
         $rootScope.inprogress = false;
@@ -153,7 +153,7 @@
         };
 
         $rootScope.startTrack = function (task, fromDashboard) {
-            
+
             if (!task) return
             return new Promise(resolve => {
                 WeeklyHourServices.find($scope.currentPage, $scope.query, function (err, weeklyHours, countItems) {
@@ -581,9 +581,9 @@
                     label: $filter('translate')('navigation.my-profile'),
                     access: $rootScope.userRole == 'developer'
                 },
-                
-                
-                
+
+
+
                 {
                     uisref: 'app.reports',
                     icon: 'ri-bar-chart-line',
