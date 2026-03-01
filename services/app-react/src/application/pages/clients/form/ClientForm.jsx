@@ -97,16 +97,12 @@ export default function ClientForm() {
 	if (fetching) return <div className="p-4 text-center">Loading...</div>
 
 	return (
-		<div className="lexart-wa">
-			<div className="lexart-wa__hdr lexart-flex">
-				<div className="lexart-flex-5">
-					<h1 className="lexart-wa__tit">
-						<a className="lexart-bc-item">{isNew() ? 'New Client' : 'Edit Client'}</a>
-					</h1>
-				</div>
+		<div className="">
+			<div className="flex justify-between items-center mb-8">
+				<h2 className="text-2xl font-medium">{isNew() ? 'New Client' : 'Edit Client !!!'}</h2>
 			</div>
 
-			<form onSubmit={handleSubmit} className="lexart-wa__cnt bg-white rounded shadow-sm border flex flex-col gap-6 max-w-5xl mx-auto mt-4 p-8 pb-20 relative">
+			<form onSubmit={handleSubmit} className="flex flex-col gap-6">
 				<div className="flex flex-col gap-6">
 					<FloatLabel>
 						<InputText
@@ -114,7 +110,7 @@ export default function ClientForm() {
 							name="name"
 							value={form.name}
 							onChange={handleChange}
-							className="w-full text-lg p-3"
+							className="p-inputtext-sm w-full"
 							required
 						/>
 						<label htmlFor="name">Name</label>
@@ -126,7 +122,7 @@ export default function ClientForm() {
 							name="company"
 							value={form.company}
 							onChange={handleChange}
-							className="w-full text-lg p-3"
+							className="p-inputtext-sm w-full"
 							required
 						/>
 						<label htmlFor="company">Company</label>
@@ -147,26 +143,26 @@ export default function ClientForm() {
 				</div>
 
 				{error && (
-					<div className="p-3 bg-red-100 text-red-700 rounded text-sm">
+					<div className="p-3 bg-red-100 text-red-700 rounded text-right ml-auto">
 						{error}
 					</div>
 				)}
 
-				<div className="lexart-wa__actions absolute bottom-0 left-0 right-0 p-6 flex justify-end gap-3 bg-white border-t">
-					<button
+				<div className="flex justify-between items-center mt-4">
+					<Button
 						type="button"
-						className="lexart-btn lexart-btn--alt"
+						label="Back"
+						icon="pi pi-arrow-left"
+						size="small"
+						className="p-button-text"
 						onClick={() => navigate(-1)}
-					>
-						BACK
-					</button>
-					<button
+					/>
+					<Button
 						type="submit"
-						className="lexart-btn ml-2"
+						label={loading ? "Saving..." : isNew() ? "Save" : "Update"}
+						size="small"
 						disabled={loading}
-					>
-						{loading ? "SAVING..." : "SAVE"}
-					</button>
+					/>
 				</div>
 			</form>
 		</div>

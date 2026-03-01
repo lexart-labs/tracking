@@ -9,8 +9,12 @@ function ResizerProvider({ children }) {
 
     window.iFrameResizer = {
         onMessage: (event) => {
-            setUser(event.user || {})
-            setToken(event.token || '')
+            if (event && (event.user || event.token)) {
+                setUser(event.user || {})
+                setToken(event.token || '')
+            } else {
+                console.warn('⚠️ Received invalid session message from parent iframe');
+            }
         }
     }
     if (!user || !token) {

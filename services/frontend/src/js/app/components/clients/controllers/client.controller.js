@@ -17,6 +17,9 @@
 
         $scope.env_react_url = $sce.trustAsResourceUrl($rootScope.trackingReactUrl + '/#/client/' + idClient);
 
+        if ($rootScope.showIframe) return false;
+
+
         if (idClient) {
             ClientServices.findById(idClient, function (err, client) {
                 if (!err) {

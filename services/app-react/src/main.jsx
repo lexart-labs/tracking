@@ -6,9 +6,10 @@ import { Dashboard } from './application/dashboard'
 import { User } from '@/application/pages/user/form/User'
 import ClientList from '@/application/pages/clients/list/ClientList'
 import ClientForm from '@/application/pages/clients/form/ClientForm'
-import ResizerProvider from '@/providers/iframe-resizer';
-import { PrimeReactProvider } from 'primereact/api';
-import Layout from "@/application/Layout"
+import ProtectedRoute from '@/application/components/ProtectedRoute'
+import ResizerProvider from '@/providers/iframe-resizer'
+import { PrimeReactProvider } from 'primereact/api'
+import Layout from '@/application/Layout'
 import '@iframe-resizer/child'
 import './index.css'
 import ChatBotWidget from '@/application/pages/chatbot/ChatBotWidget.tsx'
@@ -24,10 +25,12 @@ createRoot(document.getElementById('root')).render(
 				<Router>
 					<Routes>
 						<Route path="/" element={<Layout />}>
-							<Route index element={<Dashboard />} />
-							<Route path="/user/:userId?" element={<User />} />
-							<Route path="/clients" element={<ClientList />} />
-							<Route path="/client/:clientId?" element={<ClientForm />} />
+							<Route element={<ProtectedRoute />}>
+								<Route index element={<Dashboard />} />
+								<Route path="/user/:userId?" element={<User />} />
+								<Route path="/clients" element={<ClientList />} />
+								<Route path="/client/:clientId?" element={<ClientForm />} />
+							</Route>
 						</Route>
 						<Route path="/chatbot" element={<ChatBotWidget />} />
 					</Routes>
