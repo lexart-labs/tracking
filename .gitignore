@@ -101,3 +101,6 @@ services/api-lumen/Homestead.yaml
 services/api-lumen/.env
 services/api-lumen/.phpunit.result.cache
 services/api-lumen/public/files
+
+# AI-Driven Development
+CLAUDE.md
