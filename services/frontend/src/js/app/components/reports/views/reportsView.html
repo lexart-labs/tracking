@@ -138,6 +138,7 @@
             <div class="flex-item">{{ 'reports.start_time' | translate }}</div>
             <div class="flex-item">{{ 'reports.end_time' | translate }}</div>
             <div class="flex-item">{{ 'reports.duration' | translate }}</div>
+            <div class="flex-item">{{ 'reports.rate' | translate }}</div>
             <div class="flex-item">{{ 'reports.trackCost' | translate }}</div>
             <div style="flex: 5%; width: 5%"></div>
           </div>
@@ -174,6 +175,7 @@
                     {{track.endTime ? track.endTime : '' | date:'dd/MM/yyyy HH:mm'}}
                   </div>
                   <div class="flex-item">{{track.duration}}</div>
+                  <div class="flex-item">{{track.currency}} {{track.costHour}}/hr</div>
                   <div class="flex-item">{{track.currency}} {{track.trackCost.toFixed(2)}}</div>
                   <!-- <div class="flex-item">$ {{track}}</div> -->
                   <div style="flex: 5%; width: 5%">
@@ -276,6 +278,7 @@
                 <th>{{ 'reports.start_time' | translate }}</th>
                 <th>{{ 'reports.end_time' | translate }}</th>
                 <th>{{ 'reports.duration' | translate }}</th>
+                <th>{{ 'reports.rate' | translate }}</th>
                 <th>{{ 'reports.trackCost' | translate }}</th>
                 <th class="lexart-cstm__grid-5"></th>
               </tr>
@@ -293,6 +296,7 @@
                   }}
                 </td>
                 <td>{{track.duration}}</td>
+                <td>{{track.currency}} {{track.costHour}}/hr</td>
                 <td>$ {{track.trackCost}}</td>
                 <td>
                   <a href="" ng-click="editTrack(track)">
@@ -375,6 +379,7 @@
           <div class="flex-item">{{ 'reports.start_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.end_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.duration' | translate }}</div>
+          <div class="flex-item">{{ 'reports.rate' | translate }}</div>
           <div class="flex-item">{{ 'reports.trackCost' | translate }}</div>
           <div style="flex: 5%; width: 5%"></div>
         </div>
@@ -398,6 +403,7 @@
                   {{track.endTime ? track.endTime : '' | date:'dd/MM/yyyyHH:mm' }}
                 </div>
                 <div class="flex-item">{{track.durations}}</div>
+                <div class="flex-item">{{track.currency}} {{track.costHour}}/hr</div>
                 <div class="flex-item">$ {{track.trackCost}}</div>
                 <div style="flex: 5%; width: 5%">
                   <a href="" ng-click="editAutoTrack(track)">
@@ -535,6 +541,7 @@
           <div class="flex-item">{{ 'reports.start_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.end_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.duration' | translate }}</div>
+          <div class="flex-item">{{ 'reports.rate' | translate }}</div>
           <div class="flex-item">{{ 'reports.trackCost' | translate }}</div>
           <div style="flex: 5%; width: 5%"></div>
         </div>
@@ -567,6 +574,7 @@
                   {{track.endTime ? track.endTime : '' | date:'dd/MM/yyyy HH:mm'}}
                 </div>
                 <div class="flex-item">{{track.durations}}</div>
+                <div class="flex-item">{{track.currency}} {{track.costHour}}/hr</div>
                 <div class="flex-item">{{track.currency}} {{track.trackCost}}</div>
                 <div style="flex: 5%; width: 5%">
                   <a href="" ng-click="editTrelloTrack(track)">
@@ -704,6 +712,7 @@
           <div class="flex-item">{{ 'reports.start_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.end_time' | translate }}</div>
           <div class="flex-item">{{ 'reports.duration' | translate }}</div>
+          <div class="flex-item">{{ 'reports.rate' | translate }}</div>
           <div class="flex-item">{{ 'reports.trackCost' | translate }}</div>
           <div style="flex: 5%; width: 5%"></div>
         </div>
@@ -727,6 +736,7 @@
                   {{track.endTime ? track.endTime : '' | date:'dd/MM/yyyy HH:mm' }}
                 </div>
                 <div class="flex-item">{{track.durations}}</div>
+                <div class="flex-item">{{track.currency}} {{track.costHour}}/hr</div>
                 <div class="flex-item">$ {{track.trackCost}}</div>
                 <div style="flex: 5%; width: 5%">
                   <a href="" ng-click="editJiraTrack(track)">

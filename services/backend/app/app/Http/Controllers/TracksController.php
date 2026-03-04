@@ -41,7 +41,7 @@ class TracksController extends BaseController
             $tracks = Tracks::select(
                 "Tracks.*",
                 DB::raw("Projects.name AS projectName"),
-                DB::raw("WeeklyHours.costHour"),
+                DB::raw("COALESCE(wh.costHour, (SELECT wh2.costHour FROM WeeklyHours wh2 WHERE wh2.idUser = Tracks.idUser AND wh2.valid_from <= DATE(Tracks.startTime) AND (wh2.valid_until IS NULL OR wh2.valid_until >= DATE(Tracks.startTime)) ORDER BY wh2.valid_from DESC LIMIT 1), (SELECT wh3.costHour FROM WeeklyHours wh3 WHERE wh3.idUser = Tracks.idUser AND wh3.borrado = '0' ORDER BY wh3.valid_from DESC LIMIT 1)) AS costHour"),
                 DB::raw("Tasks.name AS taskName"),
                 DB::raw("Users.name AS userName"),
                 DB::raw("Users.photo"),
@@ -52,7 +52,7 @@ class TracksController extends BaseController
                 ->join("Users", DB::raw("Tracks.idUser"), "=", DB::raw("Users.id"))
                 ->join("Projects", DB::raw("Projects.id"), "=", DB::raw("Tasks.idProject"))
                 ->join("Clients", DB::raw("Clients.id"), "=", DB::raw("Projects.idClient"))
-                ->join("WeeklyHours", "WeeklyHours.idUser", "=", "Tracks.idUser")
+                ->leftJoin("WeeklyHours AS wh", "wh.id", "=", "Tracks.idWeeklyHour")
                 ->whereRaw("(Tracks.startTime >= ?)", [$startTime])
                 ->whereRaw("(Tracks.endTime <= ?)", [$endTime])
                 ->whereRaw("(Tracks.typeTrack = ?)", ['manual'])
@@ -66,14 +66,14 @@ class TracksController extends BaseController
                     if (!empty($project_id)) {
                         $tracks = $tracks->whereRaw("(Projects.id) = ?", [$project_id])->get();
 
-                        // $tracks = $this->calcCosto($tracks);
+                        $tracks = $this->calcCosto($tracks);
 
                         return array("response" => $tracks);
                     }
 
                     $tracks = $tracks->get();
 
-                    // $tracks = $this->calcCosto($tracks);
+                    $tracks = $this->calcCosto($tracks);
 
                     return array("response" => $tracks);
                 }
@@ -81,14 +81,14 @@ class TracksController extends BaseController
                 if (!empty($project_id)) {
                     $tracks = $tracks->whereRaw("(Projects.id) = ?", [$project_id])->get();
 
-                    // $tracks = $this->calcCosto($tracks);
+                    $tracks = $this->calcCosto($tracks);
 
                     return array("response" => $tracks);
                 }
 
                 $tracks = $tracks->get();
 
-                // $tracks = $this->calcCosto($tracks);
+                $tracks = $this->calcCosto($tracks);
 
                 return array("response" => $tracks);
             }
@@ -98,13 +98,15 @@ class TracksController extends BaseController
 
                 if (!empty($project_id)) {
                     $tracks = $tracks->whereRaw("(Projects.id) = ?", [$project_id])->get();
-                    // $tracks = $this->calcCosto($tracks);
+
+                    $tracks = $this->calcCosto($tracks);
 
                     return array("response" => $tracks);
                 }
 
                 $tracks = $tracks->get();
-                // $tracks = $this->calcCosto($tracks);
+
+                $tracks = $this->calcCosto($tracks);
 
                 return array("response" => $tracks);
             }
@@ -114,7 +116,8 @@ class TracksController extends BaseController
             }
 
             $tracks = $tracks->get();
-            // $tracks = $this->calcCosto($tracks);
+
+            $tracks = $this->calcCosto($tracks);
 
             return array("response" => $tracks);
         } catch (Exception $e) {
@@ -148,7 +151,9 @@ class TracksController extends BaseController
         $user_id = AuthController::current()->id;
 
         if(!empty($user_id)){
-            $request["currency"] = Weeklyhours::select("currency")->where("idUser", $user_id)->limit(1)->first()->currency;
+            $startDate = date('Y-m-d', strtotime($request->input("startTime") ?? 'now'));
+            $weeklyHour = Weeklyhours::forDate($user_id, $startDate);
+            $request["currency"] = $weeklyHour ? $weeklyHour->currency : 'USD';
         }
 
         $this->validate($request, [
@@ -184,26 +189,27 @@ class TracksController extends BaseController
                 }
             }
 
+            $startDate = date('Y-m-d', strtotime($startTime));
+            $weeklyHourRecord = Weeklyhours::forDate((int)$idUser, $startDate);
+
+            $track = $this->arrayTracks($currency, $idProyecto, $idTask, $idUser, $name, $startTime, $typeTrack, $endTime);
+
+            if ($weeklyHourRecord) {
+                $track['idWeeklyHour'] = $weeklyHourRecord->id;
+            }
+
             // Calculate track cost if endTime is provided
-            if (!empty($endTime)) {
+            if (!empty($endTime) && $weeklyHourRecord) {
                 $duracion = $this->duracionDiff($startTime, $endTime);
-                $costHour = Weeklyhours::where('idUser', $idUser)->value('costHour');
-                
+                $costHour = $weeklyHourRecord->costHour;
                 if ($costHour && $duracion) {
                     $timeParts = explode(':', $duracion);
                     $hours = (int)$timeParts[0];
                     $minutes = (int)$timeParts[1];
                     $seconds = (int)$timeParts[2];
                     $totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
-                    $trackCost = round($totalHours * $costHour, 2);
+                    $track['trackCost'] = round($totalHours * $costHour, 2);
                 }
-            }
-
-            $track = $this->arrayTracks($currency, $idProyecto, $idTask, $idUser, $name, $startTime, $typeTrack, $endTime);
-            
-            // Add trackCost to the track data if it was calculated
-            if ($trackCost !== null) {
-                $track['trackCost'] = $trackCost;
             }
 
             return array("response" => array(Tracks::create($track)));
@@ -232,28 +238,38 @@ class TracksController extends BaseController
         $idUser = $request->input("idUser");
 
         $duracion = $this->duracionDiff($startTime, $endTime);
+        $fromReports = $request->input("trace") === "reports";
 
         try {
-            $trackWhere = Tracks::select(
-                DB::raw("Tracks.*"),
-                DB::raw("TIMEDIFF(Tracks.endTime, Tracks.startTime) AS duration"),
-                DB::raw("WeeklyHours.costHour")
-            )
-                ->join("WeeklyHours", "WeeklyHours.idUser", "=", "Tracks.idUser")
-                ->whereRaw("Tracks.id = ?", [$id])
-                ->whereRaw("Tracks.idUser = ?", [$idUser])
-                ->get();
-
-            if(count($trackWhere) > 0){
-                $trackWhere[0]->duration = $duracion;
-                $trackCost = $this->calcCosto($trackWhere)[0]->trackCost;
-            }else{
-                $trackCost =0;
+            if ($fromReports) {
+                $existingTrack = Tracks::where("id", $id)->first();
+                $weeklyHourRecord = ($existingTrack && $existingTrack->idWeeklyHour)
+                    ? Weeklyhours::find($existingTrack->idWeeklyHour)
+                    : null;
+            } else {
+                $startDate = date('Y-m-d', strtotime($startTime));
+                $weeklyHourRecord = Weeklyhours::forDate((int)$idUser, $startDate);
             }
 
-            $update = empty($duracion) ?
-                ["endTime" => $endTime, "startTime" => $startTime, "trackCost" => $trackCost] :
-                ["duracion" => 0, "endTime" => $endTime, "startTime" => $startTime, "trackCost" => $trackCost];
+            $costHour = $weeklyHourRecord ? $weeklyHourRecord->costHour : null;
+
+            $trackCost = 0;
+            if ($costHour && $duracion) {
+                $timeParts = explode(':', $duracion);
+                $hours = (int)$timeParts[0];
+                $minutes = isset($timeParts[1]) ? (int)$timeParts[1] : 0;
+                $seconds = isset($timeParts[2]) ? (int)$timeParts[2] : 0;
+                $totalHours = $hours + ($minutes / 60) + ($seconds / 3600);
+                $trackCost = round($totalHours * $costHour, 2);
+            }
+
+            $update = empty($duracion)
+                ? ["endTime" => $endTime, "startTime" => $startTime, "trackCost" => $trackCost]
+                : ["duracion" => 0, "endTime" => $endTime, "startTime" => $startTime, "trackCost" => $trackCost];
+
+            if (!$fromReports) {
+                $update["idWeeklyHour"] = $weeklyHourRecord ? $weeklyHourRecord->id : null;
+            }
 
             Tracks::where("id", $id)->update($update);
             $track = Tracks::where("id", $id)->get();
@@ -414,7 +430,7 @@ class TracksController extends BaseController
                 "Tracks.duracion",
                 "Tracks.startTime",
                 "Tracks.endTime",
-                DB::raw("WeeklyHours.costHour AS costHour"),
+                DB::raw("COALESCE(wh.costHour, (SELECT wh2.costHour FROM WeeklyHours wh2 WHERE wh2.idUser = Tracks.idUser AND wh2.valid_from <= DATE(Tracks.startTime) AND (wh2.valid_until IS NULL OR wh2.valid_until >= DATE(Tracks.startTime)) ORDER BY wh2.valid_from DESC LIMIT 1), (SELECT wh3.costHour FROM WeeklyHours wh3 WHERE wh3.idUser = Tracks.idUser AND wh3.borrado = '0' ORDER BY wh3.valid_from DESC LIMIT 1)) AS costHour"),
                 DB::raw("Users.name AS usersName"),
                 DB::raw("Users.photo"),
                 DB::raw("TrelloTask.name AS taskName"),
@@ -426,7 +442,7 @@ class TracksController extends BaseController
                 ->join("TrelloTask", DB::raw("Tracks.idTask"), "=", DB::raw("TrelloTask.id"))
                 ->join("Projects", DB::raw("Projects.id"), "=", DB::raw("TrelloTask.idProyecto"))
                 ->join("Clients", DB::raw("Clients.id"), "=", DB::raw("Projects.idClient"))
-                ->join("WeeklyHours", "WeeklyHours.idUser", "=", "Tracks.idUser")
+                ->leftJoin("WeeklyHours AS wh", "wh.id", "=", "Tracks.idWeeklyHour")
                 ->where("startTime", ">=", $startTime)
                 ->where("endTime", "<=", $endTime)
                 ->where("typeTrack", "trello")
@@ -522,9 +538,9 @@ class TracksController extends BaseController
     public function calcCosto($tracks)
     {
         foreach ($tracks as $track) {
-            $cost = $track['costHour'];
+            $cost = floatval($track['costHour']);
             $costDecimal = $this->ConvertTimeToDecimal($track['durations'] ? $track['durations'] : $track['duration']);
-            $track['trackCost'] = round(round(($costDecimal * ($cost)), 2) ? round(($costDecimal * ($cost)), 2) : 0);
+            $track['trackCost'] = round($costDecimal * $cost, 2);
         }
 
         return $tracks;

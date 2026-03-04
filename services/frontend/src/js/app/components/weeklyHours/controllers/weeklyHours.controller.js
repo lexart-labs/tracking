@@ -9,6 +9,7 @@
     $scope.weeklyHours  = [];
     $scope.query    = "";
     $scope.currentPage  = 0;
+    $scope.showDeleted  = false;
 
 
     WeeklyHourServices.find($scope.currentPage, $scope.query, function(err, weeklyHours, countItems) {

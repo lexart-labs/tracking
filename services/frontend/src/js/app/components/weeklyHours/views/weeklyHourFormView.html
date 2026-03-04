@@ -75,11 +75,29 @@
 
   </div>
 
+  <div class="lexart-frm__fldgrp">
+    <div class="lexart-frm__fld">
+      <label class="lexart-frm__lbl">
+        <input type="date" ng-model="weeklyHour.valid_from" required/>
+        <b class="lexart-frm__lbl-name">{{ 'weeklyHours.validFrom' | translate }} <span class="required">*</span></b>
+      </label>
+    </div>
+    <div class="lexart-frm__fld">
+      <label class="lexart-frm__lbl">
+        <input type="date" ng-model="weeklyHour.valid_until"/>
+        <b class="lexart-frm__lbl-name">{{ 'weeklyHours.validUntil' | translate }}</b>
+      </label>
+    </div>
+  </div>
+
 </form>
 </div>
 
 <div class="lexart-wa__actions">
   <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
+  <p ng-if="dateError" class="err-display">{{dateError}}</p>
+  <button class="lexart-btn lexart-btn--alt" ng-if="weeklyHour.id && weeklyHour.borrado != '1'" ng-click="delete()">{{ 'general.delete' | translate }}</button>
+  <button class="lexart-btn lexart-btn--alt" ng-if="weeklyHour.id && weeklyHour.borrado == '1'" ng-click="activate()">{{ 'weeklyHours.activate' | translate }}</button>
   <button class="lexart-btn lexart-btn--alt" ui-sref="app.weeklyHours">{{ 'weeklyHours.back' | translate }}</button>
   <button class="lexart-btn" ng-disabled="sendingData" ng-click="save()">{{ 'weeklyHours.save' | translate }}</button>
 </div>

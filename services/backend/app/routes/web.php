@@ -211,11 +211,14 @@ Route::group(['prefix' => 'api'], function () {
 
             Route::put('update', 'WeeklyhoursController@update');
             Route::post('new', 'WeeklyhoursController@new');
+            Route::delete('{id}', 'WeeklyhoursController@delete');
+            Route::put('{id}/activate', 'WeeklyhoursController@activate');
 
             //User weeklyhours admin
             Route::group(['prefix' => 'user'], function(){
 
                 Route::get('{id}', 'WeeklyhoursController@user');
+                Route::get('{id}/bydate/{date}', 'WeeklyhoursController@userByDate');
             });
         });
     });
