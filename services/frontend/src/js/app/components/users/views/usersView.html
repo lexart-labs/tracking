@@ -1,63 +1,69 @@
-<div class="lexart-wa__hdr lexart-flex">
-    <div class="lexart-flex-5">
-        <h1 class="lexart-wa__tit">
-            <a class="lexart-bc-item" ui-sref="app.users">{{ 'users.title' | translate }}</a>
-        </h1>
-        <div class="lexart-btn__right">
-            <a ui-sref="app.userNew" class="lexart-btn lexart-btn--round">&#43; {{ 'users.user' | translate }}</a>
-        </div>
-    </div>
-</div>
-<div class="lexart-wa__cnt">
-    <table class="lexart-table">
-        <thead>
-            <tr>
-                <th></th>
-                <th>{{ 'users.id' | translate }}</th>
-                <th ng-if="userRole != 'admin'"></th>
-                <th>{{ 'users.name' | translate }}</th>
-                <th>{{ 'users.email' | translate }}</th>
-                <th>{{ 'users.role' | translate }}</th>
-                <th class="lexart-cstm__grid-5"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td></td>
-                <td><input class="field-filter" ng-model="filter.id"></td>
-                <td ng-if="userRole != 'admin'"></td>
-                <td><input class="field-filter" ng-model="filter.name"></td>
-                <td><input class="field-filter" ng-model="filter.email"></td>
-                <td><input class="field-filter" ng-model="filter.role"></td>
-                <td></td>
-            </tr>
-            <tr ng-repeat="user in users | filter: filter">
-                <td style="position:relative;">
-                    <img ng-if="user.photo" ng-src="{{ FILES_BASE+user.photo }}" alt="profile picture" class="usr-photo-table"></img>
-                    <img ng-if="!user.photo" src="/assets/images/user-placeholder.png" alt="profile picture" class="usr-photo-table">
-                </td>
-                <td>{{user.id}}</td>
-                <td><a ng-if="userRole == 'admin'" style="color: #4a90e2; text-decoration: underline" ui-sref="app.tasks-user({id: user.id})" >{{user.name | truncateTail:true:30:'...'}}</a></td>
-                <td ng-if="userRole != 'admin'">{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>{{user.role}}</td>
-                <td>
-                    <a ui-sref="app.userEdit({id: user.id})">
-                        <i class="ri-edit-line"></i>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div ng-cloak ng-if="env_react_url && $root.showIframe">
+    <iframe iframe-resizer options="iframeOptions"
+        style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+        sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        src="{{env_react_url}}">
+    </iframe>
 </div>
 
-<paging
-    ng-show="total>pageSize"
-    page="currentPage"
-    page-size="pageSize"
-    total="total"
-    hide-if-empty="true"
-    show-prev-next="true"
-    show-first-last="true"
-    paging-action="pager(page)">
-</paging>
+<!-- <div ng-if="!env_react_url || !$root.showIframe">
+    <div class="lexart-wa__hdr lexart-flex">
+        <div class="lexart-flex-5">
+            <h1 class="lexart-wa__tit">
+                <a class="lexart-bc-item" ui-sref="app.users">{{ 'users.title' | translate }}</a>
+            </h1>
+            <div class="lexart-btn__right">
+                <a ui-sref="app.userNew" class="lexart-btn lexart-btn--round">&#43; {{ 'users.user' | translate }}</a>
+            </div>
+        </div>
+    </div>
+    <div class="lexart-wa__cnt">
+        <table class="lexart-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ 'users.id' | translate }}</th>
+                    <th ng-if="userRole != 'admin'"></th>
+                    <th>{{ 'users.name' | translate }}</th>
+                    <th>{{ 'users.email' | translate }}</th>
+                    <th>{{ 'users.role' | translate }}</th>
+                    <th class="lexart-cstm__grid-5"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td><input class="field-filter" ng-model="filter.id"></td>
+                    <td ng-if="userRole != 'admin'"></td>
+                    <td><input class="field-filter" ng-model="filter.name"></td>
+                    <td><input class="field-filter" ng-model="filter.email"></td>
+                    <td><input class="field-filter" ng-model="filter.role"></td>
+                    <td></td>
+                </tr>
+                <tr ng-repeat="user in users | filter: filter">
+                    <td style="position:relative;">
+                        <img ng-if="user.photo" ng-src="{{ FILES_BASE+user.photo }}" alt="profile picture"
+                            class="usr-photo-table"></img>
+                        <img ng-if="!user.photo" src="/assets/images/user-placeholder.png" alt="profile picture"
+                            class="usr-photo-table">
+                    </td>
+                    <td>{{user.id}}</td>
+                    <td><a ng-if="userRole == 'admin'" style="color: #4a90e2; text-decoration: underline"
+                            ui-sref="app.tasks-user({id: user.id})">{{user.name | truncateTail:true:30:'...'}}</a></td>
+                    <td ng-if="userRole != 'admin'">{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.role}}</td>
+                    <td>
+                        <a ui-sref="app.userEdit({id: user.id})">
+                            <i class="ri-edit-line"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <paging ng-show="total>pageSize" page="currentPage" page-size="pageSize" total="total" hide-if-empty="true"
+        show-prev-next="true" show-first-last="true" paging-action="pager(page)">
+    </paging>
+</div> -->
