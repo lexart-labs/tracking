@@ -27,6 +27,7 @@ createRoot(document.getElementById('root')).render(
 						<Route path="/" element={<Layout />}>
 							<Route element={<ProtectedRoute />}>
 								<Route index element={<Dashboard />} />
+								<Route path="/users" element={<UserList />} />
 								<Route path="/user/:userId?" element={<User />} />
 								<Route path="/clients" element={<ClientList />} />
 								<Route path="/client/:clientId?" element={<ClientForm />} />

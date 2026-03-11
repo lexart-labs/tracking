@@ -1,10 +1,24 @@
 import api from '@/services/api'
+import sessionStore from '@/stores/session'
 
 const USERS_ENDPOINT = '/user'
 
 export class UserService {
     constructor() {
         this.api = api
+    }
+
+    async getUsers() {
+        try {
+            const user = sessionStore.getState().user;
+            const role = user.userRole === 'admin' || user.userRole === 'pm' ? true : false;
+            const path = role === true ? '/all-admin' : '/all';
+
+            const response = await this.api.get(`${USERS_ENDPOINT}${path}`)
+            return response.data.response || response.data
+        } catch (error) {
+            throw error
+        }
     }
 
     async createUser(userData) {
@@ -31,8 +45,8 @@ export class UserService {
     async getUser(userId) {
         try {
             const response = await this.api.get(`${USERS_ENDPOINT}/${userId}`)
-			if (response.data.response.password) delete response.data.response.password
-			if(response.data.response.deleted_at) delete response.data.response.deleted_at
+            if (response.data.response.password) delete response.data.response.password
+            if (response.data.response.deleted_at) delete response.data.response.deleted_at
             return response.data.response
         } catch (error) {
             throw error
@@ -43,7 +57,7 @@ export class UserService {
         try {
             const formData = new FormData()
             formData.append('image', file)
-            
+
             const response = await this.api.post(
                 `${USERS_ENDPOINT}/${userId}/profile-image`,
                 formData,
