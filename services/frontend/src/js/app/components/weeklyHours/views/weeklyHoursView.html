@@ -1,67 +1,74 @@
-<div class="lexart-wa__hdr lexart-flex">
-  <div class="lexart-flex-5">
-    <h1 class="lexart-wa__tit">
-      <a class="lexart-bc-item">{{ 'weeklyHours.title' | translate }}</a>
-    </h1>
-    <div class="lexart-btn__right">
-        <a ui-sref="app.weeklyHourNew" class="lexart-btn lexart-btn--round">&#43; {{ 'weeklyHours.weeklyHour' | translate }}</a>
+<div ng-cloak ng-if="env_react_url && showIframe">
+	<iframe iframe-resizer options="iframeOptions" style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+		sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+		src="{{env_react_url}}">
+	</iframe>
+</div>
+<div ng-if="!env_react_url && !showIframe">
+  <div class="lexart-wa__hdr lexart-flex">
+    <div class="lexart-flex-5">
+      <h1 class="lexart-wa__tit">
+        <a class="lexart-bc-item">{{ 'weeklyHours.title' | translate }}</a>
+      </h1>
+      <div class="lexart-btn__right">
+          <a ui-sref="app.weeklyHourNew" class="lexart-btn lexart-btn--round">&#43; {{ 'weeklyHours.weeklyHour' | translate }}</a>
+      </div>
     </div>
   </div>
+
+  <div class="lexart-wa__cnt">
+    <table class="lexart-table">
+      <thead>
+        <tr>
+          <th>{{ 'weeklyHours.id' | translate }}</th>
+          <th>{{ 'weeklyHours.userName' | translate }}</th>
+
+          <th>{{ 'weeklyHours.costHour' | translate }}</th>
+          <th>{{ 'weeklyHours.workLoad' | translate }}</th>
+          <th>{{'weeklyHours.currency' | translate}}</th>
+          <th>{{ 'weeklyHours.validFrom' | translate }}</th>
+          <th>{{ 'weeklyHours.validUntil' | translate }}</th>
+          <th>{{ 'weeklyHours.deleted' | translate }}</th>
+          <th class="lexart-cstm__grid-5"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input class="field-filter" ng-model="filter.id"></td>
+          <td><input class="field-filter" ng-model="filter.userName"></td>
+          <td><input class="field-filter" ng-model="filter.costHour"></td>
+          <td><input class="field-filter" ng-model="filter.workLoad"></td>
+          <td><input class="field-filter" ng-model="filter.currency"></td>
+          <td><input class="field-filter" ng-model="filter.valid_from"></td>
+          <td></td>
+          <td>
+            <label style="white-space: nowrap; font-weight: normal; cursor: pointer;">
+              <input type="checkbox" ng-model="showDeleted"> {{ 'weeklyHours.showDeleted' | translate }}
+            </label>
+          </td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="weeklyHour in weeklyHours | filter: filter" ng-if="showDeleted || weeklyHour.borrado == '0'">
+          <td>{{weeklyHour.id}}</td>
+          <td>{{weeklyHour.userName}}</td>
+
+          <td>{{weeklyHour.costHour}}</td>
+          <td>{{weeklyHour.workLoad}}</td>
+          <td>{{weeklyHour.currency}}</td>
+          <td>{{weeklyHour.valid_from}}</td>
+          <td>{{weeklyHour.valid_until || '—'}}</td>
+          <td>
+            <i ng-if="weeklyHour.borrado == '1'" class="ri-close-circle-line" style="color: #e05a5a;"></i>
+            <span ng-if="weeklyHour.borrado != '1'">—</span>
+          </td>
+          <td>
+            <a ui-sref="app.weeklyHourEdit({id: weeklyHour.id})">
+              <i class="ri-edit-line"></i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
 </div>
-
-<div class="lexart-wa__cnt">
-  <table class="lexart-table">
-    <thead>
-      <tr>
-        <th>{{ 'weeklyHours.id' | translate }}</th>
-        <th>{{ 'weeklyHours.userName' | translate }}</th>
-
-        <th>{{ 'weeklyHours.costHour' | translate }}</th>
-        <th>{{ 'weeklyHours.workLoad' | translate }}</th>
-        <th>{{'weeklyHours.currency' | translate}}</th>
-        <th>{{ 'weeklyHours.validFrom' | translate }}</th>
-        <th>{{ 'weeklyHours.validUntil' | translate }}</th>
-        <th>{{ 'weeklyHours.deleted' | translate }}</th>
-        <th class="lexart-cstm__grid-5"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><input class="field-filter" ng-model="filter.id"></td>
-        <td><input class="field-filter" ng-model="filter.userName"></td>
-        <td><input class="field-filter" ng-model="filter.costHour"></td>
-        <td><input class="field-filter" ng-model="filter.workLoad"></td>
-        <td><input class="field-filter" ng-model="filter.currency"></td>
-        <td><input class="field-filter" ng-model="filter.valid_from"></td>
-        <td></td>
-        <td>
-          <label style="white-space: nowrap; font-weight: normal; cursor: pointer;">
-            <input type="checkbox" ng-model="showDeleted"> {{ 'weeklyHours.showDeleted' | translate }}
-          </label>
-        </td>
-        <td></td>
-      </tr>
-      <tr ng-repeat="weeklyHour in weeklyHours | filter: filter" ng-if="showDeleted || weeklyHour.borrado == '0'">
-        <td>{{weeklyHour.id}}</td>
-        <td>{{weeklyHour.userName}}</td>
-
-        <td>{{weeklyHour.costHour}}</td>
-        <td>{{weeklyHour.workLoad}}</td>
-        <td>{{weeklyHour.currency}}</td>
-        <td>{{weeklyHour.valid_from}}</td>
-        <td>{{weeklyHour.valid_until || '—'}}</td>
-        <td>
-          <i ng-if="weeklyHour.borrado == '1'" class="ri-close-circle-line" style="color: #e05a5a;"></i>
-          <span ng-if="weeklyHour.borrado != '1'">—</span>
-        </td>
-        <td>
-          <a ui-sref="app.weeklyHourEdit({id: weeklyHour.id})">
-            <i class="ri-edit-line"></i>
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-</div>
-<!-- End Bar Graph -->
