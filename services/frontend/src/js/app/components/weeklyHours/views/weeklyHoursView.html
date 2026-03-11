@@ -19,6 +19,9 @@
         <th>{{ 'weeklyHours.costHour' | translate }}</th>
         <th>{{ 'weeklyHours.workLoad' | translate }}</th>
         <th>{{'weeklyHours.currency' | translate}}</th>
+        <th>{{ 'weeklyHours.validFrom' | translate }}</th>
+        <th>{{ 'weeklyHours.validUntil' | translate }}</th>
+        <th>{{ 'weeklyHours.deleted' | translate }}</th>
         <th class="lexart-cstm__grid-5"></th>
       </tr>
     </thead>
@@ -29,15 +32,28 @@
         <td><input class="field-filter" ng-model="filter.costHour"></td>
         <td><input class="field-filter" ng-model="filter.workLoad"></td>
         <td><input class="field-filter" ng-model="filter.currency"></td>
+        <td><input class="field-filter" ng-model="filter.valid_from"></td>
+        <td></td>
+        <td>
+          <label style="white-space: nowrap; font-weight: normal; cursor: pointer;">
+            <input type="checkbox" ng-model="showDeleted"> {{ 'weeklyHours.showDeleted' | translate }}
+          </label>
+        </td>
         <td></td>
       </tr>
-      <tr ng-repeat="weeklyHour in weeklyHours | filter: filter">
+      <tr ng-repeat="weeklyHour in weeklyHours | filter: filter" ng-if="showDeleted || weeklyHour.borrado == '0'">
         <td>{{weeklyHour.id}}</td>
         <td>{{weeklyHour.userName}}</td>
 
         <td>{{weeklyHour.costHour}}</td>
         <td>{{weeklyHour.workLoad}}</td>
         <td>{{weeklyHour.currency}}</td>
+        <td>{{weeklyHour.valid_from}}</td>
+        <td>{{weeklyHour.valid_until || '—'}}</td>
+        <td>
+          <i ng-if="weeklyHour.borrado == '1'" class="ri-close-circle-line" style="color: #e05a5a;"></i>
+          <span ng-if="weeklyHour.borrado != '1'">—</span>
+        </td>
         <td>
           <a ui-sref="app.weeklyHourEdit({id: weeklyHour.id})">
             <i class="ri-edit-line"></i>

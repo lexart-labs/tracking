@@ -1,5 +1,7 @@
 FROM node:14.16.1
 
+ARG GITHUB_TOKEN=""
+
 RUN npm install -g bower grunt-cli
 
 WORKDIR /app
@@ -16,7 +18,11 @@ RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
 COPY . .
 COPY env_files/env.local.js src/env.js
 RUN npm install
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+      git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"; \
+    fi
 RUN bower install --allow-root --force
+RUN git config --global --remove-section url."https://${GITHUB_TOKEN}@github.com/" 2>/dev/null || true
 
 EXPOSE 9000
 EXPOSE 35729

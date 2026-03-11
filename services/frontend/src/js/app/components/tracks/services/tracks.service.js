@@ -187,7 +187,8 @@
 			    		duracion   : obj.duracion,
 			    		totalTrack : obj.totalTrack,
 			    		projCost   : obj.projCost,
-						currency   : obj.currency
+						currency   : obj.currency,
+						trace      : obj.trace
 			    	}
 			    	console.log('track to update', track);
 		        	RestClient.put(path + "/update", track, function(err, result) {
@@ -203,7 +204,8 @@
 						name 	 : obj.taskName,
 			    		startTime: obj.startTime,
 			    		endTime  : obj.endTime,
-						currency : obj.currency
+						currency : obj.currency,
+						trace    : obj.trace
 					}
 					console.log('track trelloTrack to update', track);
 		        	RestClient.put(path + "/update", track, function(err, result) {
@@ -219,7 +221,8 @@
 						name 	 : obj.taskName,
 			    		startTime: obj.startTime,
 			    		endTime  : obj.endTime,
-						currency : obj.currency
+						currency : obj.currency,
+						trace    : obj.trace
 			    	}
 			    	console.log('track autoTask to update', track);
 		        	RestClient.post(model + "/update-auto", track, function(err, result) {

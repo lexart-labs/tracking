@@ -163,8 +163,10 @@
 							const date = r.created_at;
 							r.created_at = new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 							r.created_at_display = moment(date).format('MMM DD, YYYY');
-							r.start_date_display = r.payment_request_details.find(detail => detail.start_date)?.start_date ? moment(r.payment_request_details.find(detail => detail.start_date).start_date).format('MMM DD, YYYY') : '';
-							r.end_date_display = r.payment_request_details.find(detail => detail.end_date)?.end_date ? moment(r.payment_request_details.find(detail => detail.end_date).end_date).format('MMM DD, YYYY') : '';
+							var startDetail = r.payment_request_details.find(function(detail) { return detail.start_date; });
+							r.start_date_display = startDetail ? moment(startDetail.start_date).format("MMM DD, YYYY") : "";
+							var endDetail = r.payment_request_details.find(function(detail) { return detail.end_date; });
+							r.end_date_display = endDetail ? moment(endDetail.end_date).format("MMM DD, YYYY") : "";
 							r.status_display = $scope.statusTexts[r.status];
 							// Add http if not present
 							r.payment_request_details.forEach(detail => {

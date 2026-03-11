@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Weeklyhours;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Carbon;
 use WeeklyHour;
 
 class WeeklyhoursController extends BaseController
@@ -53,13 +54,15 @@ class WeeklyhoursController extends BaseController
     public function update(Request $request)
     {
         $this->validate($request, [
-            "idUser" => "required|numeric|exists:Users,id|unique:WeeklyHours,idUser," . $request->id,
+            "idUser" => "required|numeric|exists:Users,id",
             "userName" => "required",
             "costHour" => "required|numeric",
             "workLoad" => "required|numeric",
             "currency" => "required",
             "borrado" => "required|numeric",
-            "id" => "required|numeric"
+            "id" => "required|numeric",
+            "valid_from" => "required|date",
+            "valid_until" => "nullable|date|after:valid_from",
         ]);
 
         try{
@@ -71,6 +74,8 @@ class WeeklyhoursController extends BaseController
                 "workLoad",
                 "currency",
                 "borrado",
+                "valid_from",
+                "valid_until",
             ]);
 
             $id = $request->input("id");
@@ -86,7 +91,10 @@ class WeeklyhoursController extends BaseController
                 "costHour" => $weeklyhours['costHour'],
                 "workLoad" => $weeklyhours['workLoad'],
                 "currency" => $weeklyhours['currency'],
-                "borrado" => $weeklyhours['borrado']]);
+                "borrado" => $weeklyhours['borrado'],
+                "valid_from" => $weeklyhours['valid_from'],
+                "valid_until" => $weeklyhours['valid_until'],
+            ]);
         }catch(Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "weeklyhours update"), 500));
         }
@@ -95,12 +103,14 @@ class WeeklyhoursController extends BaseController
     public function new(Request $request)
     {
         $this->validate($request, [
-            "idUser" => "required|numeric|exists:Users,id|unique:WeeklyHours",
+            "idUser" => "required|numeric|exists:Users,id",
             "userName" => "required",
             "costHour" => "required|numeric",
             "workLoad" => "required|numeric",
             "currency" => "required",
             "borrado" => "required|numeric",
+            "valid_from" => "required|date",
+            "valid_until" => "nullable|date|after:valid_from",
         ]);
 
         $weeklyhours = $request->only([
@@ -110,12 +120,62 @@ class WeeklyhoursController extends BaseController
             "workLoad",
             "currency",
             "borrado",
+            "valid_from",
+            "valid_until",
         ]);
 
         try{
-            return WeeklyHours::create($weeklyhours);
+            $prev = Weeklyhours::where('idUser', $request->idUser)
+                ->where('borrado', '0')
+                ->whereNull('valid_until')
+                ->orderBy('valid_from', 'desc')
+                ->first();
+            if ($prev) {
+                $closeDate = Carbon::parse($request->valid_from)->subDay()->toDateString();
+                $prev->update(['valid_until' => $closeDate]);
+            }
+
+            return Weeklyhours::create($weeklyhours);
         }catch(Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "weeklyhours new"), 500));
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $weeklyhours = Weeklyhours::where('id', $id)->first();
+            if (!$weeklyhours) {
+                return (new Response(array("Error" => ID_INVALID, "Operation" => "weeklyhours delete"), 400));
+            }
+            $weeklyhours->update(['borrado' => 1]);
+            return array("response" => $weeklyhours);
+        } catch (Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "weeklyhours delete"), 500));
+        }
+    }
+
+    public function activate($id)
+    {
+        try {
+            $weeklyhours = Weeklyhours::where('id', $id)->first();
+            if (!$weeklyhours) {
+                return (new Response(array("Error" => ID_INVALID, "Operation" => "weeklyhours activate"), 400));
+            }
+            $weeklyhours->update(['borrado' => 0]);
+            return array("response" => $weeklyhours);
+        } catch (Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "weeklyhours activate"), 500));
+        }
+    }
+
+    public function userByDate($id, $date)
+    {
+        try {
+            $record = Weeklyhours::forDate((int)$id, $date);
+            return ['response' => $record];
+        } catch (Exception $e) {
+            return new Response(['Error' => BAD_REQUEST, 'Operation' => 'weeklyhours bydate'], 500);
         }
     }
 }
