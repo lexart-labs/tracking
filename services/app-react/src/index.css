@@ -3,10 +3,65 @@
 /* import soho theme */
 
 @import "primereact/resources/themes/soho-light/theme.css";
+@import "primereact/resources/primereact.min.css";
+
 /* @import "primereact/resources/themes/soho-dark/theme.css"; */
 :root {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-size: .9rem;
+  --color-active-text: #7076FE;
+}
+
+/* Legacy Button Overrides */
+.lexart-btn,
+.lexart-btn--round {
+  background-color: var(--color-active-text) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.lexart-btn:hover,
+.lexart-btn--round:hover {
+  background-color: #5d63f0 !important;
+}
+
+.lexart-btn--alt {
+  background-color: #E5E5E5 !important;
+  color: #666 !important;
+}
+
+.lexart-btn--alt:hover {
+  background-color: #d1d1d1 !important;
+}
+
+/* Circular Button for Actions */
+.lexart-btn-circle {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #fff !important;
+  border: 1px solid #c3c7cc !important;
+  color: #3c4250 !important;
+  transition: all 0.2s !important;
+  padding: 0 !important;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lexart-btn-circle:hover {
+  background: var(--color-active-text) !important;
+  color: #fff !important;
+  border-color: var(--color-active-text) !important;
+}
+
+.lexart-btn-circle i {
+  font-family: 'remixicon' !important;
+  font-size: 1.2rem !important;
+  line-height: 1 !important;
+  font-style: normal;
 }

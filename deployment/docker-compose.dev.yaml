@@ -13,19 +13,19 @@ services:
       - ../env_files/.env.dev
 
   app-react:
-      restart: always
-      build:
-        context: ../services/app-react
-        dockerfile: Dockerfile.dev
-        args:
-          - VITE_BASE_URL=${VITE_BASE_URL}
-          - VITE_BASE_PHOTO=${VITE_BASE_PHOTO}
-      env_file:
+    restart: always
+    build:
+      context: ../services/app-react
+      dockerfile: Dockerfile.dev
+      args:
+        - VITE_BASE_URL=${VITE_BASE_URL}
+        - VITE_BASE_PHOTO=${VITE_BASE_PHOTO}
+    env_file:
       - ../env_files/.env.dev
-      volumes:
-        - ../services/app-react/src:/app/src
-      ports:
-        - 5181:5173
+    volumes:
+      - ../services/app-react/src:/app/src
+    ports:
+      - 5181:5173
 
   nginx:
     build:
@@ -52,13 +52,13 @@ services:
       - vendor_data:/var/www/html/vendor
     ports:
       - "3086:9000"
-    expose: 
-        - 9000
-    
+    expose:
+      - 9000
+
   chatbot:
     build:
-        context: ../services/chatbot
-        dockerfile: Dockerfile.dev
+      context: ../services/chatbot
+      dockerfile: Dockerfile.dev
     restart: always
     env_file:
       - ../env_files/.env.dev
@@ -66,20 +66,33 @@ services:
       - ../services/chatbot/src:/app/src
     ports:
       - "3081:3000"
-    expose: 
-        - 3000
+    expose:
+      - 3000
 
   database:
+    image: mysql:8.0.36
     restart: always
     env_file:
       - ../env_files/.env.dev
     ports:
       - ${DB_EXTERNAL_PORT}:3306
-    expose: 
-        - 33006
+    expose:
+      - 33006
     volumes:
       - ../services/database/db_init_scripts:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - database
 
 volumes:
   vendor_data:

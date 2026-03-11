@@ -1,48 +1,57 @@
-<div class="lexart-wa__hdr lexart-flex">
-    <div class="lexart-flex-5">
-        <h1 class="lexart-wa__tit">
-            <a class="lexart-bc-item" ui-sref="app.clients">{{ 'clients.title' | translate }}</a>
-        </h1>
-        <div class="lexart-bc">
-            <a class="lexart-bc-item">{{ 'clients.client' | translate }}</a>
-        </div>
-        <div class="lexart-bc" ng-if="client.name">
-            <span class="lexart-bc-item lexart-bc--head">{{client.name}}</span>
+<div ng-cloak ng-if="env_react_url && showIframe">
+    <iframe iframe-resizer options="iframeOptions"
+        style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+        sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        src="{{env_react_url}}">
+    </iframe>
+</div>
+<div ng-if="!env_react_url && !showIframe">
+    <div class="lexart-wa__hdr lexart-flex">
+        <div class="lexart-flex-5">
+            <h1 class="lexart-wa__tit">
+                <a class="lexart-bc-item" ui-sref="app.clients">{{ 'clients.title' | translate }}</a>
+            </h1>
+            <div class="lexart-bc">
+                <a class="lexart-bc-item">{{ 'clients.client' | translate }}</a>
+            </div>
+            <div class="lexart-bc" ng-if="client.name">
+                <span class="lexart-bc-item lexart-bc--head">{{client.name}}</span>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="lexart-wa__cnt">
-    <form class="lexart-frm lexart-frm--center">
+    <div class="lexart-wa__cnt">
+        <form class="lexart-frm lexart-frm--center">
 
-        <div class="lexart-frm__fldgrp">
-            <div class="lexart-frm__fld" ng-if="client.id">
-                <label class="lexart-frm__lbl">
-                    <input type="text" ng-value="client.id" readonly/>
-                    <b class="lexart-frm__lbl-name">{{ 'ID' }}</b>
-                </label>
+            <div class="lexart-frm__fldgrp">
+                <div class="lexart-frm__fld" ng-if="client.id">
+                    <label class="lexart-frm__lbl">
+                        <input type="text" ng-value="client.id" readonly />
+                        <b class="lexart-frm__lbl-name">{{ 'ID' }}</b>
+                    </label>
+                </div>
+
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl">
+                        <input type="text" ng-model="client.name" />
+                        <b class="lexart-frm__lbl-name">{{ 'Name' }} <span class="required">*</span></b>
+                    </label>
+                </div>
+
+                <div class="lexart-frm__fld">
+                    <label class="lexart-frm__lbl">
+                        <input type="text" ng-model="client.company" />
+                        <b class="lexart-frm__lbl-name">{{ 'Company' }} <span class="required">*</span></b>
+                    </label>
+                </div>
             </div>
 
-            <div class="lexart-frm__fld">
-                <label class="lexart-frm__lbl">
-                    <input type="text" ng-model="client.name"/>
-                    <b class="lexart-frm__lbl-name">{{ 'Name' }} <span class="required">*</span></b>
-                </label>
-            </div>        
+        </form>
+    </div>
 
-            <div class="lexart-frm__fld">
-                <label class="lexart-frm__lbl">
-                    <input type="text" ng-model="client.company"/>
-                    <b class="lexart-frm__lbl-name">{{ 'Company' }} <span class="required">*</span></b>
-                </label>
-            </div>   
-        </div>
-
-    </form>
-</div>
-
-<div class="lexart-wa__actions">
-    <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
-    <button class="lexart-btn lexart-btn--alt" ui-sref="app.clients">{{ 'clients.back' | translate }}</button>
-    <button class="lexart-btn" ng-disabled="sendingData" ng-click="save()">{{ 'clients.save' | translate }}</button>
+    <div class="lexart-wa__actions">
+        <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
+        <button class="lexart-btn lexart-btn--alt" ui-sref="app.clients">{{ 'clients.back' | translate }}</button>
+        <button class="lexart-btn" ng-disabled="sendingData" ng-click="save()">{{ 'clients.save' | translate }}</button>
+    </div>
 </div>
