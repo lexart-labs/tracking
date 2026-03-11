@@ -7,7 +7,7 @@
     Module.controller('UsersCtrl', ['$scope', '$timeout', 'UserServices', 'ngDialog', '$rootScope', '$sce', function ($scope, $timeout, UserServices, ngDialog, $rootScope, $sce) {
 
         let reactUrl = $rootScope.trackingReactUrl || (typeof TRACKING_REACT_URL !== 'undefined' ? TRACKING_REACT_URL : '');
-        let env_react_url = reactUrl + '/users';
+        let env_react_url = reactUrl + '/#/users';
         $scope.env_react_url = $sce.trustAsResourceUrl(env_react_url);
 
         $scope.users = [];

@@ -10,14 +10,13 @@ import ProtectedRoute from '@/application/components/ProtectedRoute'
 import ResizerProvider from '@/providers/iframe-resizer'
 import { PrimeReactProvider } from 'primereact/api'
 import Layout from '@/application/Layout'
-import { UserList } from '@/application/pages/user/list/UserList'
-import ResizerProvider from '@/providers/iframe-resizer';
-import { PrimeReactProvider } from 'primereact/api';
-import Layout from "@/application/Layout"
 import '@iframe-resizer/child'
 import './index.css'
 import ChatBotWidget from '@/application/pages/chatbot/ChatBotWidget.tsx'
 
+function LayoutWithOutlet() {
+	return <Layout />
+}
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
