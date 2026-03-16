@@ -229,7 +229,9 @@ class TasksController extends BaseController
         $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "description"]);
 
         try {
-            return Tasks::where('id', $id)->update($task);
+            Tasks::where('id', $id)->update($task);
+            $updatedTask = Tasks::where('id', $id)->first();
+            return array("response" => $updatedTask);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks update"), 500));
         }
