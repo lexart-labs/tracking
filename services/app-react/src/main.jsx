@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 import { Dashboard } from './application/dashboard'
 import { User } from '@/application/pages/user/form/User'
+import { UserList } from '@/application/pages/user/list/UserList'
 import ClientList from '@/application/pages/clients/list/ClientList'
 import ClientForm from '@/application/pages/clients/form/ClientForm'
 import ProtectedRoute from '@/application/components/ProtectedRoute'
