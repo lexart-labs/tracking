@@ -108,11 +108,13 @@ class TasksController extends BaseController
         }
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request, $id = null)
     {
-        $this->validate($request, ["id" => "required"]);
+        if (!$id) {
+            $id = $request->input("id");
+        }
 
-        $id = $request->input("id");
+        $this->validate($request, ["id" => "numeric"]);
 
         try {
             $tasks = Tasks::where('id', $id)->where('active', 1)->first();

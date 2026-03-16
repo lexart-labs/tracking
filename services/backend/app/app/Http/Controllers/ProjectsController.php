@@ -51,7 +51,7 @@ class ProjectsController extends BaseController
         $user = $request->input();
 
         try {
-            if ($tracked) {
+            if ($tracked && ($filter == 'rest' || $filter == 'update' || $filter == 'TotalUpdate')) {
                 if ($filter == 'rest' || $filter == 'update') {
                     $c = DB::table('Projects')
                         ->select("totalCost")
@@ -78,25 +78,25 @@ class ProjectsController extends BaseController
                     } else {
                         return array("Error" => "Error al actualizar el Proyecto.");
                     }
+                }
+            } else {
+                $d = Projects::where('id', $id)
+                    ->update([
+                        'name' => $user['name'],
+                        'idClient' => $user['idClient'],
+                        'description' => $user['description'],
+                        'comments' => $user['comments'],
+                        'duration' => $user['duration'],
+                        'presupuesto' => $user['presupuesto'],
+                        'active' => $user['active'],
+                    ]);
+
+
+                // CALLBACK
+                if (empty($d)) {
+                    return array("response" => 'OK');
                 } else {
-                    $d = Projects::where('id', $id)
-                        ->update([
-                            'name' => $user['name'],
-                            'idClient' => $user['idClient'],
-                            'description' => $user['description'],
-                            'comments' => $user['comments'],
-                            'duration' => $user['duration'],
-                            'presupuesto' => $user['presupuesto'],
-                            'active' => $user['active'],
-                        ]);
-
-
-                    // CALLBACK
-                    if (empty($d)) {
-                        return array("response" => 'OK');
-                    } else {
-                        return array("Error" => "Error al actualizar el Proyecto.");
-                    }
+                    return array("Error" => "Error al actualizar el Proyecto.");
                 }
             }
         } catch (Exception $e) {
