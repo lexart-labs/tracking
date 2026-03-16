@@ -48,6 +48,9 @@
                     <a ui-sref="app.projectEdit({id: project.id})">
                         <i class="ri-edit-line"></i>
                     </a>
+                    <a ng-click="deleteProject(project.id)" style="cursor: pointer; color: red; margin-left: 10px;">
+                        <i class="ri-close-line"></i>
+                    </a>
                 </td>
                 <td ng-if="isAdmin=='false' &&  isClient=='false' "></td>
             </tr>

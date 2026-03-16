@@ -21,7 +21,10 @@ class ProjectsController extends BaseController
             }
 
 
-            $projects = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')->select('Projects.*', 'Clients.name as clientName')->get();
+            $projects = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
+                ->select('Projects.*', 'Clients.name as clientName')
+                ->where('Projects.active', 1)
+                ->get();
 
             return array('response' => $projects);
         } catch (Exception $e) {
@@ -36,7 +39,11 @@ class ProjectsController extends BaseController
                 return (new Response(array("Error" => ID_INVALID, "Operation" => "projects client id"), 500));
             }
 
-            return Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')->select('Projects.*', 'Clients.name as clientName')->where("idClient", $id)->get();
+            return Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
+                ->select('Projects.*', 'Clients.name as clientName')
+                ->where("idClient", $id)
+                ->where('Projects.active', 1)
+                ->get();
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects client id"), 500));
         }
@@ -126,6 +133,26 @@ class ProjectsController extends BaseController
             return array("response" => $project);
         }catch(Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects new"), 500));
+        }
+    }
+
+    public function delete(Request $request, $id = null)
+    {
+        if (!$id) {
+            $id = $request->input("id");
+        }
+
+        try {
+            $project = Projects::where('id', $id)->where('active', 1)->first();
+            if ($project) {
+                $project->active = 0;
+                $project->save();
+                return array("response" => 'OK');
+            } else {
+                return (new Response(array("Error" => "Proyecto ya desactivado o no existe."), 400));
+            }
+        } catch (Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects delete"), 500));
         }
     }
 }

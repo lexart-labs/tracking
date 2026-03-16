@@ -81,6 +81,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['middleware' => 'pm:api'], function() {
             Route::post('new', 'ProjectsController@new');
             Route::put('update', ["middleware" => "pm:api", "uses" => 'ProjectsController@update']);
+            Route::delete('delete/{id}', 'ProjectsController@delete');
+            Route::get('delete/{id}', 'ProjectsController@delete');
         });
 
         //Tasks
