@@ -2,6 +2,44 @@ import { http, HttpResponse } from 'msw'
 
 const BASE_URL = 'http://localhost:8081'
 
+const tracks = [
+  {
+    id: 1,
+    name: 'Implement login',
+    idProyecto: 10,
+    projectName: 'Alpha Project',
+    idUser: 1,
+    userName: 'Admin User',
+    clientName: 'Acme Corp',
+    startTime: '2024-03-01 09:00:00',
+    endTime: '2024-03-01 10:00:00',
+    duration: '01:00:00',
+    costHour: '50.00',
+    trackCost: '50.00',
+    currency: 'USD',
+  },
+  {
+    id: 2,
+    name: 'Fix bug',
+    idProyecto: 10,
+    projectName: 'Alpha Project',
+    idUser: 3,
+    userName: 'Dev User',
+    clientName: 'Acme Corp',
+    startTime: '2024-03-01 11:00:00',
+    endTime: '2024-03-01 12:00:00',
+    duration: '01:00:00',
+    costHour: '30.00',
+    trackCost: '30.00',
+    currency: 'USD',
+  },
+]
+
+const projects = [
+  { id: 10, name: 'Alpha Project' },
+  { id: 11, name: 'Beta Project' },
+]
+
 const clients = [
   { id: 1, name: 'Acme Corp', company: 'Acme', active: true },
   { id: 2, name: 'Inactive Ltd', company: 'Inactive Co', active: false },
@@ -69,5 +107,38 @@ export const handlers = [
   // Users
   http.get(`${BASE_URL}/user/all`, () => {
     return HttpResponse.json({ response: users })
+  }),
+
+  // Projects
+  http.get(`${BASE_URL}/projects/all`, () => {
+    return HttpResponse.json({ response: projects })
+  }),
+
+  // Tracks
+  http.post(`${BASE_URL}/tracks/user/all`, () => {
+    return HttpResponse.json({ response: tracks })
+  }),
+
+  http.post(`${BASE_URL}/tracks/user/current`, () => {
+    return HttpResponse.json({ response: [tracks[1]] })
+  }),
+
+  http.post(`${BASE_URL}/tracks/user/:id`, ({ params }) => {
+    const filtered = tracks.filter((t) => t.idUser === Number(params.id))
+    return HttpResponse.json({ response: filtered })
+  }),
+
+  http.put(`${BASE_URL}/tracks/update`, () => {
+    return HttpResponse.json({ response: {} })
+  }),
+
+  http.put(`${BASE_URL}/tracks/user/current/update`, () => {
+    return HttpResponse.json({ response: {} })
+  }),
+
+  http.post(`${BASE_URL}/tracks/export/csv`, () => {
+    return new HttpResponse('"Project","Client","Task"\n"Alpha Project","Acme Corp","Fix bug"', {
+      headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+    })
   }),
 ]

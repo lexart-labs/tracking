@@ -157,6 +157,8 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::post('new', 'TracksController@new');
 
+        Route::post('export/csv', 'TracksController@exportCsv');
+
         Route::group(['middleware' => 'pm:api'], function(){
             Route::get('tracking', 'TracksController@endlessTracks');
             Route::post('{id}/month', 'TracksController@month');
