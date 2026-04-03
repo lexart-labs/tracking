@@ -8,6 +8,7 @@ import ClientList from '@/application/pages/clients/list/ClientList'
 import ClientForm from '@/application/pages/clients/form/ClientForm'
 import WeeklyHoursList from '@/application/pages/weeklyhours/list/WeeklyHoursList'
 import WeeklyHoursForm from '@/application/pages/weeklyhours/form/WeeklyHoursForm'
+import TracksList from '@/application/pages/tracks/list/TracksList'
 import ProtectedRoute from '@/application/components/ProtectedRoute'
 import ResizerProvider from '@/providers/iframe-resizer'
 import { PrimeReactProvider } from 'primereact/api'
@@ -37,6 +38,7 @@ enableMocking().then(() => createRoot(document.getElementById('root')).render(
 								<Route path="/client/:clientId?" element={<ClientForm />} />
 								<Route path="/weeklyhours" element={<WeeklyHoursList />} />
 								<Route path="/weeklyhour/:weeklyhoursId?" element={<WeeklyHoursForm />} />
+								<Route path="/tracks" element={<TracksList />} />
 							</Route>
 						</Route>
 						<Route path="/chatbot" element={<ChatBotWidget />} />

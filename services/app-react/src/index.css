@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+@media print {
+  .no-print { display: none !important; }
+}
 @import 'primeicons/primeicons.css';
 /* import soho theme */
 

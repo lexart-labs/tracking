@@ -17,6 +17,8 @@
     "@iframe-resizer/child": "^5.4.6",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.10.0",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.6",
     "react": "^19.0.0",
