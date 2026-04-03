@@ -1,11 +1,13 @@
 // APP VERSION: 2.1.0-ALIGNED-FIX
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { HashRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import { Dashboard } from './application/dashboard'
 import { User } from '@/application/pages/user/form/User'
 import ClientList from '@/application/pages/clients/list/ClientList'
 import ClientForm from '@/application/pages/clients/form/ClientForm'
+import WeeklyHoursList from '@/application/pages/weeklyhours/list/WeeklyHoursList'
+import WeeklyHoursForm from '@/application/pages/weeklyhours/form/WeeklyHoursForm'
 import ProtectedRoute from '@/application/components/ProtectedRoute'
 import ResizerProvider from '@/providers/iframe-resizer'
 import { PrimeReactProvider } from 'primereact/api'
@@ -14,11 +16,13 @@ import '@iframe-resizer/child'
 import './index.css'
 import ChatBotWidget from '@/application/pages/chatbot/ChatBotWidget.tsx'
 
-function LayoutWithOutlet() {
-	return <Layout />
+async function enableMocking() {
+	if (import.meta.env.VITE_MSW_ENABLED !== 'true') return
+	const { worker } = await import('./tests/e2e/mocks/browser.js')
+	return worker.start({ onUnhandledRequest: 'warn' })
 }
 
-createRoot(document.getElementById('root')).render(
+enableMocking().then(() => createRoot(document.getElementById('root')).render(
 	<StrictMode>
 		<PrimeReactProvider>
 			<ResizerProvider>
@@ -31,6 +35,8 @@ createRoot(document.getElementById('root')).render(
 								<Route path="/user/:userId?" element={<User />} />
 								<Route path="/clients" element={<ClientList />} />
 								<Route path="/client/:clientId?" element={<ClientForm />} />
+								<Route path="/weeklyhours" element={<WeeklyHoursList />} />
+								<Route path="/weeklyhour/:weeklyhoursId?" element={<WeeklyHoursForm />} />
 							</Route>
 						</Route>
 						<Route path="/chatbot" element={<ChatBotWidget />} />
@@ -39,4 +45,4 @@ createRoot(document.getElementById('root')).render(
 			</ResizerProvider>
 		</PrimeReactProvider>
 	</StrictMode>,
-)
+))
