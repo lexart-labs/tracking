@@ -17,9 +17,16 @@
 /* Legacy Button Overrides */
 .lexart-btn,
 .lexart-btn--round {
+  display: inline-block;
+  padding: 0 1.2rem;
+  line-height: 2rem;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: 'Roboto', sans-serif;
   background-color: var(--color-active-text) !important;
   color: #fff !important;
   border: none !important;
+  transition: background-color 0.2s ease-in;
 }
 
 .lexart-btn:hover,
@@ -34,6 +41,37 @@
 
 .lexart-btn--alt:hover {
   background-color: #d1d1d1 !important;
+}
+
+/* Status Tags */
+.lexart-tag {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  width: fit-content;
+  letter-spacing: 0.4px;
+  display: inline-block;
+}
+
+.lexart-tag--info {
+  color: #0048AD;
+  background: #CAE3FC;
+}
+
+.lexart-tag--success {
+  color: #52C41A;
+  background: #F6FFED;
+}
+
+.lexart-tag--danger {
+  color: #FF4D4F;
+  background: #FFF1F0;
+}
+
+.lexart-tag--warning {
+  color: #B24D00;
+  background: #FFE3D4;
 }
 
 /* Circular Button for Actions */

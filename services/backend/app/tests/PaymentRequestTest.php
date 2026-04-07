@@ -377,6 +377,91 @@ class PaymentRequestTest extends TestCase
         $this->assertEquals(PaymentRequestStatus::Approved, $updated->status);
     }
 
+    public function test_update_payment_request_detail_by_detail_id_should_return_ok()
+    {
+        $admin = User::factory()->count(1)->create(['role' => 'admin', 'status' => 1])->first();
+        $owner = User::factory()->count(1)->create(['role' => 'employee', 'status' => 1])->first();
+        $paymentRequest = PaymentRequest::factory()->count(1)->create(['user_id' => $owner->id])->first();
+
+        $firstDetail = PaymentRequestDetail::factory()->count(1)->create([
+            'payment_request_id' => $paymentRequest->id,
+            'concept' => PaymentRequestDetailConcepts::Benefits,
+            'amount' => 100,
+            'concept_description' => 'first old',
+        ])->first();
+
+        $secondDetail = PaymentRequestDetail::factory()->count(1)->create([
+            'payment_request_id' => $paymentRequest->id,
+            'concept' => PaymentRequestDetailConcepts::Compensation,
+            'amount' => 200,
+            'concept_description' => 'second old',
+        ])->first();
+
+        $response = $this->actingAs($admin)->put(
+            "/api/payment_requests/$paymentRequest->id/update_detail",
+            [
+                'detail_id' => $secondDetail->id,
+                'amount' => 350,
+                'concept_description' => 'second updated',
+            ]
+        );
+
+        $response->seeStatusCode(201);
+        $response->seeJsonEquals(['response' => UPDATED]);
+
+        $this->assertEquals(100.0, (float)PaymentRequestDetail::find($firstDetail->id)->amount);
+        $this->assertEquals('first old', PaymentRequestDetail::find($firstDetail->id)->concept_description);
+        $this->assertEquals(350.0, (float)PaymentRequestDetail::find($secondDetail->id)->amount);
+        $this->assertEquals('second updated', PaymentRequestDetail::find($secondDetail->id)->concept_description);
+    }
+
+    public function test_update_payment_request_all_details_should_return_ok()
+    {
+        $admin = User::factory()->count(1)->create(['role' => 'admin', 'status' => 1])->first();
+        $owner = User::factory()->count(1)->create(['role' => 'employee', 'status' => 1])->first();
+        $paymentRequest = PaymentRequest::factory()->count(1)->create(['user_id' => $owner->id])->first();
+
+        $firstDetail = PaymentRequestDetail::factory()->count(1)->create([
+            'payment_request_id' => $paymentRequest->id,
+            'concept' => PaymentRequestDetailConcepts::Benefits,
+            'amount' => 120,
+            'concept_description' => 'first old',
+        ])->first();
+
+        $secondDetail = PaymentRequestDetail::factory()->count(1)->create([
+            'payment_request_id' => $paymentRequest->id,
+            'concept' => PaymentRequestDetailConcepts::Compensation,
+            'amount' => 250,
+            'concept_description' => 'second old',
+        ])->first();
+
+        $response = $this->actingAs($admin)->put(
+            "/api/payment_requests/$paymentRequest->id/update_detail",
+            [
+                'details' => [
+                    [
+                        'detail_id' => $firstDetail->id,
+                        'amount' => 130,
+                        'concept_description' => 'first updated',
+                    ],
+                    [
+                        'detail_id' => $secondDetail->id,
+                        'amount' => 275,
+                        'concept_description' => 'second updated',
+                    ],
+                ],
+            ]
+        );
+
+        $response->seeStatusCode(201);
+        $response->seeJsonEquals(['response' => UPDATED]);
+
+        $this->assertEquals(130.0, (float)PaymentRequestDetail::find($firstDetail->id)->amount);
+        $this->assertEquals('first updated', PaymentRequestDetail::find($firstDetail->id)->concept_description);
+        $this->assertEquals(275.0, (float)PaymentRequestDetail::find($secondDetail->id)->amount);
+        $this->assertEquals('second updated', PaymentRequestDetail::find($secondDetail->id)->concept_description);
+    }
+
     public function it_returns_500_if_internal_server_error_occurs()
     {
         try {

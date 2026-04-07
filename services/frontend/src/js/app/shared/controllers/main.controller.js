@@ -498,10 +498,17 @@
                     access: true
                 },
                 {
-                    uisref: 'app.paymentRequestsAdmin',
+                    uisref: 'app.paymentRequests',
                     icon: 'ri-bank-line',
                     name: 'PaymentRequests',
                     label: $filter('translate')('navigation.payment_requests'),
+                    access: true
+                },
+                {
+                    uisref: 'app.paymentRequestsAdmin',
+                    icon: 'ri-bank-line',
+                    name: 'PaymentRequestsAdmin',
+                    label: $filter('translate')('navigation.payment_requests') + ' (Admin)',
                     access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
                 },
                 {
