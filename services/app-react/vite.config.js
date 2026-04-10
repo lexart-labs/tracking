@@ -19,4 +19,22 @@ export default defineConfig({
     },
     allowedHosts: 'all',
   },
+  test: {
+    include: ['src/tests/unit/**/*.{test,spec}.{js,jsx}'],
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/tests/setup.js'],
+    css: false,
+    testTimeout: 15000,
+    pool: 'forks',
+    poolOptions: {
+      forks: { singleFork: true },
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      reportsDirectory: './coverage',
+      include: ['src/services/**', 'src/application/pages/**'],
+    },
+  },
 })

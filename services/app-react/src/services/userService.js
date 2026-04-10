@@ -53,6 +53,24 @@ export class UserService {
         }
     }
 
+    async getUsers() {
+        try {
+            const response = await this.api.get(`${USERS_ENDPOINT}/all`)
+            return response.data.response
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getUsers() {
+        try {
+            const response = await this.api.get(`${USERS_ENDPOINT}/all`)
+            return response.data.response
+        } catch (error) {
+            throw error
+        }
+    }
+
     async uploadProfileImage(userId, file) {
         try {
             const formData = new FormData()

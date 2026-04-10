@@ -108,11 +108,13 @@ class TasksController extends BaseController
         }
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request, $id = null)
     {
-        $this->validate($request, ["id" => "required"]);
+        if (!$id) {
+            $id = $request->input("id");
+        }
 
-        $id = $request->input("id");
+        $this->validate($request, ["id" => "numeric"]);
 
         try {
             $tasks = Tasks::where('id', $id)->where('active', 1)->first();
@@ -227,7 +229,9 @@ class TasksController extends BaseController
         $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "description"]);
 
         try {
-            return Tasks::where('id', $id)->update($task);
+            Tasks::where('id', $id)->update($task);
+            $updatedTask = Tasks::where('id', $id)->first();
+            return array("response" => $updatedTask);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks update"), 500));
         }

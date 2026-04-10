@@ -599,6 +599,13 @@
                     access: true
                 },
                 {
+                    uisref: 'app.tracks',
+                    icon: 'ri-timer-line',
+                    name: 'TimeReports',
+                    label: $filter('translate')('navigation.timeReports'),
+                    access: $rootScope.userRole !== 'client'
+                },
+                {
                     uisref: 'app.weeklyHours',
                     icon: 'ri-calendar-2-line',
                     name: 'weeklyHour',

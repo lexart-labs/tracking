@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+@media print {
+  .no-print { display: none !important; }
+}
 @import 'primeicons/primeicons.css';
 /* import soho theme */
 
@@ -14,24 +18,44 @@
   --color-active-text: #7076FE;
 }
 
-/* Legacy Button Overrides */
-.lexart-btn,
-.lexart-btn--round {
+/* Legacy Button — matches AngularJS .lexart-btn */
+.lexart-btn {
   display: inline-block;
-  padding: 0 1.2rem;
+  padding: 0rem 1.2rem;
   line-height: 2rem;
-  cursor: pointer;
-  border-radius: 2px;
   font-family: 'Roboto', sans-serif;
+  font-size: .875rem;
+  color: #F9F9F9 !important;
   background-color: var(--color-active-text) !important;
-  color: #fff !important;
   border: none !important;
-  transition: background-color 0.2s ease-in;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease-in, border-color 0.2s ease-in;
 }
 
-.lexart-btn:hover,
+.lexart-btn:hover {
+  background-color: #8085ff !important;
+}
+
+.lexart-btn:active {
+  background-color: #5660dd !important;
+}
+
+/* Round modifier — matches AngularJS .lexart-btn--round */
+.lexart-btn--round {
+  font-size: .875rem;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+  padding: .25rem 1rem .20rem;
+  margin-bottom: .25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, .1) !important;
+  word-break: keep-all;
+}
+
 .lexart-btn--round:hover {
-  background-color: #5d63f0 !important;
+  background-color: #8085ff !important;
 }
 
 .lexart-btn--alt {

@@ -97,7 +97,7 @@
 			},
 
 			remove: function (id, cb) {
-				RestClient.delete(model + "/" + id, function (err, result) {
+				RestClient.delete(model + "/delete/" + id, function (err, result) {
 					cb(err, result);
 				})
 			},

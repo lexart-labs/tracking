@@ -306,6 +306,12 @@
                 controller: 'BillCtrl'
             })
 
+            .state('app.tracks', {
+                url: '/tracks',
+                templateUrl: 'app/components/tracks/views/tracksView.html',
+                controller: 'TracksCtrl'
+            })
+
             .state('app.weeklyHours', {
                 url: '/weeklyHour',
                 templateUrl: 'app/components/weeklyHours/views/weeklyHoursView.html',
