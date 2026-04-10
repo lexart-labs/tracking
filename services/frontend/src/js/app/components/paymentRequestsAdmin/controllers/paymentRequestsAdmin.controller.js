@@ -7,9 +7,18 @@
 		"$scope",
 		"$rootScope",
 		"$translate",
+		"$sce",
 		"ngDialog",
 		"PaymentRequestsServiceAdmin",
-		function ($scope, $rootScope, $translate, ngDialog, PaymentRequestsServiceAdmin) {
+		function ($scope, $rootScope, $translate, $sce, ngDialog, PaymentRequestsServiceAdmin) {
+
+			let reactUrl = $rootScope.trackingReactUrl || (typeof TRACKING_REACT_URL !== 'undefined' ? TRACKING_REACT_URL : '');
+			$scope.env_react_url = $sce.trustAsResourceUrl(reactUrl + '/#/admin/payment-requests');
+			$scope.iframeOptions = {
+				license: "GPLv3",
+				log: 'collapsed',
+				waitForLoad: true,
+			};
 
 			const INITIAL_STATE_FILTERS = {
 				concept: null,
@@ -29,27 +38,8 @@
 				External: $translate.instant("payment_requests.concepts.external_closure")
 			};
 			$scope.currencyTexts = {
-				CLP: $translate.instant("payment_requests.currency.clp"),
 				USD: $translate.instant("payment_requests.currency.usd"),
-				EUR: $translate.instant("payment_requests.currency.eur"),
 				BRL: $translate.instant("payment_requests.currency.brl"),
-				JPY: $translate.instant("payment_requests.currency.jpy"),
-				GBP: $translate.instant("payment_requests.currency.gbp"),
-				CAD: $translate.instant("payment_requests.currency.cad"),
-				AUD: $translate.instant("payment_requests.currency.aud"),
-				CNY: $translate.instant("payment_requests.currency.cny"),
-				INR: $translate.instant("payment_requests.currency.inr"),
-				MXN: $translate.instant("payment_requests.currency.mxn"),
-				RUB: $translate.instant("payment_requests.currency.rub"),
-				ZAR: $translate.instant("payment_requests.currency.zar"),
-				CHF: $translate.instant("payment_requests.currency.chf"),
-				KRW: $translate.instant("payment_requests.currency.krw"),
-				SEK: $translate.instant("payment_requests.currency.sek"),
-				NZD: $translate.instant("payment_requests.currency.nzd"),
-				SGD: $translate.instant("payment_requests.currency.sgd"),
-				HKD: $translate.instant("payment_requests.currency.hkd"),
-				ARS: $translate.instant("payment_requests.currency.ars"),
-				PYG: $translate.instant("payment_requests.currency.pyg"),
 				UYU: $translate.instant("payment_requests.currency.uyu")
 			};
 			$scope.statusTexts = {
