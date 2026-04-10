@@ -7,62 +7,65 @@ import { http, HttpResponse } from 'msw'
 import { server } from '../../../mocks/server.js'
 import { setSession, adminUser, developerUser, clientUser } from '../../helpers/mockSession.js'
 import TracksList from '@/application/pages/tracks/list/TracksList'
+import { resizerContext } from '@/providers/iframe-resizer'
 
-function renderWithProviders() {
+function renderWithProviders(user = adminUser) {
     return render(
-        <PrimeReactProvider>
-            <MemoryRouter>
-                <TracksList />
-            </MemoryRouter>
-        </PrimeReactProvider>
+        <resizerContext.Provider value={{ user, token: 'test-token' }}>
+            <PrimeReactProvider>
+                <MemoryRouter>
+                    <TracksList />
+                </MemoryRouter>
+            </PrimeReactProvider>
+        </resizerContext.Provider>
     )
 }
 
 describe('TracksList', () => {
     it('renders "Tracks" heading', () => {
         setSession(adminUser)
-        renderWithProviders()
-        expect(screen.getByText('Tracks')).toBeInTheDocument()
+        renderWithProviders(adminUser)
+        expect(screen.getByRole('heading', { name: 'Tracks' })).toBeInTheDocument()
     })
 
     it('shows Access Denied for client role', () => {
         setSession(clientUser)
-        renderWithProviders()
+        renderWithProviders(clientUser)
         expect(screen.getByText(/Access Denied/i)).toBeInTheDocument()
     })
 
     it('admin sees Client, User and Project filter labels', async () => {
         setSession(adminUser)
-        renderWithProviders()
+        renderWithProviders(adminUser)
         await waitFor(() => {
-            expect(screen.getByText('Client')).toBeInTheDocument()
-            expect(screen.getByText('User')).toBeInTheDocument()
-            expect(screen.getByText('Project')).toBeInTheDocument()
+            expect(screen.getByText('Client', { selector: 'label[for="tracks-client"]' })).toBeInTheDocument()
+            expect(screen.getByText('User', { selector: 'label[for="tracks-user"]' })).toBeInTheDocument()
+            expect(screen.getByText('Project', { selector: 'label[for="tracks-project"]' })).toBeInTheDocument()
         })
     })
 
     it('developer does not see User filter label', () => {
         setSession(developerUser)
-        renderWithProviders()
-        expect(screen.queryByText('User')).not.toBeInTheDocument()
-        expect(screen.queryByText('Client')).not.toBeInTheDocument()
-        expect(screen.queryByText('Project')).not.toBeInTheDocument()
+        renderWithProviders(developerUser)
+        expect(screen.queryByText('User', { selector: 'label[for="tracks-user"]' })).not.toBeInTheDocument()
+        expect(screen.queryByText('Client', { selector: 'label[for="tracks-client"]' })).not.toBeInTheDocument()
+        expect(screen.queryByText('Project', { selector: 'label[for="tracks-project"]' })).not.toBeInTheDocument()
     })
 
     it('Apply button is present', () => {
         setSession(adminUser)
-        renderWithProviders()
+        renderWithProviders(adminUser)
         expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument()
     })
 
     it('shows project group and CSV/PDF buttons after applying filters', async () => {
         setSession(adminUser)
-        renderWithProviders()
+        renderWithProviders(adminUser)
 
         await userEvent.click(screen.getByRole('button', { name: /apply/i }))
 
         await waitFor(() => {
-            expect(screen.getByText('Alpha Project')).toBeInTheDocument()
+            expect(screen.getAllByText('Alpha Project').length).toBeGreaterThan(0)
             expect(screen.getByRole('button', { name: /csv/i })).toBeInTheDocument()
             expect(screen.getByRole('button', { name: /pdf/i })).toBeInTheDocument()
         })
@@ -70,7 +73,7 @@ describe('TracksList', () => {
 
     it('shows track task names after applying filters', async () => {
         setSession(adminUser)
-        renderWithProviders()
+        renderWithProviders(adminUser)
 
         await userEvent.click(screen.getByRole('button', { name: /apply/i }))
 
@@ -87,7 +90,7 @@ describe('TracksList', () => {
                 HttpResponse.json({ response: [] })
             )
         )
-        renderWithProviders()
+        renderWithProviders(adminUser)
 
         await userEvent.click(screen.getByRole('button', { name: /apply/i }))
 
@@ -105,7 +108,7 @@ describe('TracksList', () => {
                 new HttpResponse(null, { status: 500 })
             )
         )
-        renderWithProviders()
+        renderWithProviders(adminUser)
 
         await userEvent.click(screen.getByRole('button', { name: /apply/i }))
 
@@ -116,7 +119,7 @@ describe('TracksList', () => {
 
     it('developer sees own tracks after applying filters', async () => {
         setSession(developerUser)
-        renderWithProviders()
+        renderWithProviders(developerUser)
 
         await userEvent.click(screen.getByRole('button', { name: /apply/i }))
 
