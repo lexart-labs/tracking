@@ -99,7 +99,7 @@ export default function ClientForm() {
 	return (
 		<div className="">
 			<div className="flex justify-between items-center mb-8">
-				<h2 className="text-2xl font-medium">{isNew() ? 'New Client' : 'Edit Client !!!'}</h2>
+				<h2 className="text-2xl font-medium">{isNew() ? 'New Client' : 'Edit Client'}</h2>
 			</div>
 
 			<form onSubmit={handleSubmit} className="flex flex-col gap-6">

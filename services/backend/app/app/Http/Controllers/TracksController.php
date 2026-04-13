@@ -546,6 +546,115 @@ class TracksController extends BaseController
         return $tracks;
     }
 
+    private function getExportTracks(Request $request)
+    {
+        $this->validate($request, [
+            "startTime" => "required",
+            "endTime" => "required",
+        ]);
+
+        $currentUser = AuthController::current();
+        $isAdminOrPm = in_array($currentUser->role, ['admin', 'pm']);
+
+        $startTime = date('Y-m-d H:i:s', strtotime($request->input("startTime")));
+        $endTime = date('Y-m-d H:i:s', strtotime($request->input("endTime")));
+        $idUser = $isAdminOrPm ? ($request->input("idUser") ?: null) : $currentUser->id;
+        $idClient = $request->input("idClient") ?: null;
+        $idProject = $request->input("idProject") ?: null;
+
+        $query = Tracks::select(
+            "Tracks.*",
+            DB::raw("Projects.name AS projectName"),
+            DB::raw("COALESCE(wh.costHour, (SELECT wh2.costHour FROM WeeklyHours wh2 WHERE wh2.idUser = Tracks.idUser AND wh2.valid_from <= DATE(Tracks.startTime) AND (wh2.valid_until IS NULL OR wh2.valid_until >= DATE(Tracks.startTime)) ORDER BY wh2.valid_from DESC LIMIT 1), (SELECT wh3.costHour FROM WeeklyHours wh3 WHERE wh3.idUser = Tracks.idUser AND wh3.borrado = '0' ORDER BY wh3.valid_from DESC LIMIT 1)) AS costHour"),
+            DB::raw("Tasks.name AS taskName"),
+            DB::raw("Users.name AS userName"),
+            DB::raw("Clients.name AS clientName"),
+            DB::raw("TIMEDIFF(Tracks.endTime, Tracks.startTime) AS duration")
+        )
+            ->join("Tasks", DB::raw("Tracks.idTask"), "=", DB::raw("Tasks.id"))
+            ->join("Users", DB::raw("Tracks.idUser"), "=", DB::raw("Users.id"))
+            ->join("Projects", DB::raw("Projects.id"), "=", DB::raw("Tasks.idProject"))
+            ->join("Clients", DB::raw("Clients.id"), "=", DB::raw("Projects.idClient"))
+            ->leftJoin("WeeklyHours AS wh", "wh.id", "=", "Tracks.idWeeklyHour")
+            ->whereRaw("(Tracks.startTime >= ?)", [$startTime])
+            ->whereRaw("(Tracks.endTime <= ?)", [$endTime])
+            ->whereRaw("(Tracks.typeTrack = ?)", ['manual'])
+            ->whereRaw("(Tasks.active >= ?)", [1]);
+
+        if ($idUser) $query = $query->whereRaw("(Tracks.idUser) = ?", [$idUser]);
+        if ($idClient) $query = $query->whereRaw("(Projects.idClient) = ?", [$idClient]);
+        if ($idProject) $query = $query->whereRaw("(Projects.id) = ?", [$idProject]);
+
+        $tracks = $query->orderBy("Tracks.idProyecto")->get();
+        return $this->calcCosto($tracks);
+    }
+
+    private function formatDuration($duration)
+    {
+        if (!$duration) return '00:00';
+        $parts = explode(':', $duration);
+        $h = (int)($parts[0] ?? 0);
+        $m = (int)($parts[1] ?? 0);
+        $s = (int)($parts[2] ?? 0);
+        return $this->minutesToHhmm($h * 60 + $m + (int)round($s / 60));
+    }
+
+    private function minutesToHhmm($totalMinutes)
+    {
+        $totalMinutes = max(0, (int)$totalMinutes);
+        return str_pad((int)floor($totalMinutes / 60), 2, '0', STR_PAD_LEFT) . ':' . str_pad($totalMinutes % 60, 2, '0', STR_PAD_LEFT);
+    }
+
+    private function formatDatetimeExport($datetime)
+    {
+        if (!$datetime) return '';
+        $parts = explode(' ', $datetime);
+        $d = explode('-', $parts[0]);
+        $time = isset($parts[1]) ? substr($parts[1], 0, 5) : '';
+        return ($d[2] ?? '') . '/' . ($d[1] ?? '') . '/' . ($d[0] ?? '') . ($time ? ' ' . $time : '');
+    }
+
+    public function exportCsv(Request $request)
+    {
+        try {
+            $tracks = $this->getExportTracks($request);
+            $currentUser = AuthController::current();
+            $isAdminOrPm = in_array($currentUser->role, ['admin', 'pm']);
+
+            $buf = fopen('php://temp', 'r+');
+            $headers = ['Project', 'Client', 'Task', 'Start', 'End', 'Duration', 'Cost/Hour', 'Cost'];
+            if ($isAdminOrPm) array_unshift($headers, 'User');
+            fputcsv($buf, $headers);
+
+            foreach ($tracks as $track) {
+                $cur = $track['currency'] ?? 'USD';
+                $row = [
+                    $track['projectName'] ?? '',
+                    $track['clientName'] ?? '',
+                    $track['name'] ?? '',
+                    $this->formatDatetimeExport($track['startTime']),
+                    $this->formatDatetimeExport($track['endTime']),
+                    $this->formatDuration($track['duration']),
+                    $cur . ' ' . number_format((float)($track['costHour'] ?? 0), 2),
+                    $cur . ' ' . number_format((float)($track['trackCost'] ?? 0), 2),
+                ];
+                if ($isAdminOrPm) array_unshift($row, $track['userName'] ?? '');
+                fputcsv($buf, $row);
+            }
+
+            rewind($buf);
+            $csv = chr(0xEF) . chr(0xBB) . chr(0xBF) . stream_get_contents($buf);
+            fclose($buf);
+
+            return response($csv, 200, [
+                'Content-Type' => 'text/csv; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="tracks.csv"',
+            ]);
+        } catch (Exception $e) {
+            return new Response(['Error' => 'Export failed'], 500);
+        }
+    }
+
     public function endlessTracks(Request $request)
     {
         try {

@@ -66,6 +66,9 @@
         if (!err) {
           console.log('project:', project);
           $scope.project = project;
+          if ($scope.project.presupuesto !== undefined && $scope.project.presupuesto !== null) {
+            $scope.project.presupuesto = Number($scope.project.presupuesto);
+          }
           if($scope.project.active === '1'){
             $scope.project.active = {name:'Active', value: 1}
           }else{
@@ -82,8 +85,9 @@
           //Project tasks
           ProjectsServices.getProjectTasks(idProject, function(err, tasks) {
             if (!err) {
-              console.log('tasks:', tasks);
-              $scope.tasks = tasks;
+              $scope.tasks = tasks.filter(function(task) {
+                return task.active == 1;
+              });
             }
           })
         }

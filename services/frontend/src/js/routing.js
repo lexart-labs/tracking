@@ -39,6 +39,12 @@
                 controller: 'DashboardCtrl'
             })
 
+            .state('app.paymentRequests', {
+                url: '/payment-requests',
+                templateUrl: 'app/components/paymentRequests/views/paymentRequestsView.html',
+                controller: 'PaymentRequestsCtrl'
+            })
+
             .state('app.paymentRequestsAdmin', {
                 url: '/admin/payment-requests',
                 templateUrl: 'app/components/paymentRequestsAdmin/views/adminPaymentRequestsView.html',
@@ -298,6 +304,12 @@
                 url: '/bill/edit/:id',
                 templateUrl: 'app/components/bills/views/billFormView.html',
                 controller: 'BillCtrl'
+            })
+
+            .state('app.tracks', {
+                url: '/tracks',
+                templateUrl: 'app/components/tracks/views/tracksView.html',
+                controller: 'TracksCtrl'
             })
 
             .state('app.weeklyHours', {

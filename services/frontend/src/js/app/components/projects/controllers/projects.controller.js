@@ -22,13 +22,14 @@
 
 
 
+
+
     if ($rootScope.isAdmin=="true") {
       ProjectsServices.find($scope.currentPage, $scope.query, function(err, projects, countItems) {
         if (!err) {
           console.log('projects', projects, countItems);
-          $scope.allProjects  = projects;
-          $scope.projects     = projects.slice(0, PAGE_SIZE - 1);
-          $scope.total        = projects.length;
+          $scope.allProjects  = projects.filter(function(p){ return p.active == 1; });
+          $scope.filterProjects();
         }
       });
     }else if($rootScope.isClient =="true") {
@@ -36,41 +37,48 @@
         console.log(err, projects);
         if (!err) {
           console.log('projects', projects);
-          $scope.allProjects  = projects;
-          $scope.projects     = angular.copy($scope.allProjects);
+          $scope.allProjects  = projects.filter(function(p){ return p.active == 1; });
+          $scope.filterProjects();
         }
       });
     }else {
-      // ProjectsServices.getProjectsByUser($rootScope.userId, function(err, projects) {
-      //   console.log(err, projects);
-      //   if (!err) {
-      //     console.log('projects', projects);
-      //     $scope.allProjects  = projects;
-      //     $scope.projects     = angular.copy($scope.allProjects);
-      //   }
-      // });
       ProjectsServices.find($scope.currentPage, $scope.query, function(err, projects, countItems) {
         if (!err) {
           console.log('projects', projects, countItems);
-          $scope.allProjects  = projects;
-          $scope.projects     = projects.slice(0, PAGE_SIZE - 1);
-          $scope.total        = projects.length;
+          $scope.allProjects  = projects.filter(function(p){ return p.active == 1; });
+          $scope.filterProjects();
         }
       });
     }
 
+    $scope.deleteProject = function (id) {
+      if (confirm('Tem certeza que deseja excluir este projeto?')) {
+        ProjectsServices.remove(id, function (err, result) {
+          if (!err) {
+            $scope.allProjects = $scope.allProjects.filter(function (project) {
+              return project.id !== id;
+            });
+            $scope.filterProjects();
+            $rootScope.showToaster('Projeto excluído com sucesso', 'success');
+          } else {
+            $rootScope.showToaster('Erro ao excluir projeto', 'error');
+          }
+        });
+      }
+    };
+
     $scope.filterProjects = function () {
       $scope.currentPage = 0;
-      $scope.projects = ($filter('filter')($scope.allProjects, $scope.filter));
-      if ($scope.projects) {
-        $scope.total    = $scope.projects.length;
-        $scope.projects = $scope.projects.slice(0,  PAGE_SIZE - 1);
-      }
+      var filtered = $filter('filter')($scope.allProjects, $scope.filter);
+
+      $scope.filteredList = filtered;
+      $scope.total = filtered.length;
+      $scope.projects = filtered.slice(0, PAGE_SIZE - 1);
     };
 
     $scope.pager = function(page) {
       var offset = PAGE_SIZE * (page - 1);
-      $scope.projects = $scope.allProjects.slice(offset, offset + PAGE_SIZE - 1);
+      $scope.projects = $scope.filteredList.slice(offset, offset + PAGE_SIZE - 1);
     };  
 
   }]);

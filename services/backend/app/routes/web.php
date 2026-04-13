@@ -81,6 +81,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::group(['middleware' => 'pm:api'], function() {
             Route::post('new', 'ProjectsController@new');
             Route::put('update', ["middleware" => "pm:api", "uses" => 'ProjectsController@update']);
+            Route::delete('delete/{id}', 'ProjectsController@delete');
+            Route::get('delete/{id}', 'ProjectsController@delete');
         });
 
         //Tasks
@@ -88,6 +90,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('all', 'TasksController@all');
             Route::get('{id}', 'TasksController@all');
             Route::delete('delete', 'TasksController@delete');
+            Route::get('delete/{id}', 'TasksController@delete');
             Route::post('undelete', 'TasksController@undelete');
             Route::put('update', 'TasksController@update');
             Route::post('new', 'TasksController@create');
@@ -153,6 +156,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'tracks', 'middleware' => 'auth:api'], function() {
 
         Route::post('new', 'TracksController@new');
+
+        Route::post('export/csv', 'TracksController@exportCsv');
 
         Route::group(['middleware' => 'pm:api'], function(){
             Route::get('tracking', 'TracksController@endlessTracks');

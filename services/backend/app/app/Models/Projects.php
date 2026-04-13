@@ -11,7 +11,7 @@ class Projects extends Model
 
     protected $table = 'Projects';
 
-    protected $fillable = ['idClient', 'name', 'description', 'comments', 'duration', 'tracked', 'totalCost', 'presuposto'];
+    protected $fillable = ['idClient', 'name', 'description', 'comments', 'duration', 'tracked', 'totalCost', 'presupuesto', 'active'];
 
     public $timestamps = false;
 

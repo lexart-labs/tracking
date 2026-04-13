@@ -498,10 +498,17 @@
                     access: true
                 },
                 {
-                    uisref: 'app.paymentRequestsAdmin',
+                    uisref: 'app.paymentRequests',
                     icon: 'ri-bank-line',
                     name: 'PaymentRequests',
                     label: $filter('translate')('navigation.payment_requests'),
+                    access: true
+                },
+                {
+                    uisref: 'app.paymentRequestsAdmin',
+                    icon: 'ri-bank-line',
+                    name: 'PaymentRequestsAdmin',
+                    label: $filter('translate')('navigation.payment_requests') + ' (Admin)',
                     access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
                 },
                 {
@@ -590,6 +597,13 @@
                     name: 'Reports',
                     label: 'Reportes',
                     access: true
+                },
+                {
+                    uisref: 'app.tracks',
+                    icon: 'ri-timer-line',
+                    name: 'TimeReports',
+                    label: $filter('translate')('navigation.timeReports'),
+                    access: $rootScope.userRole !== 'client'
                 },
                 {
                     uisref: 'app.weeklyHours',

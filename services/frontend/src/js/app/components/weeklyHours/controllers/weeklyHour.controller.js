@@ -4,7 +4,7 @@
 
   var Module = ng.module('LexTracking');
 
-  Module.controller('WeeklyHourCtrl', ['$scope','$state','$stateParams', '$rootScope', '$filter', '$timeout', 'WeeklyHourServices','UserServices' , 'ngDialog', function($scope,$state,$stateParams, $rootScope, $filter, $timeout, WeeklyHourServices,UserServices, ngDialog) {
+  Module.controller('WeeklyHourCtrl', ['$scope','$state','$stateParams', '$rootScope', '$filter', '$timeout', 'WeeklyHourServices','UserServices' , 'ngDialog', '$sce', function($scope,$state,$stateParams, $rootScope, $filter, $timeout, WeeklyHourServices,UserServices, ngDialog, $sce) {
 
     $scope.users  = [];
     $scope.user  ={};
@@ -15,6 +15,10 @@
     $scope.currentPage  = 0;
 
     var idWeeklyHour          = $stateParams.id;
+
+    $scope.env_react_url = $sce.trustAsResourceUrl($rootScope.trackingReactUrl + '/#/weeklyhour/' + (idWeeklyHour || 'NEW'));
+
+    if ($rootScope.showIframe) return false;
 
     if (!idWeeklyHour) {
       $scope.weeklyHour.valid_from = new Date();
@@ -47,7 +51,7 @@
       });
     }
 
-   
+
 
     UserServices.find($scope.currentPage, $scope.query, function(err, users, countItems) {
       if (!err) {
