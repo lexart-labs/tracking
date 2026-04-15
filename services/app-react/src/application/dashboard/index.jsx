@@ -8,11 +8,17 @@ import { CurrentTracksSection } from './components/CurrentTracksSection'
 import './Dashboard.css'
 
 export function Dashboard() {
-    const { user } = useContext(resizerContext)
+    const { user, refreshCounter } = useContext(resizerContext)
     const userRole = user?.userRole
 
     const { history, activeTracks, loading, refresh } = useDashboardData(userRole)
     const { startTrack, stopTrack, createManualTrack, submitting } = useTrackActions(user, refresh)
+
+    React.useEffect(() => {
+        if (refreshCounter > 0) {
+            refresh()
+        }
+    }, [refreshCounter, refresh])
 
     const activeTrack = history.find(item => !item.endTime || item.endTime === '0000-00-00 00:00:00')
     const hasAnyActiveTrack = !!activeTrack

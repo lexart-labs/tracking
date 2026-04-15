@@ -199,6 +199,7 @@
                                 result = result[0];
                                 $rootScope.currentTrack.id = result.id;
                                 $scope.toggleTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                                 $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
                                 $rootScope.topBar.filterTask.name = $rootScope.topBar.filterTask.taskName;
                                 $rootScope.topBar.filterTask.id = $rootScope.topBar.filterTask.idTask;
@@ -476,12 +477,14 @@
                             TracksServices.update($rootScope.currentTrack, function (err, result) {
                                 $rootScope.timerRunning = false;
                                 $scope.stopTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                             });
                         })
                     } else {
                         TracksServices.update($rootScope.currentTrack, function (err, result) {
                             $rootScope.timerRunning = false;
                             $scope.stopTimer();
+                            $rootScope.$broadcast('timerStateChanged');
                         });
                     }
                 }
@@ -662,24 +665,6 @@
             ]
         };
 
-        // Check for defined session values
-        if (!$window.localStorage[TOKEN_KEY]) {
-            $log.error('You are not logged in');
-            $state.go('login');
-        } else {
-            $rootScope.showTrackTooltip = true;
-            $rootScope.showManualTrackTooltip = false;
-            $log.info('Welcome back', $window.localStorage["userName"]);
-            $rootScope.userId = $window.localStorage["userId"];
-            $rootScope.userName = $window.localStorage["userName"];
-            $rootScope.userEmail = $window.localStorage["userEmail"];
-            $rootScope.userRole = $window.localStorage["userRole"];
-            $rootScope.isAdmin = $window.localStorage["isAdmin"];
-            $rootScope.isClient = $window.localStorage["isClient"];
-            if ($rootScope.isClient == 'true') {
-                $rootScope.userIdClient = $window.localStorage["idUserClient"];
-            }
-            $rootScope.generateSidebarContent();
         $rootScope.syncTimerStatus = function() {
             TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
                 if (!err) {
@@ -704,9 +689,37 @@
                         $scope.timer = "00:00:00";
                         document.title = 'Tracking';
                     }
+                    $rootScope.$broadcast('timerStateChanged');
                 }
             });
         };
+
+        // Listen for messages from React (in iframe)
+        $window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'object') {
+                if (event.data.action === 'refresh-timer') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.syncTimerStatus) $rootScope.syncTimerStatus()
+                    });
+                } else if (event.data.action === 'show-toast') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.showToaster) {
+                            $rootScope.showToaster(event.data.message, event.data.type || 'info', '')
+                        }
+                    });
+                }
+            }
+        });
+
+        // Broadcast changes from Angular to React
+        $rootScope.$on('timerStateChanged', function() {
+            var iframes = document.querySelectorAll('iframe');
+            iframes.forEach(function(iframe) {
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ action: 'refresh-dashboard' }, '*');
+                }
+            });
+        });
 
         // Check for defined session values
         if (!$window.localStorage[TOKEN_KEY]) {

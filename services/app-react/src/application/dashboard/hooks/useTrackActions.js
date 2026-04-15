@@ -18,9 +18,6 @@ export function useTrackActions(user, onRefresh) {
 
     const notifyParentToSyncTimer = () => {
         if (window.parent && window.parent.postMessage) {
-            // Usamos el formato esperado por iframe-resizer
-            window.parent.postMessage('[iFrameResizer]refresh-timer:refresh-timer', '*');
-            // O una señal directa si el directive escucha mensajes planos
             window.parent.postMessage({ action: 'refresh-timer' }, '*');
         }
     }
