@@ -34,6 +34,26 @@ class TracksService {
         }
         return response.data.response
     }
+
+    async getHistory() {
+        const response = await api.get('/tracks/user/history')
+        return response.data.response
+    }
+
+    async getActiveTracks() {
+        const response = await api.get('/tracks/tracking')
+        return response.data.response
+    }
+
+    async create(track) {
+        const response = await api.post('/tracks/new', track)
+        return response.data
+    }
+
+    async getCurrentUserLastTrack() {
+        const response = await api.get('/tracks/user/current/last')
+        return response.data.response
+    }
 }
 
 export default new TracksService()

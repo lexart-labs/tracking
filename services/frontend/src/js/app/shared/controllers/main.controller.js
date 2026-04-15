@@ -680,22 +680,53 @@
                 $rootScope.userIdClient = $window.localStorage["idUserClient"];
             }
             $rootScope.generateSidebarContent();
+        $rootScope.syncTimerStatus = function() {
             TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
                 if (!err) {
-                    if (track) {
-                        if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
+                    // Stop current visual timer if running
+                    if ($rootScope.timerRunning) {
+                        $scope.stopTimer();
+                        $rootScope.timerRunning = false;
+                    }
 
-                            //Update current track
-                            $rootScope.currentTrack = track;
-                            $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
-                            var now = new Date().getTime(); //Fecha actual millisegundos
-                            var start = new Date(track.startTime).getTime(); //Fecha de track en millisegundos
-                            var ms = now - start;
-                            $scope.toggleTimer(ms); //Iniciamos el clock con el tiempo corrido
-                        }
+                    if (track && (!track.endTime || track.endTime == '0000-00-00 00:00:00')) {
+                        // Update current track
+                        $rootScope.currentTrack = track;
+                        $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
+                        var now = new Date().getTime(); // Fecha actual milisegundos
+                        var start = new Date(track.startTime).getTime(); // Fecha de track en milisegundos
+                        var ms = now - start;
+                        $scope.toggleTimer(ms); // Iniciamos el clock con el tiempo corrido
+                    } else {
+                        $rootScope.currentTrack = {};
+                        $rootScope.timerRunning = false;
+                        $scope.mode = "Start";
+                        $scope.timer = "00:00:00";
+                        document.title = 'Tracking';
                     }
                 }
             });
+        };
+
+        // Check for defined session values
+        if (!$window.localStorage[TOKEN_KEY]) {
+            $log.error('You are not logged in');
+            $state.go('login');
+        } else {
+            $rootScope.showTrackTooltip = true;
+            $rootScope.showManualTrackTooltip = false;
+            $log.info('Welcome back', $window.localStorage["userName"]);
+            $rootScope.userId = $window.localStorage["userId"];
+            $rootScope.userName = $window.localStorage["userName"];
+            $rootScope.userEmail = $window.localStorage["userEmail"];
+            $rootScope.userRole = $window.localStorage["userRole"];
+            $rootScope.isAdmin = $window.localStorage["isAdmin"];
+            $rootScope.isClient = $window.localStorage["isClient"];
+            if ($rootScope.isClient == 'true') {
+                $rootScope.userIdClient = $window.localStorage["idUserClient"];
+            }
+            $rootScope.generateSidebarContent();
+            $rootScope.syncTimerStatus();
         }
 
 

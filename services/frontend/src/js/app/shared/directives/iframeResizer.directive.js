@@ -20,8 +20,21 @@
             checkOrigin: false,
             license: "GPLv3",
             scrolling: "omit",
-            onResized: function (data) {
-              console.log('Iframe resized:', data.height);
+            onMessage: function (event) {
+              if (event.message && event.message.action === 'refresh-timer') {
+                $rootScope.$apply(function() {
+                  if ($rootScope.syncTimerStatus) {
+                    $rootScope.syncTimerStatus();
+                  }
+                });
+              }
+              if (event.message && event.message.action === 'show-toast') {
+                $rootScope.$apply(function() {
+                  if ($rootScope.showToaster) {
+                    $rootScope.showToaster(event.message.message, event.message.type || 'info');
+                  }
+                });
+              }
             },
             onReady: function (iframeEl) {
               console.log('iframe listo:', iframeEl.iframeResizer);
