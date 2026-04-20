@@ -115,6 +115,19 @@ export const handlers = [
   }),
 
   // Tracks
+  http.get(`${BASE_URL}/tracks/user/history`, () => {
+    return HttpResponse.json({ response: tracks })
+  }),
+
+  http.get(`${BASE_URL}/tracks/tracking`, () => {
+    return HttpResponse.json({ response: [tracks[1]] })
+  }),
+
+  http.post(`${BASE_URL}/tracks/new`, async ({ request }) => {
+    const body = await request.json()
+    return HttpResponse.json({ response: { ...body, id: 99 } }, { status: 201 })
+  }),
+
   http.post(`${BASE_URL}/tracks/user/all`, () => {
     return HttpResponse.json({ response: tracks })
   }),
@@ -129,11 +142,11 @@ export const handlers = [
   }),
 
   http.put(`${BASE_URL}/tracks/update`, () => {
-    return HttpResponse.json({ response: {} })
+    return HttpResponse.json({ response: { success: true } })
   }),
 
   http.put(`${BASE_URL}/tracks/user/current/update`, () => {
-    return HttpResponse.json({ response: {} })
+    return HttpResponse.json({ response: { success: true } })
   }),
 
   http.post(`${BASE_URL}/tracks/export/csv`, () => {
