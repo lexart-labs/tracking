@@ -29,8 +29,8 @@ class TracksController extends BaseController
         $startTime = $request->input("startTime");
         $endTime = $request->input("endTime");
 
-        $startTime = date('Y-m-d H:i:s',date(strtotime($startTime)));
-        $endTime = date('Y-m-d H:i:s',date(strtotime($endTime)));
+        $startTime = date('Y-m-d H:i:s', strtotime($startTime));
+        $endTime = date('Y-m-d H:i:s', strtotime($endTime));
 
         $user_id = $id;
         $client_id = $request->input("idClient") ? $request->input("idClient") : null;
