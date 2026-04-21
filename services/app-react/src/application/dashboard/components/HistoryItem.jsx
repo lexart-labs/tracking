@@ -59,6 +59,7 @@ export default function HistoryItem({ item, onStart, onStop, onSaveSelection, su
 				<div className="history-item__duration">
 					<div className="flex items-center gap-2">
 						<span className="lexart-tag lexart-tag--info">{item.projectName}</span>
+						{item.clientName && <span className="lexart-tag lexart-tag--secondary">{item.clientName}</span>}
 						<span className="history-item__task_name">{item.name}</span>
 					</div>
 				</div>
@@ -112,6 +113,7 @@ export default function HistoryItem({ item, onStart, onStop, onSaveSelection, su
 									className="action-circle-btn"
 									onClick={() => onStart(item)}
 									disabled={submitting}
+									data-testid="start-track-btn"
 								>
 									<i className={submitting ? "pi pi-spin pi-spinner" : "pi pi-play"}></i>
 								</button>

@@ -1,11 +1,11 @@
 import React from 'react'
 import HistoryItem from './HistoryItem'
 
-export default function HistorySection({ history, onStart, onStop, onSaveSelection, submitting, hasAnyActiveTrack, activeTrackId }) {
+export default function HistorySection({ history, onStart, onStop, onSaveSelection, submitting, hasAnyActiveTrack, activeTrackId, ...props }) {
     if (!history || history.length === 0) return null
 
     return (
-        <details open>
+        <details open {...props}>
             <summary>
                 <i className="ri-arrow-right-s-line summary-chevron"></i>
                 <span className="summary-title">History</span>

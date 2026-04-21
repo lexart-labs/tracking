@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function CurrentTracksSection({ tracks, userRole }) {
+export function CurrentTracksSection({ tracks, userRole, ...props }) {
 	if (userRole !== 'admin' && userRole !== 'pm') return null
 
 	const formatDate = (dateStr) => {
@@ -11,7 +11,7 @@ export function CurrentTracksSection({ tracks, userRole }) {
 	}
 
 	return (
-		<details open>
+		<details open {...props}>
 			<summary>
 				<i className="ri-arrow-right-s-line summary-chevron"></i>
 				<span className="summary-title">Current Tracks</span>

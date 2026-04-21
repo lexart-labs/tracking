@@ -27,7 +27,7 @@ export function Dashboard() {
     const activeTrackId = activeTrack ? activeTrack.id : null
 
     return (
-        <div className="dashboard-container p-4">
+        <div className="dashboard-container p-4" data-testid="dashboard-container">
             <div className="flex justify-between items-center mb-4">
                 <BreadCrumbs items={[{ label: 'Dashboard', url: '#/' }, { label: 'Current Tracks' }]} />
             </div>
@@ -46,6 +46,7 @@ export function Dashboard() {
                                 submitting={submitting}
                                 hasAnyActiveTrack={hasAnyActiveTrack}
                                 activeTrackId={activeTrackId}
+                                data-testid="history-section"
                             />
                         )
                     )}
@@ -55,6 +56,7 @@ export function Dashboard() {
                     <CurrentTracksSection 
                         tracks={activeTracks} 
                         userRole={userRole} 
+                        data-testid="current-tracks-section"
                     />
                 </ErrorBoundary>
             </div>

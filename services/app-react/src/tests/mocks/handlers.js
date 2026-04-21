@@ -6,6 +6,7 @@ const tracks = [
   {
     id: 1,
     name: 'Implement login',
+    taskName: 'Implement login',
     idProyecto: 10,
     projectName: 'Alpha Project',
     idUser: 1,
@@ -21,6 +22,7 @@ const tracks = [
   {
     id: 2,
     name: 'Fix bug',
+    taskName: 'Fix bug',
     idProyecto: 10,
     projectName: 'Alpha Project',
     idUser: 3,

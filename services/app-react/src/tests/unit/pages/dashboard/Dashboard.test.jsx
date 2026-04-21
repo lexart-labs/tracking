@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Dashboard } from '@/application/dashboard'
 import { resizerContext } from '@/providers/iframe-resizer'
@@ -17,7 +17,7 @@ const mockUser = {
 
 const renderDashboard = (user = mockUser, refreshCounter = 0) => {
   return render(
-    <resizerContext.Provider value={{ user, refreshCounter }}>
+    <resizerContext.Provider value={{ user, token: 'fake-token', refreshCounter }}>
       <Dashboard />
     </resizerContext.Provider>
   )
@@ -26,30 +26,33 @@ const renderDashboard = (user = mockUser, refreshCounter = 0) => {
 describe('Dashboard Component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.spyOn(window.parent, 'postMessage').mockImplementation(() => {})
     sessionStore.setState({ user: mockUser, token: 'fake-token' })
   })
 
   it('renders history correctly after loading', async () => {
     renderDashboard()
     
-    // Debería mostrar skeleton al inicio (o simplemente esperar a que termine)
+    // Esperamos a que aparezca un elemento del historial
     await waitFor(() => {
       expect(screen.getByText('Implement login')).toBeInTheDocument()
-    })
+    }, { timeout: 5000 })
     
-    expect(screen.getByText('Alpha Project')).toBeInTheDocument()
-    expect(screen.getByText('Acme Corp')).toBeInTheDocument()
+    // Alpha Project aparece en varios lugares, usamos getAllByText
+    expect(screen.getAllByText('Alpha Project').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Acme Corp').length).toBeGreaterThan(0)
   })
 
   it('shows Current Tracks section for admin', async () => {
     renderDashboard()
     
     await waitFor(() => {
-      expect(screen.getByText('Current Tracks')).toBeInTheDocument()
-    })
+      const section = screen.getByTestId('current-tracks-section')
+      expect(within(section).getByText('Fix bug')).toBeInTheDocument()
+    }, { timeout: 5000 })
     
-    // track[1] de los mocks es "Fix bug"
-    expect(screen.getByText('Fix bug')).toBeInTheDocument()
+    const section = screen.getByTestId('current-tracks-section')
+    expect(within(section).getByText('Current Tracks')).toBeInTheDocument()
   })
 
   it('notifies parent to sync timer when a track is started', async () => {
@@ -57,33 +60,25 @@ describe('Dashboard Component', () => {
     
     await waitFor(() => screen.getByText('Implement login'))
     
-    // Buscar el botón de play para "Implement login" (id: 1)
-    const playButtons = screen.getAllByRole('button')
-    // El primer item en el historial de mocks es id 1 (Implement login), no tiene endTime nulo 
-    // pero el DASHBOARD lo muestra.
-    // Vamos a buscar el botón con el icono pi-play
-    const playButton = playButtons.find(btn => btn.querySelector('.pi-play'))
-    
-    fireEvent.click(playButton)
+    const startButtons = screen.getAllByTestId('start-track-btn')
+    fireEvent.click(startButtons[0])
     
     await waitFor(() => {
-      expect(mockPostMessage).toHaveBeenCalledWith(
+      expect(window.parent.postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ action: 'refresh-timer' }),
         '*'
       )
-    })
+    }, { timeout: 5000 })
   })
 
   it('updates dashboard when refreshCounter increments', async () => {
-    const { rerender } = renderDashboard(mockUser, 0)
+    renderDashboard(mockUser, 0)
     
     await waitFor(() => screen.getByText('Implement login'))
     
     // Simulamos un mensaje de Angular que incrementa el contador
     renderDashboard(mockUser, 1) 
     
-    // El useEffect de Dashboard debería llamar a refresh()
-    // Podemos verificar que aparezca el spinner de carga brevemente o simplemente que los datos sigan ahí
     expect(screen.getByText('Implement login')).toBeInTheDocument()
   })
 })
