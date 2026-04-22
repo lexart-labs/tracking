@@ -110,10 +110,11 @@ export default function HistoryItem({ item, onStart, onStop, onSaveSelection, su
 							)}
 							{!hasAnyActiveTrack && (
 								<button
-									className="action-circle-btn"
-									onClick={() => onStart(item)}
-									disabled={submitting}
+									className={`action-circle-btn ${Number(item.isActive) !== 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+									onClick={() => Number(item.isActive) === 1 && onStart(item)}
+									disabled={submitting || Number(item.isActive) !== 1}
 									data-testid="start-track-btn"
+									title={Number(item.isActive) !== 1 ? "Tarea inactiva" : "Iniciar track"}
 								>
 									<i className={submitting ? "pi pi-spin pi-spinner" : "pi pi-play"}></i>
 								</button>
