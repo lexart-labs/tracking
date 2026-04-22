@@ -1,6 +1,8 @@
 import React from 'react'
 import { render, screen, waitFor, fireEvent, within } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { server } from '@/tests/mocks/server.js'
 import { Dashboard } from '@/application/dashboard'
 import { resizerContext } from '@/providers/iframe-resizer'
 import sessionStore from '@/stores/session'
@@ -13,6 +15,18 @@ const mockUser = {
   userId: 1,
   userName: 'Test User',
   userRole: 'admin',
+}
+
+const dummyTrack = {
+  id: 1,
+  name: 'Test Task',
+  taskName: 'Test Task',
+  idProyecto: 10,
+  projectName: 'Test Project',
+  idUser: 1,
+  startTime: '2024-03-01 09:00:00',
+  endTime: '2024-03-01 10:00:00',
+  duration: '01:00:00',
 }
 
 const renderDashboard = (user = mockUser, refreshCounter = 0) => {
@@ -80,5 +94,48 @@ describe('Dashboard Component', () => {
     renderDashboard(mockUser, 1) 
     
     expect(screen.getByText('Implement login')).toBeInTheDocument()
+  })
+
+  it('disables play button for inactive tasks', async () => {
+    // Sobrescribimos el mock para devolver una tarea inactiva
+    server.use(
+      http.get('http://localhost:8081/tracks/user/history', () => {
+        return HttpResponse.json({ 
+          response: [{
+            ...dummyTrack,
+            isActive: 0,
+            name: 'Inactive Task'
+          }]
+        })
+      })
+    )
+
+    renderDashboard()
+    await waitFor(() => screen.getByText('Inactive Task'))
+    
+    const startButton = screen.getByTestId('start-track-btn')
+    expect(startButton).toBeDisabled()
+    expect(startButton).toHaveAttribute('title', 'Tarea inactiva')
+    expect(startButton.className).toContain('opacity-50')
+  })
+
+  it('disables play button for deleted tasks (null isActive)', async () => {
+    server.use(
+      http.get('http://localhost:8081/tracks/user/history', () => {
+        return HttpResponse.json({ 
+          response: [{
+            ...dummyTrack,
+            isActive: null,
+            name: 'Deleted Task'
+          }]
+        })
+      })
+    )
+
+    renderDashboard()
+    await waitFor(() => screen.getByText('Deleted Task'))
+    
+    const startButton = screen.getByTestId('start-track-btn')
+    expect(startButton).toBeDisabled()
   })
 })

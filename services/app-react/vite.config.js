@@ -32,10 +32,14 @@ export default defineConfig({
     css: false,
     testTimeout: 30000,
     hookTimeout: 30000,
+    teardownTimeout: 10000,
+    maxWorkers: 1,
+    minWorkers: 1,
     pool: 'forks',
     poolOptions: {
       forks: { 
         singleFork: true,
+        isolate: false,
       },
     },
     coverage: {

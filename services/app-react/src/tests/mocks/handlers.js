@@ -18,6 +18,7 @@ const tracks = [
     costHour: '50.00',
     trackCost: '50.00',
     currency: 'USD',
+    isActive: 1,
   },
   {
     id: 2,
@@ -34,6 +35,7 @@ const tracks = [
     costHour: '30.00',
     trackCost: '30.00',
     currency: 'USD',
+    isActive: 1,
   },
 ]
 
