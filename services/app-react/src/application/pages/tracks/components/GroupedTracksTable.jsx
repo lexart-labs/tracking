@@ -74,9 +74,11 @@ const GroupedTracksTable = forwardRef(function GroupedTracksTable({ grouped, loa
         <Button
             icon="pi pi-pencil"
             rounded
-            text
+            outlined
             size="small"
             onClick={() => onEdit(rowData)}
+            aria-label="Edit"
+            title="Edit"
         />
     )
 

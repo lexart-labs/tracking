@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import { Button } from 'primereact/button'
 import weeklyhoursService from '@/services/weeklyhoursService'
 import sessionStore from '@/stores/session'
 
@@ -41,13 +42,15 @@ export default function WeeklyHoursList() {
 	const actionBodyTemplate = (rowData) => {
 		return (
 			<div className="flex justify-end pr-4">
-				<button
-					className="lexart-btn-circle"
+				<Button
+					icon="pi pi-pencil"
+					rounded
+					outlined
+					size="small"
 					onClick={() => navigate(`/weeklyhour/${rowData.id}`)}
+					aria-label="Edit"
 					title="Edit"
-				>
-					<i className="ri-edit-line" />
-				</button>
+				/>
 			</div>
 		)
 	}
