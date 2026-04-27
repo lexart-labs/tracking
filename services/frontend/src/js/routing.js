@@ -112,8 +112,8 @@
             // TASKS
             .state('app.tasks', {
                 url: '/tasks',
-                templateUrl: 'app/components/tasks/tasks/views/tasksView.html',
-                controller: 'TasksCtrl',
+                templateUrl: 'app/components/tasks/tasks/views/tasks_react.html',
+                controller: 'TasksReactCtrl',
                 resolve: {
                 PreviousState: ["$state", function ($state) {
                     var currentStateData = {

@@ -12,6 +12,7 @@ import PaymentRequests from '@/application/pages/paymentRequests/PaymentRequests
 import WeeklyHoursList from '@/application/pages/weeklyhours/list/WeeklyHoursList'
 import WeeklyHoursForm from '@/application/pages/weeklyhours/form/WeeklyHoursForm'
 import TracksList from '@/application/pages/tracks/list/TracksList'
+import TasksList from '@/application/pages/tasks/list/TasksList'
 import ProtectedRoute from '@/application/components/ProtectedRoute'
 import ResizerProvider from '@/providers/iframe-resizer'
 import { PrimeReactProvider } from 'primereact/api'
@@ -44,6 +45,7 @@ enableMocking().then(() => createRoot(document.getElementById('root')).render(
 								<Route path="/weeklyhours" element={<WeeklyHoursList />} />
 								<Route path="/weeklyhour/:weeklyhoursId?" element={<WeeklyHoursForm />} />
 								<Route path="/tracks" element={<TracksList />} />
+								<Route path="/tasks" element={<TasksList />} />
 							</Route>
 						</Route>
 						<Route path="/chatbot" element={<ChatBotWidget />} />
