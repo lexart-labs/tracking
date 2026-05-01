@@ -31,33 +31,33 @@ Session (user + JWT token) is injected from AngularJS into the iframe via `iFram
 
 | File | Description |
 |------|-------------|
-| `src/application/pages/tasks/list/TasksList.jsx` | Main page component. Orchestrates filters, data fetch, table view, and creation/edit dialogs. |
-| `src/application/pages/tasks/components/FilterBar.jsx` | Status filter (`Active`, `Inactive`, `All`). |
-| `src/application/pages/tasks/components/TasksTable.jsx` | PrimeReact `DataTable` to display tasks with columns: ID, Project, Task Name, Start Date, End Date, Duration, Status, Progress, and Assignees. |
-| `src/application/pages/tasks/components/TaskFormDialog.jsx` | Modal dialog to create/edit tasks. Includes Project selection, Task Name, Duration, Start Date, End Date, Progress Status, and Assignee selection table. |
-| `src/application/pages/tasks/components/ProjectCreateDialog.jsx` | Sub-modal for Admin/PM to create a new project on the fly and associate it with a client. |
-| `src/services/tasksService.js` | API client for tasks. Handles routing calls based on role (`POST /tasks/all`, `POST /tasks/user/current`, `POST /tasks/new`, `PUT /tasks/update`, etc.). |
-| `src/services/projectService.js` | Extended to support creating projects (`POST /projects/new`) for Admin/PM. |
+| `src/application/pages/tasks/list/TasksList.jsx` | Main page component. Orchestrates filters, data fetch, table view, and creation/edit dialogs. Correctly handles role-based data fetching and coordinates tracking synchronization with the global header. |
+| `src/application/pages/tasks/components/FilterBar.jsx` | Dual filtering: Status (`Active`, `Inactive`, `All`) and Progress Status (`To-do`, `In-Progress`, `In-Review`, `Done`). |
+| `src/application/pages/tasks/components/TasksTable.jsx` | PrimeReact `DataTable` to display tasks. Includes reactive "Play/Pause" buttons with single-active-track enforcement (disables other tasks when one is running). |
+| `src/application/pages/tasks/components/TaskFormDialog.jsx` | Modal dialog to create/edit tasks. Uses a dynamic `key` pattern for clean state initialization. Includes Project selection, Task Name, Duration, Start Date, End Date, Progress Status, and Assignee selection table. |
+| `src/application/pages/tasks/components/ProjectCreateDialog.jsx` | Sub-modal for Admin/PM to create a new project. Automatically sends mandatory fields (`active`, `duration`, `description`) to satisfy backend validation. |
+| `src/services/tasksService.js` | API client for tasks. Normalizes dates to local `YYYY-MM-DD` and maps `assignees` to `users` payload. |
+| `src/services/tracksService.js` | API client for tracking. Includes cache-busting (`?t=...`) for the `getCurrentUserLastTrack` call to ensure fresh UI state. |
 
 **Modified files:**
 
 | File | Change |
 |------|--------|
 | `src/main.jsx` | Added `/tasks` route → `<TasksList />`. |
-| `src/tests/mocks/handlers.js` | Added MSW handlers for `/tasks/all`, `/tasks/user/current`, `/tasks/new`, `/tasks/update`, `/projects/new`. |
+| `src/tests/mocks/handlers.js` | Added MSW handlers for `/projects/tasks/all`, `/projects/tasks/user/current`, `/projects/tasks/new`, `/projects/tasks/update`, `/projects/new`, and `/user/all-admin`. |
 
 ### 3.2 AngularJS Frontend (`services/frontend/`)
 
 | File | Description |
 |------|-------------|
-| `src/js/app/components/tasks/controllers/tasks.controller.js` | `TasksCtrl` — sets `$scope.env_react_url` to `trackingReactUrl + '/#/tasks'`. |
-| `src/js/app/components/tasks/views/tasksView.html` | iframe-resizer template pointing to the React `/tasks` route. |
+| `src/js/app/components/tasks/tasks/controllers/tasks_react.controller.js` | `TasksReactCtrl` — sets `$scope.env_react_url` to `trackingReactUrl + '/#/tasks'`. |
+| `src/js/app/components/tasks/tasks/views/tasks_react.html` | iframe-resizer template pointing to the React `/tasks` route. |
 
 **Modified files:**
 
 | File | Change |
 |------|--------|
-| `src/js/routing.js` | Redirect the existing `app.tasks` state to use the new `TasksCtrl` and iframe `tasksView.html`. |
+| `src/js/routing.js` | Redirect the existing `app.tasks` state to use the new `TasksReactCtrl` and iframe `tasks_react.html`. |
 | `src/js/app/shared/controllers/main.controller.js` | Ensure "Tasks" nav menu entry correctly routes to the new state. |
 
 ### 3.3 Backend (`services/backend/app/`)
@@ -66,7 +66,7 @@ Session (user + JWT token) is injected from AngularJS into the iframe via `iFram
 
 | File | Change |
 |------|--------|
-| `routes/web.php` | The routes `POST /api/tasks/all`, `POST /api/tasks/user/current`, `POST /api/tasks/new`, `PUT /api/tasks/update`, `DELETE /api/tasks/delete`, `POST /api/tasks/undelete` are already implemented and will be consumed by the new frontend. |
+| `routes/web.php` | The routes `POST /api/projects/tasks/all`, `POST /api/projects/tasks/user/current`, `POST /api/projects/tasks/new`, `PUT /api/projects/tasks/update`, `DELETE /api/projects/tasks/delete`, `POST /api/projects/tasks/undelete`, and `GET /api/user/all-admin` are already implemented and will be consumed by the new frontend. |
 
 ---
 
@@ -78,24 +78,24 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 
 | Method | Path | Middleware | Description |
 |--------|------|-----------|-------------|
-| `POST` | `/tasks/all` | `pm:api` | All tasks (admin/pm). |
-| `POST` | `/tasks/user/current` | `auth:api` | Tasks assigned to the authenticated user. |
+| `POST` | `/projects/tasks/all` | `pm:api` | All tasks (admin/pm). |
+| `POST` | `/projects/tasks/user/current` | `auth:api` | Tasks assigned to the authenticated user. |
+
+### Fetch Users
+
+| Method | Path | Middleware | Description |
+|--------|------|-----------|-------------|
+| `GET` | `/user/all-admin` | `pm:api` | All users (for admin/pm selection). |
+| `GET` | `/user/all` | `auth:api` | Basic user list. |
 
 ### Create / Update Task
 
 | Method | Path | Middleware | Description |
 |--------|------|-----------|-------------|
-| `POST` | `/tasks/new` | `pm:api` | Admin/PM creates a new task. |
-| `PUT` | `/tasks/update` | `pm:api` | Admin/PM updates a task. |
-| `PUT` | `/tasks/update` (or custom) | `auth:api` | Regular user updates description of their own task. *(Needs verification on existing route availability for regular users).* |
-| `POST` | `/projects/new` | `pm:api` | Admin/PM creates a new project on the fly. |
-
-### Task Deletion (Status Toggle)
-
-| Method | Path | Middleware | Description |
-|--------|------|-----------|-------------|
-| `DELETE` | `/tasks/delete` | `auth:api` | Marks a task as Inactive (soft delete). |
-| `POST` | `/tasks/undelete` | `auth:api` | Marks a task as Active. |
+| `POST` | `/projects/tasks/new` | `pm:api` | Admin/PM creates a new task. Requires `startDate` and `endDate` in `Y-m-d`. |
+| `PUT` | `/projects/tasks/update` | `pm:api` | Admin/PM updates a task. |
+| `POST` | `/projects/new` | `pm:api` | Admin/PM creates a new project. Requires `active`, `duration`, `description`, `idClient`, `name`. |
+| `PUT` | `/tracks/update` | `auth:api` | Updates/Stops a track. The `duracion` field MUST be omitted to allow backend auto-calculation. |
 
 ---
 
@@ -113,7 +113,9 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 ## 6. UI Behaviour
 
 - **Default View:** Active tasks only.
-- **Filter Bar:** Status dropdown (`Active`, `Inactive`, `All`). Visible to all users, but result scope depends on role.
+- **Filter Bar:**
+  - Status dropdown (`Active`, `Inactive`, `All`).
+  - Progress dropdown (`To-do`, `In-Progress`, `In-Review`, `Done`).
 - **Task Form Details:**
   - Project (Select or create new if Admin/PM)
   - Task Name
@@ -123,8 +125,19 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
   - Progress (`To-do`, `Done`, `In-Progress`, `In-Review`)
   - Assignees Table (Select users to assign to the task)
   - Description / Comments
-- **Play (Start Tracking):** Integrated with the global header. Limits project selector to assigned projects. Admins/PMs can bypass assignment restrictions.
-- **Pause Tracking:** Triggers a modal requiring a description of work completed during the session.
+- **Play (Start Tracking):** Integrated with the global header. 
+  - Only one task can be active at a time for the current user.
+  - When a task is running, other tasks' "Play" buttons are disabled (grayscale, 40% opacity).
+  - Tooltips provide feedback: "Another task is running" or "Start Tracking".
+- **Tracking Sync:**
+  - On every start/stop action, React sends `window.parent.postMessage({ action: 'refresh-timer' }, '*')` to AngularJS.
+  - This ensures the top bar timer and the legacy dashboard stay in sync without page reloads.
+- **Task Form Details:**
+  - Project: Disabled on edit to maintain data integrity. Normalizes IDs to `Number` for matching.
+  - Dates: Formatted to local `YYYY-MM-DD` before sending to avoid timezone shifts.
+  - End Date: Must be strictly after Start Date (backend validation).
+  - Assignees: Managed via a sub-table within the dialog.
+- **Table View:** Removed "Assignees" column from the main table to reduce clutter (still available in edit dialog).
 
 ---
 
@@ -135,15 +148,15 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 **`TasksList.test.jsx`** — Target coverage:
 - Heading renders correctly.
 - Access Denied for `client` role.
-- Status filter applies correctly.
+- Status and Progress filters apply correctly.
 - Admin sees "New Project" option in task creation.
 - Developer does not see "New Project" option.
 - Create/Edit dialog opens with correct fields.
 - Empty state message when API returns `[]`.
 
 **`tasksService.test.js`** — Target coverage:
-- Admin calls `/tasks/all`.
-- Developer calls `/tasks/user/current`.
+- Admin calls `/projects/tasks/all`.
+- Developer calls `/projects/tasks/user/current`.
 - Create task payload formatting.
 - Update task payload formatting.
 

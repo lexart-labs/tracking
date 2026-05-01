@@ -6,12 +6,9 @@ import { Card } from "primereact/card"
 export default function Layout() {
   const { changeTheme } = useContext(PrimeReactContext)
 
-
   return (
-    <div className="lexart-flex">
-      <div className="lexart-wa w-full">
+    <div className="w-full min-h-screen">
         <Outlet />
-      </div>
     </div>
   )
 }

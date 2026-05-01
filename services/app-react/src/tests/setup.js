@@ -16,7 +16,7 @@ global.ResizeObserver = class ResizeObserver {
 
 // MSW lifecycle + cleanup in correct order
 // cleanup() MUST run before clearing session to avoid re-renders on null user
-beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }))
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterEach(() => {
   server.resetHandlers()
   cleanup()

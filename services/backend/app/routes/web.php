@@ -95,9 +95,6 @@ Route::group(['prefix' => 'api'], function () {
             Route::put('update', 'TasksController@update');
             Route::post('new', 'TasksController@create');
 
-            Route::get('project/{id}', 'TasksController@project');
-            Route::post('id-user/{idUser}', 'TasksController@getTasksByUserFilter');
-
             //User
             Route::group(['prefix' => 'user'], function(){
                 Route::post('current', 'TasksController@currentUser'); //POST POR CAUSA DA API ANTIGA
@@ -127,6 +124,7 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::group(['prefix' => 'tasks'], function() {
             Route::post('all', 'TasksController@all');
+            Route::get('project/{id}', 'TasksController@project');
 
             Route::group(['prefix' => 'user'], function(){
                 Route::post('current', 'TasksController@currentUser'); //POST POR CAUSA DA API ANTIGA

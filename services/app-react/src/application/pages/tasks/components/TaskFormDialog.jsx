@@ -11,16 +11,17 @@ import { Checkbox } from 'primereact/checkbox'
 
 export default function TaskFormDialog({ visible, onHide, task, onSave, projects, users, canCreateProject, onCreateProject }) {
     const [formData, setFormData] = useState({
-        idProyecto: '',
+        idProject: '',
         name: '',
+        description: '',
         duration: 0,
         startDate: null,
         endDate: null,
-        progress: 'To-do',
+        status: 'To-do',
         assignees: []
     })
 
-    const progressOptions = [
+    const statusOptions = [
         { label: 'To-do', value: 'To-do' },
         { label: 'In-Progress', value: 'In-Progress' },
         { label: 'In-Review', value: 'In-Review' },
@@ -28,50 +29,47 @@ export default function TaskFormDialog({ visible, onHide, task, onSave, projects
     ]
 
     useEffect(() => {
-        if (task) {
-            setFormData({
-                ...task,
-                startDate: task.startDate ? new Date(task.startDate) : null,
-                endDate: task.endDate ? new Date(task.endDate) : null,
-                assignees: task.assignees || []
-            })
-        } else {
-            setFormData({
-                idProyecto: '',
-                name: '',
-                duration: 0,
-                startDate: null,
-                endDate: null,
-                progress: 'To-do',
-                assignees: []
-            })
+        if (visible) {
+            if (task) {
+                setFormData({
+                    ...task,
+                    idProject: task.idProject ? Number(task.idProject) : '',
+                    description: task.description || '',
+                    status: task.status || 'To-do',
+                    duration: parseFloat(task.duration) || 0,
+                    startDate: task.startDate ? new Date(task.startDate) : null,
+                    endDate: task.endDate ? new Date(task.endDate) : null,
+                    assignees: typeof task.users === 'string' ? JSON.parse(task.users) : (Array.isArray(task.users) ? task.users : (task.assignees || []))
+                })
+            } else {
+                setFormData({
+                    idProject: '',
+                    name: '',
+                    description: '',
+                    duration: 0,
+                    startDate: null,
+                    endDate: null,
+                    status: 'To-do',
+                    assignees: []
+                })
+            }
         }
-    }, [task, visible])
-
-    const handleAssigneeToggle = (user) => {
-        const isAssigned = formData.assignees.some(a => a.id === user.id)
-        let updatedAssignees
-        if (isAssigned) {
-            updatedAssignees = formData.assignees.filter(a => a.id !== user.id)
-        } else {
-            updatedAssignees = [...formData.assignees, user]
-        }
-        setFormData({ ...formData, assignees: updatedAssignees })
-    }
-
-    const assigneeCheckboxTemplate = (rowData) => {
-        return (
-            <Checkbox
-                checked={formData.assignees.some(a => a.id === rowData.id)}
-                onChange={() => handleAssigneeToggle(rowData)}
-            />
-        )
-    }
+    }, [visible, task])
 
     const footer = (
-        <div>
-            <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onHide} />
-            <Button label="Save" icon="pi pi-check" onClick={() => onSave(formData)} />
+        <div className="flex justify-end gap-3 p-4 bg-gray-50/50 rounded-b-xl border-t border-gray-100">
+            <Button 
+                label="Cancel" 
+                icon="pi pi-times" 
+                className="p-button-text p-button-secondary font-semibold" 
+                onClick={onHide} 
+            />
+            <Button 
+                label="Save" 
+                icon="pi pi-check" 
+                className="p-button-primary px-6 shadow-md shadow-primary/20"
+                onClick={() => onSave(formData)} 
+            />
         </div>
     )
 
@@ -79,99 +77,132 @@ export default function TaskFormDialog({ visible, onHide, task, onSave, projects
         <Dialog
             header={task ? "Edit Task" : "New Task"}
             visible={visible}
-            style={{ width: '600px' }}
+            style={{ width: '700px' }}
             footer={footer}
             onHide={onHide}
-            className="p-fluid"
+            className="lexart-dialog"
+            breakpoints={{ '960px': '75vw', '641px': '90vw' }}
         >
-            <div className="grid">
-                <div className="col-12 field">
-                    <label htmlFor="project" className="font-bold">Project *</label>
-                    <div className="flex gap-2">
-                        <Dropdown
-                            id="project"
-                            value={formData.idProyecto}
-                            options={projects}
-                            optionLabel="name"
-                            optionValue="id"
-                            onChange={(e) => setFormData({ ...formData, idProyecto: e.value })}
-                            placeholder="Select Project"
-                            filter
-                        />
-                        {canCreateProject && (
-                            <Button
-                                icon="pi pi-plus"
-                                className="p-button-outlined"
-                                onClick={onCreateProject}
-                                tooltip="New Project"
-                                style={{ width: 'auto' }}
+            <div className="flex flex-col gap-6 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="project" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Project *</label>
+                        <div className="flex gap-2">
+                            <Dropdown
+                                inputId="project"
+                                value={formData.idProject}
+                                options={projects}
+                                optionLabel="name"
+                                optionValue="id"
+                                onChange={(e) => setFormData({ ...formData, idProject: e.value })}
+                                placeholder="Select Project"
+                                filter
+                                disabled={!!task}
+                                className="w-full border-gray-200"
                             />
-                        )}
+                            {!task && canCreateProject && (
+                                <Button
+                                    icon="pi pi-plus"
+                                    className="p-button-outlined p-button-primary"
+                                    onClick={onCreateProject}
+                                    tooltip="New Project"
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="name" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Task Name *</label>
+                        <InputText
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="What are you working on?"
+                            className="border-gray-200"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="description" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Description</label>
+                        <InputText
+                            id="description"
+                            value={formData.description}
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            placeholder="Brief description"
+                            className="border-gray-200"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="status" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Progress</label>
+                        <Dropdown
+                            inputId="status"
+                            value={formData.status}
+                            options={statusOptions}
+                            onChange={(e) => setFormData({ ...formData, status: e.value })}
+                            className="border-gray-200"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label htmlFor="duration" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Duration (hrs)</label>
+                        <InputNumber
+                            inputId="duration"
+                            value={formData.duration}
+                            onValueChange={(e) => setFormData({ ...formData, duration: e.value })}
+                            min={0}
+                            mode="decimal"
+                            minFractionDigits={1}
+                            maxFractionDigits={2}
+                            className="border-gray-200"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="startDate" className="text-sm font-bold text-gray-600 uppercase tracking-wider">Start Date</label>
+                            <Calendar
+                                inputId="startDate"
+                                value={formData.startDate}
+                                onChange={(e) => setFormData({ ...formData, startDate: e.value })}
+                                dateFormat="dd/mm/yy"
+                                showIcon
+                                className="border-gray-200"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="endDate" className="text-sm font-bold text-gray-600 uppercase tracking-wider">End Date</label>
+                            <Calendar
+                                inputId="endDate"
+                                value={formData.endDate}
+                                onChange={(e) => setFormData({ ...formData, endDate: e.value })}
+                                dateFormat="dd/mm/yy"
+                                showIcon
+                                className="border-gray-200"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="col-12 field">
-                    <label htmlFor="name" className="font-bold">Task Name *</label>
-                    <InputText
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="What are you working on?"
-                    />
-                </div>
-
-                <div className="col-4 field">
-                    <label htmlFor="duration" className="font-bold">Duration (hrs)</label>
-                    <InputNumber
-                        id="duration"
-                        value={formData.duration}
-                        onValueChange={(e) => setFormData({ ...formData, duration: e.value })}
-                        min={0}
-                    />
-                </div>
-
-                <div className="col-8 field">
-                    <label htmlFor="progress" className="font-bold">Progress</label>
-                    <Dropdown
-                        id="progress"
-                        value={formData.progress}
-                        options={progressOptions}
-                        onChange={(e) => setFormData({ ...formData, progress: e.value })}
-                    />
-                </div>
-
-                <div className="col-6 field">
-                    <label htmlFor="startDate" className="font-bold">Start Date</label>
-                    <Calendar
-                        id="startDate"
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({ ...formData, startDate: e.value })}
-                        dateFormat="dd/mm/yy"
-                        showIcon
-                    />
-                </div>
-
-                <div className="col-6 field">
-                    <label htmlFor="endDate" className="font-bold">End Date</label>
-                    <Calendar
-                        id="endDate"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.value })}
-                        dateFormat="dd/mm/yy"
-                        showIcon
-                    />
-                </div>
-
-                <div className="col-12 mt-4">
-                    <label className="font-bold mb-2 block">Assign Users</label>
+                <div className="flex flex-col gap-2 mt-2">
+                    <label className="text-sm font-bold text-gray-600 uppercase tracking-wider block mb-2">Assign Users</label>
                     <DataTable
                         value={users}
+                        selection={formData.assignees}
+                        onSelectionChange={(e) => {
+                            console.log('✅ Selection changed. New count:', e.value.length);
+                            setFormData(prev => ({ ...prev, assignees: e.value }));
+                        }}
+                        selectionMode="multiple"
+                        dataKey="id"
                         scrollable
                         scrollHeight="200px"
-                        className="border rounded overflow-hidden"
+                        className="border border-gray-100 rounded-xl overflow-hidden shadow-sm"
+                        rowClassName={() => 'hover:bg-gray-50/50 transition-colors'}
                     >
-                        <Column body={assigneeCheckboxTemplate} style={{ width: '3rem' }} />
-                        <Column field="name" header="Name" />
+                        <Column selectionMode="multiple" style={{ width: '4rem' }} align="center" />
+                        <Column field="name" header="Name" className="font-medium text-gray-700" />
                     </DataTable>
                 </div>
             </div>

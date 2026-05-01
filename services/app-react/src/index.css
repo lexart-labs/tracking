@@ -18,6 +18,13 @@
   --color-active-text: #7076FE;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F9F9F9;
+  min-height: 100vh;
+}
+
 /* Legacy Button — matches AngularJS .lexart-btn */
 .lexart-btn {
   display: inline-block;
@@ -126,4 +133,53 @@
   font-size: 1.2rem !important;
   line-height: 1 !important;
   font-style: normal;
+}
+
+/* DataTable Customization */
+.p-datatable.lexart-table .p-datatable-thead > tr > th {
+  background: #fff;
+  color: #8c9196;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1.25rem 1rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr {
+  background: #fff;
+  transition: background-color 0.2s;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f3f5;
+  color: #495057;
+  font-size: 0.875rem;
+}
+
+.p-paginator {
+  background: transparent !important;
+  border: none !important;
+  padding: 1rem 0 !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--color-active-text) !important;
+  color: #fff !important;
+  border-radius: 8px;
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

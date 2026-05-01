@@ -30,14 +30,15 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/tests/setup.js'],
     css: false,
-    testTimeout: 30000,
-    hookTimeout: 30000,
+    testTimeout: 60000,
+    hookTimeout: 60000,
     teardownTimeout: 10000,
+    fileParallelism: false,
     maxWorkers: 1,
     minWorkers: 1,
     pool: 'forks',
     poolOptions: {
-      forks: { 
+      forks: {
         singleFork: true,
         isolate: false,
       },

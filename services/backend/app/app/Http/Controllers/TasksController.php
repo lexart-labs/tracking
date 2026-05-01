@@ -64,8 +64,13 @@ class TasksController extends BaseController
                                 $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
                                 break;
                             case "description":
-                                // var_dump($value);
                                 $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
+                                break;
+                            case "status":
+                                $tasks = $tasks->whereRaw("Tasks.status = ?", $value);
+                                break;
+                            case "active":
+                                $tasks = $tasks->whereRaw("Tasks.active = ?", $value);
                                 break;
                         }
                     }
@@ -176,19 +181,25 @@ class TasksController extends BaseController
                     $key = array_keys($filter)[0];
                     $value = $filter[$key];
 
-                    switch ($key) {
-                        case "projectName":
-                            $tasks = $tasks->whereRaw("Projects.name LIKE ?", "%$value%");
-                            break;
-                        case "name":
-                            $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
-                            break;
-                        case "description":
-                            $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
-                            break;
+                        switch ($key) {
+                            case "projectName":
+                                $tasks = $tasks->whereRaw("Projects.name LIKE ?", "%$value%");
+                                break;
+                            case "name":
+                                $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
+                                break;
+                            case "description":
+                                $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
+                                break;
+                            case "status":
+                                $tasks = $tasks->whereRaw("Tasks.status = ?", $value);
+                                break;
+                            case "active":
+                                $tasks = $tasks->whereRaw("Tasks.active = ?", $value);
+                                break;
+                        }
                     }
                 }
-            }
 
             $tasks = $tasks->where('users', 'LIKE', $model_like)->get();
             $countTasks = strval(count($tasks));
@@ -198,7 +209,7 @@ class TasksController extends BaseController
                 "task" => $tasks
             ));
         }catch(Exception $e){
-            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks undelete id invalid"), 500));
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks userId error"), 500));
         }
     }
 
@@ -280,14 +291,21 @@ class TasksController extends BaseController
         if (count($filter_params) > 0) {
 			foreach ($filter_params as $key => $value) {
 				$keyName = array_keys($filter_params[$key])[0];
+                $val = $filter_params[$key][$keyName];
 				if($keyName == "projectName"){
-					$filter .= " AND Projects.name LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Projects.name LIKE '%".$val."%'";
 				}else if($keyName == "name"){
-					$filter .= " AND Tasks.name LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Tasks.name LIKE '%".$val."%'";
 				}
 				else if($keyName == "description"){
-					$filter .= " AND Tasks.description LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Tasks.description LIKE '%".$val."%'";
 				}
+                else if($keyName == "status"){
+                    $filter .= " AND Tasks.status = '".$val."'";
+                }
+                else if($keyName == "active"){
+                    $filter .= " AND Tasks.active = ".$val;
+                }
 			}
 		}
 

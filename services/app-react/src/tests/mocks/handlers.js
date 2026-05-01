@@ -113,6 +113,10 @@ export const handlers = [
     return HttpResponse.json({ response: users })
   }),
 
+  http.get(`${BASE_URL}/user/all-admin`, () => {
+    return HttpResponse.json({ response: users })
+  }),
+
   // Projects
   http.get(`${BASE_URL}/projects/all`, () => {
     return HttpResponse.json({ response: projects })
