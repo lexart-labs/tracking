@@ -254,10 +254,22 @@ class TasksController extends BaseController
         ]);
 
         $id = $request->input("id");
-        $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "description"]);
+        $taskData = $request->only(["name", "idProject", "comments", "duration", "status", "description"]);
+        
+        // Normalize users for update
+        if ($request->has('users') && is_array($request->input('users'))) {
+            $normalizedUsers = [];
+            foreach ($request->input('users') as $u) {
+                $idUser = (string)($u['idUser'] ?? $u['id'] ?? '');
+                if ($idUser) {
+                    $normalizedUsers[] = ["idUser" => $idUser];
+                }
+            }
+            $taskData["users"] = json_encode($normalizedUsers);
+        }
 
         try {
-            Tasks::where('id', $id)->update($task);
+            Tasks::where('id', $id)->update($taskData);
             $updatedTask = Tasks::where('id', $id)->first();
             return array("response" => $updatedTask);
         } catch (Exception $e) {
@@ -270,25 +282,32 @@ class TasksController extends BaseController
         $startDate = $request->input("startDate");
         $endDate = $request->input("endDate");
 
-        $request["startDate"] = explode("T", $startDate)[0];
-        $request["endDate"] = explode("T", $endDate)[0];
+        // Normalize dates
+        $request["startDate"] = $startDate ? explode("T", $startDate)[0] : null;
+        $request["endDate"] = $endDate ? explode("T", $endDate)[0] : null;
 
         $this->validate($request, [
             "name" => "required|string",
             "idProject" => "required|numeric|exists:Projects,id",
-            "comments" => "string",
+            "comments" => "string|nullable",
+            "description" => "string|nullable",
             "duration" => "required|string",
             "users" => "array",
             "status" => "required|string",
             "startDate" => "required|date_format:Y-m-d",
-            "endDate" => "required|date_format:Y-m-d|after:startDate"
+            "endDate" => "required|date_format:Y-m-d|after_or_equal:startDate"
         ]);
 
-        $taskData = $request->only(["name", "idProject", "comments", "duration", "users", "status", "startDate", "endDate", "description"]);
-        
         $user = AuthController::current();
+        $taskData = $request->only(["name", "idProject", "comments", "duration", "status", "startDate", "endDate", "description"]);
+        
+        // Ensure description/comments consistency
+        if (!isset($taskData['comments']) && isset($taskData['description'])) {
+            $taskData['comments'] = $taskData['description'];
+        }
+
         if ($user->role != 'admin' && $user->role != 'pm') {
-            // Check if user is assigned to this project (has at least one task in it)
+            // Check if user is assigned to this project
             $projectAssigned = Tasks::where('idProject', $taskData['idProject'])
                 ->where('users', 'LIKE', '%{"idUser":"' . $user->id . '"}%')
                 ->exists();
@@ -297,34 +316,27 @@ class TasksController extends BaseController
                 return (new Response(array("Error" => "Unauthorized: You are not assigned to this project"), 403));
             }
 
-            // Force assignment to current user for non-admin/pm
+            // Force assignment to current user (Simplified format)
             $taskData["users"] = [
-                [
-                    "idUser" => (string)$user->id,
-                    "idTask" => 0,
-                    "nameUser" => $user->name
-                ]
+                ["idUser" => (string)$user->id]
             ];
         } else {
-            // Normalize users format for admin/pm if they provide it
-            if (isset($taskData["users"]) && is_array($taskData["users"])) {
-                $normalizedUsers = [];
-                foreach ($taskData["users"] as $u) {
-                    $normalizedUsers[] = [
-                        "idUser" => (string)($u['idUser'] ?? $u['id'] ?? ''),
-                        "idTask" => 0,
-                        "nameUser" => $u['nameUser'] ?? $u['name'] ?? ''
-                    ];
+            // Normalize users format for admin/pm (Simplified format)
+            $providedUsers = $request->input('users', []);
+            $normalizedUsers = [];
+            foreach ($providedUsers as $u) {
+                $idUser = (string)($u['idUser'] ?? $u['id'] ?? '');
+                if ($idUser) {
+                    $normalizedUsers[] = ["idUser" => $idUser];
                 }
-                $taskData["users"] = $normalizedUsers;
             }
+            $taskData["users"] = $normalizedUsers;
         }
 
-        $taskData["users"] = json_encode($taskData["users"] ?? []);
+        $taskData["users"] = json_encode($taskData["users"]);
 
         try {
             $task = Tasks::create($taskData);
-
             return array("response" => $task);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks create invalid"), 500));
