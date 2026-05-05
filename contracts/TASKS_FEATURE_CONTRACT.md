@@ -80,6 +80,8 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 |--------|------|-----------|-------------|
 | `POST` | `/projects/tasks/all` | `pm:api` | All tasks (admin/pm). |
 | `POST` | `/projects/tasks/user/current` | `auth:api` | Tasks assigned to the authenticated user. |
+| `GET` | `/projects/all` | `auth:api` | All active projects for admin/pm. Non-admin see only projects with assigned tasks. |
+| `GET` | `/projects/tasks/project/{id}` | `auth:api` | All tasks of a project for admin/pm. Non-admin see only assigned tasks. |
 
 ### Fetch Users
 
@@ -105,7 +107,7 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 |------|------------|-------------|----------------------------|--------------------|-----------|--------------|
 | `admin` | ✅ | ✅ | Any existing project | ✅ | Full | All Tasks |
 | `pm` | ✅ | ✅ | Any existing project | ✅ | Full | All Tasks |
-| `developer` / `employee` | ✅ | ✅ | Only assigned projects | ❌ | Description & Status only | Only assigned Tasks |
+| `developer` / `employee` | ✅ | ✅ | Only projects with assigned tasks | ❌ | Description & Status only | Only assigned Tasks |
 | `client` | ❌ Access Denied | — | — | — | — | — |
 
 ---

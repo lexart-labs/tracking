@@ -122,6 +122,30 @@ export const handlers = [
     return HttpResponse.json({ response: projects })
   }),
 
+  http.get(`${BASE_URL}/projects/tasks/project/:id`, ({ params }) => {
+    const projectId = Number(params.id)
+    const projectTasks = tracks.filter(t => t.idProyecto === projectId)
+    return HttpResponse.json({ response: projectTasks })
+  }),
+
+  http.post(`${BASE_URL}/projects/tasks/all`, () => {
+    return HttpResponse.json({ response: { task: tracks, count: tracks.length } })
+  }),
+
+  http.post(`${BASE_URL}/projects/tasks/user/current`, () => {
+    return HttpResponse.json({ response: { task: [tracks[1]], count: 1 } })
+  }),
+
+  http.post(`${BASE_URL}/projects/tasks/new`, async ({ request }) => {
+    const body = await request.json()
+    return HttpResponse.json({ response: { ...body, id: 99 } }, { status: 201 })
+  }),
+
+  http.put(`${BASE_URL}/projects/tasks/update`, async ({ request }) => {
+    const body = await request.json()
+    return HttpResponse.json({ response: { ...body } })
+  }),
+
   // Tracks
   http.get(`${BASE_URL}/tracks/user/history`, () => {
     return HttpResponse.json({ response: tracks })

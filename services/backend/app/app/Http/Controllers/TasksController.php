@@ -106,7 +106,18 @@ class TasksController extends BaseController
                 return (new Response(array("Error" => ID_INVALID, "Operation" => "tasks projecs id"), 500));
             }
 
-            $response = Tasks::join('Projects', 'Tasks.idProject', '=', 'Projects.id')->select('Tasks.*', 'Projects.name as projectName')->where('idProject', $id)->get();
+            $user = AuthController::current();
+            $query = Tasks::join('Projects', 'Tasks.idProject', '=', 'Projects.id')
+                ->select('Tasks.*', 'Projects.name as projectName')
+                ->where('idProject', $id);
+
+            // Security check: non-admins only see tasks assigned to them
+            if ($user->role !== 'admin' && $user->role !== 'pm') {
+                $model_like = '%{"idUser":"' . $user->id . '"}%';
+                $query->where('Tasks.users', 'LIKE', $model_like);
+            }
+
+            $response = $query->get();
             return array('response' => $response);
         }catch(Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks projecs id"), 500));
