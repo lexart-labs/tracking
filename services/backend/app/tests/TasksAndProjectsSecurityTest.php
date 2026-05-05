@@ -104,4 +104,60 @@ class TasksAndProjectsSecurityTest extends TestCase
         $this->assertCount(1, $body['response']);
         $this->assertEquals($assignedTask->id, $body['response'][0]['id']);
     }
+
+    public function testDeveloperCanCreateTaskInAssignedProject()
+    {
+        // 1. Create a project and a task assigned to developer
+        $project = DB::table('Projects')->insertGetId(['name' => 'Dev Project', 'active' => 1]);
+        $devId = DB::table('Users')->where('role', 'developer')->value('id');
+        $devName = DB::table('Users')->where('id', $devId)->value('name');
+        
+        DB::table('Tasks')->insert([
+            'idProject' => $project,
+            'name' => 'Existing Task',
+            'users' => json_encode([['idUser' => (string)$devId, 'nameUser' => $devName]]),
+            'active' => 1,
+            'status' => 'Done',
+            'duration' => '1.0'
+        ]);
+
+        // 2. Developer tries to create a NEW task in this project
+        $this->actingAs($this->developer);
+        $response = $this->post('/api/projects/tasks/new', [
+            'idProject' => $project,
+            'name' => 'New Dev Task',
+            'description' => 'Created by dev',
+            'duration' => '2.0',
+            'startDate' => date('Y-m-d'),
+            'endDate' => date('Y-m-d', strtotime('+1 day')),
+            'status' => 'To-do',
+            'comments' => 'test'
+        ]);
+
+        $response->assertResponseStatus(200);
+        $this->seeInDatabase('Tasks', ['name' => 'New Dev Task', 'idProject' => $project]);
+        
+        // 3. Verify they are automatically assigned even if they didn't send users
+        $task = DB::table('Tasks')->where('name', 'New Dev Task')->first();
+        $users = json_decode($task->users, true);
+        $this->assertEquals($devId, $users[0]['idUser']);
+    }
+
+    public function testDeveloperCannotCreateTaskInUnassignedProject()
+    {
+        // Project with NO tasks for developer
+        $project = DB::table('Projects')->insertGetId(['name' => 'Private Project', 'active' => 1]);
+
+        $this->actingAs($this->developer);
+        $response = $this->post('/api/projects/tasks/new', [
+            'idProject' => $project,
+            'name' => 'Illegal Task',
+            'duration' => '1.0',
+            'startDate' => date('Y-m-d'),
+            'endDate' => date('Y-m-d', strtotime('+1 day')),
+            'status' => 'To-do'
+        ]);
+
+        $response->assertResponseStatus(403);
+    }
 }

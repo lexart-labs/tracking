@@ -78,7 +78,7 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 
 | Method | Path | Middleware | Description |
 |--------|------|-----------|-------------|
-| `POST` | `/projects/tasks/all` | `pm:api` | All tasks (admin/pm). |
+| `POST` | `/projects/tasks/all` | `auth:api` | All tasks for admin/pm. Non-admin see only assigned tasks. |
 | `POST` | `/projects/tasks/user/current` | `auth:api` | Tasks assigned to the authenticated user. |
 | `GET` | `/projects/all` | `auth:api` | All active projects for admin/pm. Non-admin see only projects with assigned tasks. |
 | `GET` | `/projects/tasks/project/{id}` | `auth:api` | All tasks of a project for admin/pm. Non-admin see only assigned tasks. |
@@ -94,7 +94,7 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 
 | Method | Path | Middleware | Description |
 |--------|------|-----------|-------------|
-| `POST` | `/projects/tasks/new` | `pm:api` | Admin/PM creates a new task. Requires `startDate` and `endDate` in `Y-m-d`. |
+| `POST` | `/projects/tasks/new` | `auth:api` | Admin/PM creates for any project. Developers create ONLY for assigned projects (forced auto-assignment). |
 | `PUT` | `/projects/tasks/update` | `pm:api` | Admin/PM updates a task. |
 | `POST` | `/projects/new` | `pm:api` | Admin/PM creates a new project. Requires `active`, `duration`, `description`, `idClient`, `name`. |
 | `PUT` | `/tracks/update` | `auth:api` | Updates/Stops a track. The `duracion` field MUST be omitted to allow backend auto-calculation. |
@@ -107,7 +107,7 @@ All endpoints are prefixed `/api` and require JWT (`Authorization: Bearer <token
 |------|------------|-------------|----------------------------|--------------------|-----------|--------------|
 | `admin` | ✅ | ✅ | Any existing project | ✅ | Full | All Tasks |
 | `pm` | ✅ | ✅ | Any existing project | ✅ | Full | All Tasks |
-| `developer` / `employee` | ✅ | ✅ | Only projects with assigned tasks | ❌ | Description & Status only | Only assigned Tasks |
+| `developer` / `employee` | ✅ | ✅ (Assigned Projects only) | Only projects with assigned tasks | ❌ | Description & Status only | Only assigned Tasks |
 | `client` | ❌ Access Denied | — | — | — | — | — |
 
 ---

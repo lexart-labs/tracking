@@ -42,8 +42,14 @@ class TasksController extends BaseController
                     'Projects.name as projectName'
                 )
                 ->selectRaw('IFNULL(Tasks.users, "[]") AS users')
-                ->whereRaw('Projects.active = ?', 1)
-                ->orderBy("Tasks.id", "DESC");
+                ->whereRaw('Projects.active = ?', 1);
+
+            $user = AuthController::current();
+            if ($user && $user->role != 'admin' && $user->role != 'pm') {
+                $tasks->where('Tasks.users', 'LIKE', '%{"idUser":"' . $user->id . '"}%');
+            }
+
+            $tasks->orderBy("Tasks.id", "DESC");
 
             $count = Tasks::select("*");
 
@@ -278,11 +284,46 @@ class TasksController extends BaseController
             "endDate" => "required|date_format:Y-m-d|after:startDate"
         ]);
 
-        $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "startDate", "endDate", "description"]);
-        $task["users"] = json_encode($task["users"]);
+        $taskData = $request->only(["name", "idProject", "comments", "duration", "users", "status", "startDate", "endDate", "description"]);
+        
+        $user = AuthController::current();
+        if ($user->role != 'admin' && $user->role != 'pm') {
+            // Check if user is assigned to this project (has at least one task in it)
+            $projectAssigned = Tasks::where('idProject', $taskData['idProject'])
+                ->where('users', 'LIKE', '%{"idUser":"' . $user->id . '"}%')
+                ->exists();
+            
+            if (!$projectAssigned) {
+                return (new Response(array("Error" => "Unauthorized: You are not assigned to this project"), 403));
+            }
+
+            // Force assignment to current user for non-admin/pm
+            $taskData["users"] = [
+                [
+                    "idUser" => (string)$user->id,
+                    "idTask" => 0,
+                    "nameUser" => $user->name
+                ]
+            ];
+        } else {
+            // Normalize users format for admin/pm if they provide it
+            if (isset($taskData["users"]) && is_array($taskData["users"])) {
+                $normalizedUsers = [];
+                foreach ($taskData["users"] as $u) {
+                    $normalizedUsers[] = [
+                        "idUser" => (string)($u['idUser'] ?? $u['id'] ?? ''),
+                        "idTask" => 0,
+                        "nameUser" => $u['nameUser'] ?? $u['name'] ?? ''
+                    ];
+                }
+                $taskData["users"] = $normalizedUsers;
+            }
+        }
+
+        $taskData["users"] = json_encode($taskData["users"] ?? []);
 
         try {
-            $task = Tasks::create($task);
+            $task = Tasks::create($taskData);
 
             return array("response" => $task);
         } catch (Exception $e) {
