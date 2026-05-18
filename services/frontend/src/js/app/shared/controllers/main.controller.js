@@ -545,43 +545,11 @@
                 },
 
                 {
-                    uisref: '',
+                    uisref: 'app.tasks',
                     icon: 'ri-task-line',
                     name: 'Tasks',
                     label: $filter('translate')('navigation.tasks'),
-                    access: true,
-                    submenus: [
-                        {
-                            uisref: 'app.tasks',
-                            name: 'Tasks Manuales',
-                            label: 'Tareas Manuales',
-                            access: true
-                        },
-                        // {
-                        //     uisref: 'app.tasks_automatic',
-                        //     name: 'Tasks Automatic',
-                        //     label: $filter('translate')('navigation.tasks_automatic'),
-                        //     access: true
-                        // },
-                        {
-                            uisref: 'app.tasks_trello',
-                            name: 'Tasks Trello',
-                            label: $filter('translate')('navigation.tasks_trello'),
-                            access: true
-                        },
-                        // {
-                        //     uisref: 'app.jira',
-                        //     name: 'Tasks Jira',
-                        //     label: $filter('translate')('navigation.jira'),
-                        //     access: true
-                        // },
-                        // {
-                        //     uisref: 'app.taskManager',
-                        //     name: 'Task Manager',
-                        //     label: $filter('translate')('navigation.taskManager'),
-                        //     access: true
-                        // }
-                    ]
+                    access: true
                 },
                 // PROFILE
                 {

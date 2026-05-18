@@ -42,8 +42,14 @@ class TasksController extends BaseController
                     'Projects.name as projectName'
                 )
                 ->selectRaw('IFNULL(Tasks.users, "[]") AS users')
-                ->whereRaw('Projects.active = ?', 1)
-                ->orderBy("Tasks.id", "DESC");
+                ->whereRaw('Projects.active = ?', 1);
+
+            $user = AuthController::current();
+            if ($user && $user->role != 'admin' && $user->role != 'pm') {
+                $tasks->where('Tasks.users', 'LIKE', '%{"idUser":"' . $user->id . '"}%');
+            }
+
+            $tasks->orderBy("Tasks.id", "DESC");
 
             $count = Tasks::select("*");
 
@@ -64,8 +70,13 @@ class TasksController extends BaseController
                                 $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
                                 break;
                             case "description":
-                                // var_dump($value);
                                 $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
+                                break;
+                            case "status":
+                                $tasks = $tasks->whereRaw("Tasks.status = ?", $value);
+                                break;
+                            case "active":
+                                $tasks = $tasks->whereRaw("Tasks.active = ?", $value);
                                 break;
                         }
                     }
@@ -101,7 +112,18 @@ class TasksController extends BaseController
                 return (new Response(array("Error" => ID_INVALID, "Operation" => "tasks projecs id"), 500));
             }
 
-            $response = Tasks::join('Projects', 'Tasks.idProject', '=', 'Projects.id')->select('Tasks.*', 'Projects.name as projectName')->where('idProject', $id)->get();
+            $user = AuthController::current();
+            $query = Tasks::join('Projects', 'Tasks.idProject', '=', 'Projects.id')
+                ->select('Tasks.*', 'Projects.name as projectName')
+                ->where('idProject', $id);
+
+            // Security check: non-admins only see tasks assigned to them
+            if ($user->role !== 'admin' && $user->role !== 'pm') {
+                $model_like = '%{"idUser":"' . $user->id . '"}%';
+                $query->where('Tasks.users', 'LIKE', $model_like);
+            }
+
+            $response = $query->get();
             return array('response' => $response);
         }catch(Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks projecs id"), 500));
@@ -176,19 +198,25 @@ class TasksController extends BaseController
                     $key = array_keys($filter)[0];
                     $value = $filter[$key];
 
-                    switch ($key) {
-                        case "projectName":
-                            $tasks = $tasks->whereRaw("Projects.name LIKE ?", "%$value%");
-                            break;
-                        case "name":
-                            $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
-                            break;
-                        case "description":
-                            $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
-                            break;
+                        switch ($key) {
+                            case "projectName":
+                                $tasks = $tasks->whereRaw("Projects.name LIKE ?", "%$value%");
+                                break;
+                            case "name":
+                                $tasks = $tasks->whereRaw("Tasks.name LIKE ?", "%$value%");
+                                break;
+                            case "description":
+                                $tasks = $tasks->whereRaw("Tasks.description LIKE ?", "%$value%");
+                                break;
+                            case "status":
+                                $tasks = $tasks->whereRaw("Tasks.status = ?", $value);
+                                break;
+                            case "active":
+                                $tasks = $tasks->whereRaw("Tasks.active = ?", $value);
+                                break;
+                        }
                     }
                 }
-            }
 
             $tasks = $tasks->where('users', 'LIKE', $model_like)->get();
             $countTasks = strval(count($tasks));
@@ -198,7 +226,7 @@ class TasksController extends BaseController
                 "task" => $tasks
             ));
         }catch(Exception $e){
-            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks undelete id invalid"), 500));
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks userId error"), 500));
         }
     }
 
@@ -226,10 +254,22 @@ class TasksController extends BaseController
         ]);
 
         $id = $request->input("id");
-        $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "description"]);
+        $taskData = $request->only(["name", "idProject", "comments", "duration", "status", "description"]);
+        
+        // Normalize users for update
+        if ($request->has('users') && is_array($request->input('users'))) {
+            $normalizedUsers = [];
+            foreach ($request->input('users') as $u) {
+                $idUser = (string)($u['idUser'] ?? $u['id'] ?? '');
+                if ($idUser) {
+                    $normalizedUsers[] = ["idUser" => $idUser];
+                }
+            }
+            $taskData["users"] = json_encode($normalizedUsers);
+        }
 
         try {
-            Tasks::where('id', $id)->update($task);
+            Tasks::where('id', $id)->update($taskData);
             $updatedTask = Tasks::where('id', $id)->first();
             return array("response" => $updatedTask);
         } catch (Exception $e) {
@@ -242,26 +282,61 @@ class TasksController extends BaseController
         $startDate = $request->input("startDate");
         $endDate = $request->input("endDate");
 
-        $request["startDate"] = explode("T", $startDate)[0];
-        $request["endDate"] = explode("T", $endDate)[0];
+        // Normalize dates
+        $request["startDate"] = $startDate ? explode("T", $startDate)[0] : null;
+        $request["endDate"] = $endDate ? explode("T", $endDate)[0] : null;
 
         $this->validate($request, [
             "name" => "required|string",
             "idProject" => "required|numeric|exists:Projects,id",
-            "comments" => "string",
+            "comments" => "string|nullable",
+            "description" => "string|nullable",
             "duration" => "required|string",
             "users" => "array",
             "status" => "required|string",
             "startDate" => "required|date_format:Y-m-d",
-            "endDate" => "required|date_format:Y-m-d|after:startDate"
+            "endDate" => "required|date_format:Y-m-d|after_or_equal:startDate"
         ]);
 
-        $task = $request->only(["name", "idProject", "comments", "duration", "users", "status", "startDate", "endDate", "description"]);
-        $task["users"] = json_encode($task["users"]);
+        $user = AuthController::current();
+        $taskData = $request->only(["name", "idProject", "comments", "duration", "status", "startDate", "endDate", "description"]);
+        
+        // Ensure description/comments consistency
+        if (!isset($taskData['comments']) && isset($taskData['description'])) {
+            $taskData['comments'] = $taskData['description'];
+        }
+
+        if ($user->role != 'admin' && $user->role != 'pm') {
+            // Check if user is assigned to this project
+            $projectAssigned = Tasks::where('idProject', $taskData['idProject'])
+                ->where('users', 'LIKE', '%{"idUser":"' . $user->id . '"}%')
+                ->exists();
+            
+            if (!$projectAssigned) {
+                return (new Response(array("Error" => "Unauthorized: You are not assigned to this project"), 403));
+            }
+
+            // Force assignment to current user (Simplified format)
+            $taskData["users"] = [
+                ["idUser" => (string)$user->id]
+            ];
+        } else {
+            // Normalize users format for admin/pm (Simplified format)
+            $providedUsers = $request->input('users', []);
+            $normalizedUsers = [];
+            foreach ($providedUsers as $u) {
+                $idUser = (string)($u['idUser'] ?? $u['id'] ?? '');
+                if ($idUser) {
+                    $normalizedUsers[] = ["idUser" => $idUser];
+                }
+            }
+            $taskData["users"] = $normalizedUsers;
+        }
+
+        $taskData["users"] = json_encode($taskData["users"]);
 
         try {
-            $task = Tasks::create($task);
-
+            $task = Tasks::create($taskData);
             return array("response" => $task);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tasks create invalid"), 500));
@@ -280,14 +355,21 @@ class TasksController extends BaseController
         if (count($filter_params) > 0) {
 			foreach ($filter_params as $key => $value) {
 				$keyName = array_keys($filter_params[$key])[0];
+                $val = $filter_params[$key][$keyName];
 				if($keyName == "projectName"){
-					$filter .= " AND Projects.name LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Projects.name LIKE '%".$val."%'";
 				}else if($keyName == "name"){
-					$filter .= " AND Tasks.name LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Tasks.name LIKE '%".$val."%'";
 				}
 				else if($keyName == "description"){
-					$filter .= " AND Tasks.description LIKE '%".$value[$keyName]."%'";
+					$filter .= " AND Tasks.description LIKE '%".$val."%'";
 				}
+                else if($keyName == "status"){
+                    $filter .= " AND Tasks.status = '".$val."'";
+                }
+                else if($keyName == "active"){
+                    $filter .= " AND Tasks.active = ".$val;
+                }
 			}
 		}
 

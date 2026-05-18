@@ -51,7 +51,7 @@ class TracksService {
     }
 
     async getCurrentUserLastTrack() {
-        const response = await api.get('/tracks/user/current/last')
+        const response = await api.get(`/tracks/user/current/last?t=${Date.now()}`)
         return response.data.response
     }
 }

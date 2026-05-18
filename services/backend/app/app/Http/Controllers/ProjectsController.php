@@ -21,10 +21,23 @@ class ProjectsController extends BaseController
             }
 
 
-            $projects = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
+            $user = AuthController::current();
+            $query = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
                 ->select('Projects.*', 'Clients.name as clientName')
-                ->where('Projects.active', 1)
-                ->get();
+                ->where('Projects.active', 1);
+
+            // Security check: non-admins only see projects where they have assigned tasks
+            if ($user->role !== 'admin' && $user->role !== 'pm') {
+                $model_like = '%{"idUser":"' . $user->id . '"}%';
+                $query->whereExists(function ($query) use ($model_like) {
+                    $query->select(DB::raw(1))
+                        ->from('Tasks')
+                        ->whereRaw('Tasks.idProject = Projects.id')
+                        ->where('Tasks.users', 'LIKE', $model_like);
+                });
+            }
+
+            $projects = $query->get();
 
             return array('response' => $projects);
         } catch (Exception $e) {

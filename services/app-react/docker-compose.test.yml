@@ -1,9 +1,9 @@
-version: '3.8'
-
 services:
   test-app:
     image: node:20
     working_dir: /app
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=2048
     # Montamos todo el directorio actual en /app dentro del contenedor
     volumes:
       - .:/app
