@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
 import { InputNumber } from 'primereact/inputnumber'
 import { InputTextarea } from 'primereact/inputtextarea'
@@ -162,13 +163,26 @@ export default function PaymentRequests() {
 
 	const actionsTemplate = (row) => (
 		<div className="flex gap-1 justify-end pr-2">
-			<button className="lexart-btn-circle" title="View details" onClick={() => setDetailsDialog({ visible: true, request: row })}>
-				<i className="ri-information-line" />
-			</button>
+			<Button
+				icon="pi pi-info-circle"
+				rounded
+				outlined
+				className="p-button-sm"
+				onClick={() => setDetailsDialog({ visible: true, request: row })}
+				title="View details"
+				aria-label="View details"
+			/>
 			{row.status === 'Pending' && (
-				<button className="lexart-btn-circle" title="Cancel" onClick={() => setCancelDialog({ visible: true, id: row.id })}>
-					<i className="ri-close-line" />
-				</button>
+				<Button
+					icon="pi pi-times"
+					rounded
+					outlined
+					severity="danger"
+					className="p-button-sm"
+					onClick={() => setCancelDialog({ visible: true, id: row.id })}
+					title="Cancel"
+					aria-label="Cancel"
+				/>
 			)}
 		</div>
 	)
@@ -183,7 +197,7 @@ export default function PaymentRequests() {
 				</div>
 			</div>
 
-			<div className="lexart-wa__cnt flex flex-col gap-6">
+			<div className="lexart-wa__cnt flex flex-col gap-6 min-h-[600px]">
 
 				{/* Form */}
 				<div className="flex gap-4 items-start">
@@ -296,13 +310,16 @@ export default function PaymentRequests() {
 											</div>
 											<div className="flex items-center gap-2">
 												<span className="text-sm font-semibold">{Number(d.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-												<button
-													className="lexart-btn-circle"
+												<Button
+													icon="pi pi-trash"
+													rounded
+													outlined
+													severity="danger"
+													className="p-button-sm"
 													onClick={() => handleRemoveDetail(d.id)}
 													title="Remove"
-												>
-													<i className="ri-delete-bin-line" />
-												</button>
+													aria-label="Remove"
+												/>
 											</div>
 										</div>
 									))}

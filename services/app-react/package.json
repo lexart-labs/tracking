@@ -11,7 +11,8 @@
     "start": "serve -s dist -l 5173",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:docker": "docker-compose -f docker-compose.test.yml run --rm test-app"
   },
   "dependencies": {
     "@iframe-resizer/child": "^5.4.6",

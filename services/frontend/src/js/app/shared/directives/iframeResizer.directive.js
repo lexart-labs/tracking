@@ -14,17 +14,17 @@
         // <-- Permite pasar una función como atributo
       },
       link: function (scope, element, attrs) {
+        var resizerInstance = null;
+
         function initResizer() {
           iframeResize({
             log: false,
             checkOrigin: false,
             license: "GPLv3",
             scrolling: "omit",
-            onResized: function (data) {
-              console.log('Iframe resized:', data.height);
-            },
             onReady: function (iframeEl) {
               console.log('iframe listo:', iframeEl.iframeResizer);
+              resizerInstance = iframeEl.iframeResizer;
               scope.$applyAsync(function () {
                 if (scope.onReady) scope.onReady({ iframe: iframeEl });
               });
@@ -36,7 +36,7 @@
                 userPhoto: $rootScope.userPhoto,
                 userEmail: $rootScope.userEmail
               }
-              iframeEl.iframeResizer.sendMessage({ user, token: $window.localStorage[TOKEN_KEY] }, '*');
+              resizerInstance.sendMessage({ user, token: $window.localStorage[TOKEN_KEY] }, '*');
             }
           }, element[0]);
         }

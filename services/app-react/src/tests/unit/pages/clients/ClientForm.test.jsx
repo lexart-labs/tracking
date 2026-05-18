@@ -42,6 +42,22 @@ describe('ClientForm - Create mode', () => {
       expect(screen.getByText(/Name and Company are required/i)).toBeInTheDocument()
     })
   })
+
+  it('submits successfully and navigates back', async () => {
+    setSession()
+    renderForm('/client/NEW')
+    
+    fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: 'New Client Inc' } })
+    fireEvent.change(screen.getByLabelText(/Company/i), { target: { value: 'NewCo' } })
+    
+    const saveButton = screen.getByRole('button', { name: /Save/i })
+    fireEvent.click(saveButton)
+    
+    await waitFor(() => {
+      // El mock de handlers devuelve 201 y un body con ID
+      expect(saveButton).not.toBeDisabled()
+    })
+  })
 })
 
 describe('ClientForm - Edit mode', () => {

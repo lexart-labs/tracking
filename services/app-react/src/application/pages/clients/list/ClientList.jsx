@@ -76,13 +76,14 @@ export default function ClientList() {
 	const actionBodyTemplate = (rowData) => {
 		return (
 			<div className="flex justify-end pr-4">
-				<button
-					className="lexart-btn-circle"
+				<Button
+					icon="pi pi-pencil"
+					rounded
+					outlined
+					className="p-button-sm mr-2"
 					onClick={() => navigate(`/client/${rowData.id}`)}
-					title="Edit"
-				>
-					<i className="ri-edit-line" />
-				</button>
+					aria-label="Edit"
+				/>
 			</div>
 		)
 	}

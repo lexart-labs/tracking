@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
 import { Dialog } from 'primereact/dialog'
 import { InputNumber } from 'primereact/inputnumber'
@@ -200,29 +201,37 @@ export default function PaymentRequestsAdmin() {
 		<div className="flex gap-1 justify-end pr-2">
 			{row.status === 'Pending' && (
 				<>
-					<button
-						className="lexart-btn-circle"
-						title="Approve"
+					<Button
+						icon="pi pi-check"
+						rounded
+						outlined
+						severity="success"
+						className="p-button-sm"
 						onClick={() => openStatusDialog(row, 'Approved')}
-					>
-						<i className="ri-check-line" />
-					</button>
-					<button
-						className="lexart-btn-circle"
-						title="Reject"
+						title="Approve"
+						aria-label="Approve"
+					/>
+					<Button
+						icon="pi pi-times"
+						rounded
+						outlined
+						severity="danger"
+						className="p-button-sm"
 						onClick={() => openStatusDialog(row, 'Rejected')}
-					>
-						<i className="ri-close-line" />
-					</button>
+						title="Reject"
+						aria-label="Reject"
+					/>
 				</>
 			)}
-			<button
-				className="lexart-btn-circle"
-				title="Edit"
+			<Button
+				icon="pi pi-pencil"
+				rounded
+				outlined
+				className="p-button-sm"
 				onClick={() => openEditDialog(row)}
-			>
-				<i className="ri-edit-line" />
-			</button>
+				title="Edit"
+				aria-label="Edit"
+			/>
 		</div>
 	)
 
@@ -245,77 +254,89 @@ export default function PaymentRequestsAdmin() {
 				</div>
 			</div>
 
-			<div className="lexart-wa__cnt">
+			<div className="lexart-wa__cnt min-h-[600px]">
 				{/* Filters */}
-				<div className="flex flex-wrap gap-3 mb-4 items-end">
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">Status</label>
+				<div className="flex flex-wrap gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 items-end">
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">Status</label>
 						<Dropdown
 							value={filters.status}
 							options={STATUSES.map((s) => ({ label: s, value: s }))}
 							onChange={(e) => handleFilterChange('status', e.value)}
 							placeholder="Status"
-							style={{ minWidth: '130px' }}
+							style={{ minWidth: '140px' }}
+							className="h-[42px] flex items-center"
 						/>
 					</div>
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">Concept</label>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">Concept</label>
 						<Dropdown
 							value={filters.concept ?? ''}
 							options={[{ label: 'All concepts', value: '' }, ...CONCEPTS.map((c) => ({ label: c, value: c }))]}
 							onChange={(e) => handleFilterChange('concept', e.value || null)}
 							placeholder="Concept"
-							style={{ minWidth: '140px' }}
+							style={{ minWidth: '160px' }}
+							className="h-[42px] flex items-center"
 						/>
 					</div>
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">User</label>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">User</label>
 						<Dropdown
 							value={filters.user ?? ''}
 							options={userOptions}
 							onChange={(e) => handleFilterChange('user', e.value || null)}
-							placeholder="User"
+							placeholder="Select User"
 							filter
-							style={{ minWidth: '160px' }}
+							style={{ minWidth: '180px' }}
+							className="h-[42px] flex items-center"
 						/>
 					</div>
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">Currency</label>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">Currency</label>
 						<Dropdown
 							value={filters.currency ?? ''}
-							options={[{ label: 'All currencies', value: '' }, ...CURRENCIES]}
+							options={[{ label: 'All', value: '' }, ...CURRENCIES]}
 							onChange={(e) => handleFilterChange('currency', e.value || null)}
 							placeholder="Currency"
-							style={{ minWidth: '130px' }}
+							style={{ minWidth: '120px' }}
+							className="h-[42px] flex items-center"
 						/>
 					</div>
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">From</label>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">From</label>
 						<Calendar
 							value={filters.startDate}
 							onChange={(e) => handleFilterChange('startDate', e.value)}
 							placeholder="Start date"
 							dateFormat="yy-mm-dd"
 							style={{ minWidth: '140px' }}
+							className="h-[42px]"
 						/>
 					</div>
-					<div className="flex flex-col gap-1">
-						<label className="text-xs text-gray-500 font-medium">To</label>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">To</label>
 						<Calendar
 							value={filters.endDate}
 							onChange={(e) => handleFilterChange('endDate', e.value)}
 							placeholder="End date"
 							dateFormat="yy-mm-dd"
 							style={{ minWidth: '140px' }}
+							className="h-[42px]"
 						/>
 					</div>
-					<div className="flex gap-2">
-						<button className="lexart-btn lexart-btn--round" onClick={handleApplyFilters}>
-							Apply
-						</button>
-						<button className="lexart-btn lexart-btn--alt" onClick={handleClearFilters}>
-							Clear
-						</button>
+					<div className="flex gap-2 ml-auto">
+						<Button
+							label="Apply"
+							icon="pi pi-search"
+							className="p-button-primary rounded-lg h-[42px] px-6"
+							onClick={handleApplyFilters}
+						/>
+						<Button
+							label="Clear"
+							icon="pi pi-filter-slash"
+							className="p-button-secondary p-button-outlined rounded-lg h-[42px] px-4"
+							onClick={handleClearFilters}
+						/>
 					</div>
 				</div>
 
@@ -386,40 +407,70 @@ export default function PaymentRequestsAdmin() {
 				visible={editDialog.visible}
 				onHide={closeEditDialog}
 				header="Edit Payment Request"
-				style={{ width: '560px' }}
+				style={{ width: '600px' }}
+				modal
+				className="lexart-dialog"
 				footer={
-					<div className="flex justify-end gap-2">
-						<button className="lexart-btn lexart-btn--alt" onClick={closeEditDialog}>Cancel</button>
-						<button className="lexart-btn lexart-btn--round" onClick={handleSaveEdit}>Save</button>
+					<div className="flex justify-end gap-3 pr-2 pb-2">
+						<Button 
+							label="Cancel" 
+							icon="pi pi-times" 
+							className="p-button-text p-button-secondary" 
+							onClick={closeEditDialog} 
+						/>
+						<Button 
+							label="Save Changes" 
+							icon="pi pi-check" 
+							className="p-button-primary px-4" 
+							onClick={handleSaveEdit} 
+						/>
 					</div>
 				}
 			>
-				<div className="flex flex-col gap-4 pt-2 max-h-[60vh] overflow-auto pr-1">
-					{editDetails.map((detail) => (
-						<div key={detail.detail_id} className="border border-gray-200 rounded p-3 flex flex-col gap-3">
-							<div className="text-sm font-semibold text-gray-700">{detail.concept}</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs text-gray-500 font-medium">Amount</label>
-								<InputNumber
-									value={detail.amount}
-									onValueChange={(e) => handleEditDetailChange(detail.detail_id, 'amount', e.value)}
-									minFractionDigits={2}
-									maxFractionDigits={2}
-								/>
+				<div className="flex flex-col gap-5 pt-4 max-h-[65vh] overflow-auto px-1">
+					{editDetails.map((detail, index) => (
+						<div key={detail.detail_id} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+							<div className="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center">
+								<span className="font-bold text-gray-800 flex items-center gap-2">
+									<i className="pi pi-tag text-blue-500" />
+									{detail.concept}
+								</span>
+								<span className="text-xs text-gray-400 uppercase font-semibold">Item #{index + 1}</span>
 							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs text-gray-500 font-medium">Description</label>
-								<InputTextarea
-									value={detail.concept_description}
-									onChange={(e) => handleEditDetailChange(detail.detail_id, 'concept_description', e.target.value)}
-									rows={3}
-									autoResize
-								/>
+							<div className="p-4 flex flex-col gap-4">
+								<div className="flex flex-col gap-2">
+									<label className="text-sm font-semibold text-gray-600 ml-1">Amount</label>
+									<InputNumber
+										value={detail.amount}
+										onValueChange={(e) => handleEditDetailChange(detail.detail_id, 'amount', e.value)}
+										minFractionDigits={2}
+										maxFractionDigits={2}
+										mode="currency"
+										currency={editDialog.request?.currency || 'USD'}
+										locale="en-US"
+										className="w-full"
+										inputClassName="w-full font-bold text-lg"
+									/>
+								</div>
+								<div className="flex flex-col gap-2">
+									<label className="text-sm font-semibold text-gray-600 ml-1">Description</label>
+									<InputTextarea
+										value={detail.concept_description}
+										onChange={(e) => handleEditDetailChange(detail.detail_id, 'concept_description', e.target.value)}
+										rows={3}
+										autoResize
+										className="w-full"
+										placeholder="Add internal notes or corrections..."
+									/>
+								</div>
 							</div>
 						</div>
 					))}
 					{editDetails.length === 0 && (
-						<p className="text-sm text-gray-500">No editable details found for this request.</p>
+						<div className="text-center py-8">
+							<i className="pi pi-search text-4xl text-gray-300 mb-3 block" />
+							<p className="text-gray-500 italic">No editable details found for this request.</p>
+						</div>
 					)}
 				</div>
 			</Dialog>

@@ -199,6 +199,7 @@
                                 result = result[0];
                                 $rootScope.currentTrack.id = result.id;
                                 $scope.toggleTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                                 $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
                                 $rootScope.topBar.filterTask.name = $rootScope.topBar.filterTask.taskName;
                                 $rootScope.topBar.filterTask.id = $rootScope.topBar.filterTask.idTask;
@@ -476,12 +477,14 @@
                             TracksServices.update($rootScope.currentTrack, function (err, result) {
                                 $rootScope.timerRunning = false;
                                 $scope.stopTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                             });
                         })
                     } else {
                         TracksServices.update($rootScope.currentTrack, function (err, result) {
                             $rootScope.timerRunning = false;
                             $scope.stopTimer();
+                            $rootScope.$broadcast('timerStateChanged');
                         });
                     }
                 }
@@ -662,6 +665,62 @@
             ]
         };
 
+        $rootScope.syncTimerStatus = function() {
+            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
+                if (!err) {
+                    // Stop current visual timer if running
+                    if ($rootScope.timerRunning) {
+                        $scope.stopTimer();
+                        $rootScope.timerRunning = false;
+                    }
+
+                    if (track && (!track.endTime || track.endTime == '0000-00-00 00:00:00')) {
+                        // Update current track
+                        $rootScope.currentTrack = track;
+                        $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
+                        var now = new Date().getTime(); // Fecha actual milisegundos
+                        var start = new Date(track.startTime).getTime(); // Fecha de track en milisegundos
+                        var ms = now - start;
+                        $scope.toggleTimer(ms); // Iniciamos el clock con el tiempo corrido
+                    } else {
+                        $rootScope.currentTrack = {};
+                        $rootScope.timerRunning = false;
+                        $scope.mode = "Start";
+                        $scope.timer = "00:00:00";
+                        document.title = 'Tracking';
+                    }
+                    $rootScope.$broadcast('timerStateChanged');
+                }
+            });
+        };
+
+        // Listen for messages from React (in iframe)
+        $window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'object') {
+                if (event.data.action === 'refresh-timer') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.syncTimerStatus) $rootScope.syncTimerStatus()
+                    });
+                } else if (event.data.action === 'show-toast') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.showToaster) {
+                            $rootScope.showToaster(event.data.message, event.data.type || 'info', '')
+                        }
+                    });
+                }
+            }
+        });
+
+        // Broadcast changes from Angular to React
+        $rootScope.$on('timerStateChanged', function() {
+            var iframes = document.querySelectorAll('iframe');
+            iframes.forEach(function(iframe) {
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ action: 'refresh-dashboard' }, '*');
+                }
+            });
+        });
+
         // Check for defined session values
         if (!$window.localStorage[TOKEN_KEY]) {
             $log.error('You are not logged in');
@@ -680,22 +739,7 @@
                 $rootScope.userIdClient = $window.localStorage["idUserClient"];
             }
             $rootScope.generateSidebarContent();
-            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
-                if (!err) {
-                    if (track) {
-                        if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
-
-                            //Update current track
-                            $rootScope.currentTrack = track;
-                            $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
-                            var now = new Date().getTime(); //Fecha actual millisegundos
-                            var start = new Date(track.startTime).getTime(); //Fecha de track en millisegundos
-                            var ms = now - start;
-                            $scope.toggleTimer(ms); //Iniciamos el clock con el tiempo corrido
-                        }
-                    }
-                }
-            });
+            $rootScope.syncTimerStatus();
         }
 
 

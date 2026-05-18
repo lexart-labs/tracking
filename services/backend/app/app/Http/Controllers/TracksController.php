@@ -29,8 +29,8 @@ class TracksController extends BaseController
         $startTime = $request->input("startTime");
         $endTime = $request->input("endTime");
 
-        $startTime = date('Y-m-d H:i:s',date(strtotime($startTime)));
-        $endTime = date('Y-m-d H:i:s',date(strtotime($endTime)));
+        $startTime = date('Y-m-d H:i:s', strtotime($startTime));
+        $endTime = date('Y-m-d H:i:s', strtotime($endTime));
 
         $user_id = $id;
         $client_id = $request->input("idClient") ? $request->input("idClient") : null;
@@ -177,16 +177,21 @@ class TracksController extends BaseController
         $trackCost = null;
 
         try {
-            if ($typeTrack == "manual") {
-                $task_manual = Tasks::where('id', $idTask)->get();
-
-                if (!$task_manual) {
-                    $task_trello = TrelloTasks::where('id', $idTask)->get();
-
-                    if (!$task_trello) {
-                        return (new Response(array("Error" => TASK_INVALID, "Operation" => "tracks new"), 500));
-                    }
+            if ($typeTrack == "trello") {
+                $task = TrelloTasks::where('id', $idTask)->first();
+            } else {
+                $task = Tasks::where('id', $idTask)->first();
+                if (!$task) {
+                    $task = TrelloTasks::where('id', $idTask)->first();
                 }
+            }
+
+            if (!$task) {
+                return (new Response(array("Error" => "TASK_INVALID", "Operation" => "tracks new"), 500));
+            }
+
+            if (isset($task->active) && $task->active < 1) {
+                return (new Response(array("Error" => "TASK_INACTIVE", "Operation" => "tracks new"), 403));
             }
 
             $startDate = date('Y-m-d', strtotime($startTime));
@@ -745,15 +750,16 @@ class TracksController extends BaseController
                     WHEN Tracks.typeTrack='trello' THEN TrelloTask.status
                     ELSE Tasks.status
                 END) as status"),
+            DB::raw("
+                (CASE
+                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.active
+                    ELSE Tasks.active
+                END) as isActive"),
             DB::raw("Users.name AS userName"),
             DB::raw("Users.photo"),
             DB::raw("TIMEDIFF( Tracks.endTime, Tracks.startTime ) AS duration")
         )
-        ->leftJoin("Tasks", function($join) {
-            $join
-                ->on("Tracks.idTask", "=", "Tasks.id")
-                ->where('Tasks.active', '=', 1);
-        })
+        ->leftJoin("Tasks", "Tracks.idTask", "=", "Tasks.id")
         ->leftJoin("TrelloTask", "Tracks.idTask", "=", "TrelloTask.id")
         ->join("Users", "Tracks.idUser", "=", "Users.id")
         ->join("Projects", function($join) {

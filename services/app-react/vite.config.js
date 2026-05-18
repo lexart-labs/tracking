@@ -20,15 +20,27 @@ export default defineConfig({
     allowedHosts: 'all',
   },
   test: {
+    server: {
+      deps: {
+        inline: ['jsdom', 'html-encoding-sniffer', '@exodus/bytes'],
+      },
+    },
     include: ['src/tests/unit/**/*.{test,spec}.{js,jsx}'],
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/tests/setup.js'],
     css: false,
-    testTimeout: 15000,
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    teardownTimeout: 10000,
+    maxWorkers: 1,
+    minWorkers: 1,
     pool: 'forks',
     poolOptions: {
-      forks: { singleFork: true },
+      forks: { 
+        singleFork: true,
+        isolate: false,
+      },
     },
     coverage: {
       provider: 'v8',

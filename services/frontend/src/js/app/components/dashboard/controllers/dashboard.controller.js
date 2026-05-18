@@ -4,7 +4,9 @@
 
   var Module = ng.module('LexTracking');
 
-  Module.controller('DashboardCtrl', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', 'TracksServices','TasksServices', 'ngDialog', function($scope, $rootScope, $state, $stateParams, $filter, TracksServices,TasksServices, ngDialog) {
+  Module.controller('DashboardCtrl', ['$scope', '$rootScope', '$state', '$stateParams', '$filter', 'TracksServices','TasksServices', 'ngDialog', '$sce', function($scope, $rootScope, $state, $stateParams, $filter, TracksServices,TasksServices, ngDialog, $sce) {
+    $scope.env_react_url = $sce.trustAsResourceUrl($rootScope.trackingReactUrl + '/#/');
+    if ($rootScope.showIframe) return false;
 
     $scope.tracks   = [];
     $scope.allTasks = [];
