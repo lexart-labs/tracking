@@ -21,6 +21,33 @@ export class UserService {
         }
     }
 
+    async getUser(userId) {
+        try {
+            const response = await this.api.get(`${USERS_ENDPOINT}/${userId}`)
+            return response.data.response || response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createUser(userData) {
+        try {
+            const response = await this.api.post(`${USERS_ENDPOINT}/register`, userData)
+            return response.data.response || response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async updateUser(userId, userData) {
+        try {
+            const response = await this.api.put(`${USERS_ENDPOINT}/update/${userId}`, userData)
+            return response.data.response || response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
     async uploadProfileImage(userId, file) {
         try {
             const formData = new FormData()
