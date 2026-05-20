@@ -31,6 +31,16 @@ export default function TaskFormDialog({ visible, onHide, task, onSave, projects
     useEffect(() => {
         if (visible) {
             if (task) {
+                const parsedAssignees = typeof task.users === 'string' 
+                    ? JSON.parse(task.users) 
+                    : (Array.isArray(task.users) ? task.users : (task.assignees || []));
+
+                const assigneesWithId = parsedAssignees.map(item => {
+                    const id = item.id ? Number(item.id) : (item.idUser ? Number(item.idUser) : null);
+                    const matchingUser = users.find(u => Number(u.id) === id);
+                    return matchingUser || { ...item, id };
+                }).filter(item => item.id !== null);
+
                 setFormData({
                     ...task,
                     idProject: task.idProject ? Number(task.idProject) : '',
@@ -39,7 +49,7 @@ export default function TaskFormDialog({ visible, onHide, task, onSave, projects
                     duration: parseFloat(task.duration) || 0,
                     startDate: task.startDate ? new Date(task.startDate) : null,
                     endDate: task.endDate ? new Date(task.endDate) : null,
-                    assignees: typeof task.users === 'string' ? JSON.parse(task.users) : (Array.isArray(task.users) ? task.users : (task.assignees || []))
+                    assignees: assigneesWithId
                 })
             } else {
                 setFormData({
@@ -54,7 +64,7 @@ export default function TaskFormDialog({ visible, onHide, task, onSave, projects
                 })
             }
         }
-    }, [visible, task])
+    }, [visible, task, users])
 
     const footer = (
         <div className="flex justify-end gap-3 p-4 bg-gray-50/50 rounded-b-xl border-t border-gray-100">
