@@ -8,6 +8,7 @@ import { Tag } from 'primereact/tag'
 import clientService from '@/services/clientService'
 import sessionStore from '@/stores/session'
 import BreadCrumbs from '@/components/shared/BreadCrumbs'
+import PageHeader from '@/components/shared/PageHeader'
 
 /**
  * ClientList Component
@@ -113,22 +114,13 @@ export default function ClientList() {
 	}
 
 	return (
-		<>
-			<div className="lexart-wa__hdr lexart-flex">
-				<div className="lexart-flex-5 flex justify-between items-center w-full">
-					<h1 className="lexart-wa__tit">
-						<a className="lexart-bc-item">Clients</a>
-					</h1>
-					<div className="lexart-btn__right m-0">
-						<button
-							className="lexart-btn lexart-btn--round"
-							onClick={() => navigate('/client/NEW')}
-						>
-							+ CLIENT
-						</button>
-					</div>
-				</div>
-			</div>
+		<div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+			<PageHeader 
+				title="Clients" 
+				description="Manage your client list and track associated company accounts" 
+				buttonLabel="New Client" 
+				onButtonClick={() => navigate('/client/NEW')}
+			/>
 
 			<div className="lexart-wa__cnt">
 				<DataTable
@@ -164,6 +156,6 @@ export default function ClientList() {
 					<Column body={actionBodyTemplate} exportable={false} style={{ width: '8rem' }} />
 				</DataTable>
 			</div>
-		</>
+		</div>
 	)
 }

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useContext } from 'react'
 import { Button } from 'primereact/button'
 import BreadCrumbs from '@/components/shared/BreadCrumbs'
+import PageHeader from '@/components/shared/PageHeader'
 import FilterBar from '../components/FilterBar'
 import GroupedTracksTable from '../components/GroupedTracksTable'
 import TracksSummary from '../components/TracksSummary'
@@ -127,16 +128,14 @@ function TracksList() {
     if (userRole === 'client') {
         return (
             <div className="p-4">
-                <BreadCrumbs items={[{ label: 'Tracks' }]} />
                 <p className="text-red-500 mt-4">Access Denied</p>
             </div>
         )
     }
 
     return (
-        <div className="p-4">
-            <BreadCrumbs items={[{ label: 'Tracks' }]} />
-            <h1 className="text-xl font-bold mb-4 text-black">Tracks</h1>
+        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+            <PageHeader title="Reports" description="Record and monitor your daily working hours" />
 
             <div className="no-print">
                 <FilterBar

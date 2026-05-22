@@ -10,6 +10,7 @@ import { Calendar } from 'primereact/calendar'
 import paymentRequestService from '@/services/paymentRequestService'
 import userService from '@/services/userService'
 import sessionStore from '@/stores/session'
+import PageHeader from '@/components/shared/PageHeader'
 
 const STATUSES = ['All', 'Pending', 'Approved', 'Rejected', 'Canceled']
 const CONCEPTS = ['Closure', 'Benefits', 'Compensation', 'External']
@@ -245,16 +246,13 @@ export default function PaymentRequestsAdmin() {
 	]
 
 	return (
-		<>
-			<div className="lexart-wa__hdr lexart-flex">
-				<div className="lexart-flex-5 flex justify-between items-center w-full">
-					<h1 className="lexart-wa__tit">
-						<a className="lexart-bc-item">Payment Requests</a>
-					</h1>
-				</div>
-			</div>
+		<div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+			<PageHeader 
+				title="Payment Requests" 
+				description="Review, approve and manage all team payment requests" 
+			/>
 
-			<div className="lexart-wa__cnt min-h-[600px]">
+			<div className="min-h-[600px]">
 				{/* Filters */}
 				<div className="flex flex-wrap gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100 items-end">
 					<div className="flex flex-col gap-2">
@@ -474,6 +472,6 @@ export default function PaymentRequestsAdmin() {
 					)}
 				</div>
 			</Dialog>
-		</>
+		</div>
 	)
 }

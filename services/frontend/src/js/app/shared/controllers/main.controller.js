@@ -536,13 +536,13 @@
                     access: true
                 },
 
-                {
+/*                 {
                     uisref: 'app.calendar',
                     icon: 'ri-calendar-line',
                     name: 'Calendar',
                     label: $filter('translate')('navigation.calendar'),
                     access: true
-                },
+                }, */
 
                 {
                     uisref: 'app.tasks',
@@ -562,13 +562,13 @@
 
 
 
-                {
+/*                 {
                     uisref: 'app.reports',
                     icon: 'ri-bar-chart-line',
                     name: 'Reports',
                     label: 'Reportes',
                     access: true
-                },
+                }, */
                 {
                     uisref: 'app.tracks',
                     icon: 'ri-timer-line',
