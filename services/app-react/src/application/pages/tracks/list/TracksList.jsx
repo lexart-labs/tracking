@@ -128,7 +128,6 @@ function TracksList() {
     if (userRole === 'client') {
         return (
             <div className="p-4">
-                <BreadCrumbs items={[{ label: 'Tracks' }]} />
                 <p className="text-red-500 mt-4">Access Denied</p>
             </div>
         )
@@ -136,8 +135,7 @@ function TracksList() {
 
     return (
         <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
-            <BreadCrumbs items={[{ label: 'Tracks' }]} />
-            <PageHeader title="Tracks" description="Record and monitor your daily working hours" />
+            <PageHeader title="Reports" description="Record and monitor your daily working hours" />
 
             <div className="no-print">
                 <FilterBar

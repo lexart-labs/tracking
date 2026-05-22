@@ -1,6 +1,7 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { resizerContext } from "@/providers/iframe-resizer"
-import BreadCrumbs from "@/components/shared/BreadCrumbs"
+// Nota: Quité BreadCrumbs si no se usa, o puedes cambiar PageHeader por BreadCrumbs si te equivocaste de nombre.
+import PageHeader from "@/components/shared/PageHeader" // <-- FALTABA ESTE IMPORT
 import { useDashboardData } from './hooks/useDashboardData'
 import { useTrackActions } from './hooks/useTrackActions'
 import HistorySection from './components/HistorySection'
@@ -16,7 +17,8 @@ export function Dashboard() {
     const { history, activeTracks, loading, refresh } = useDashboardData(userRole)
     const { startTrack, stopTrack, createManualTrack, submitting } = useTrackActions(user, refresh)
 
-    React.useEffect(() => {
+    // Es mejor importar useEffect directamente para mantener el código limpio
+    useEffect(() => {
         if (refreshCounter > 0) {
             refresh()
         }
@@ -27,38 +29,38 @@ export function Dashboard() {
     const activeTrackId = activeTrack ? activeTrack.id : null
 
     return (
-        <div className="dashboard-container p-4" data-testid="dashboard-container">
-            <div className="flex justify-between items-center mb-4">
-                <BreadCrumbs items={[{ label: 'Dashboard', url: '#/' }, { label: 'Current Tracks' }]} />
-            </div>
+        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+            <PageHeader title="Dashboard" /> 
             
-            <div className="grid gap-6">
-                <ErrorBoundary>
-                    {loading && !history.length ? (
-                        <HistorySkeleton />
-                    ) : (
-                        (userRole === 'admin' || userRole === 'pm' || userRole === 'developer') && (
-                            <HistorySection 
-                                history={history} 
-                                onStart={startTrack}
-                                onStop={stopTrack}
-                                onSaveSelection={createManualTrack}
-                                submitting={submitting}
-                                hasAnyActiveTrack={hasAnyActiveTrack}
-                                activeTrackId={activeTrackId}
-                                data-testid="history-section"
-                            />
-                        )
-                    )}
-                </ErrorBoundary>
+            <div className="dashboard-container p-4" data-testid="dashboard-container">
+                <div className="grid gap-6">
+                    <ErrorBoundary>
+                        {loading && !history.length ? (
+                            <HistorySkeleton />
+                        ) : (
+                            (userRole === 'admin' || userRole === 'pm' || userRole === 'developer') && (
+                                <HistorySection 
+                                    history={history} 
+                                    onStart={startTrack}
+                                    onStop={stopTrack}
+                                    onSaveSelection={createManualTrack}
+                                    submitting={submitting}
+                                    hasAnyActiveTrack={hasAnyActiveTrack}
+                                    activeTrackId={activeTrackId}
+                                    data-testid="history-section"
+                                />
+                            )
+                        )}
+                    </ErrorBoundary>
 
-                <ErrorBoundary>
-                    <CurrentTracksSection 
-                        tracks={activeTracks} 
-                        userRole={userRole} 
-                        data-testid="current-tracks-section"
-                    />
-                </ErrorBoundary>
+                    <ErrorBoundary>
+                        <CurrentTracksSection 
+                            tracks={activeTracks} 
+                            userRole={userRole} 
+                            data-testid="current-tracks-section"
+                        />
+                    </ErrorBoundary>
+                </div>
             </div>
         </div>
     )
