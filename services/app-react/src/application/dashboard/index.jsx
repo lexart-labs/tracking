@@ -30,8 +30,7 @@ export function Dashboard() {
 
     return (
         <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
-            <PageHeader title="Dashboard" /> 
-            
+            <PageHeader title="Dashboard" description="Monitor your daily working hours" />
             <div className="dashboard-container p-4" data-testid="dashboard-container">
                 <div className="grid gap-6">
                     <ErrorBoundary>
