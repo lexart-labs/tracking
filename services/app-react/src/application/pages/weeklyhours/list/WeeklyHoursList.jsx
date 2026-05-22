@@ -6,6 +6,8 @@ import { Button } from 'primereact/button'
 import weeklyhoursService from '@/services/weeklyhoursService'
 import sessionStore from '@/stores/session'
 
+import PageHeader from '@/components/shared/PageHeader'
+
 export default function WeeklyHoursList() {
 	const [records, setRecords] = useState([])
 	const [loading, setLoading] = useState(true)
@@ -82,22 +84,13 @@ export default function WeeklyHoursList() {
 	}
 
 	return (
-		<>
-			<div className="lexart-wa__hdr lexart-flex">
-				<div className="lexart-flex-5 flex justify-between items-center w-full">
-					<h1 className="lexart-wa__tit">
-						<a className="lexart-bc-item">Weekly Hours</a>
-					</h1>
-					<div className="lexart-btn__right m-0">
-						<button
-							className="lexart-btn lexart-btn--round"
-							onClick={() => navigate('/weeklyhour/NEW')}
-						>
-							+ WEEKLY HOUR
-						</button>
-					</div>
-				</div>
-			</div>
+		<div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+			<PageHeader 
+				title="Weekly Hours" 
+				description="Manage and audit standard workloads and cost-per-hour settings" 
+				buttonLabel="New Weekly Hour" 
+				onButtonClick={() => navigate('/weeklyhour/NEW')}
+			/>
 
 			<div className="lexart-wa__cnt">
 				<DataTable
@@ -136,6 +129,6 @@ export default function WeeklyHoursList() {
 					<Column body={actionBodyTemplate} exportable={false} style={{ width: '6rem' }} />
 				</DataTable>
 			</div>
-		</>
+		</div>
 	)
 }

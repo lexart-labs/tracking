@@ -5,6 +5,7 @@ import FilterBar from '../components/FilterBar'
 import TasksTable from '../components/TasksTable'
 import TaskFormDialog from '../components/TaskFormDialog'
 import ProjectCreateDialog from '../components/ProjectCreateDialog'
+import PageHeader from '@/components/shared/PageHeader'
 import tasksService from '@/services/tasksService'
 import tracksService from '@/services/tracksService'
 import userService from '@/services/userService'
@@ -201,18 +202,12 @@ export default function TasksList() {
         <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
             <Toast ref={toast} />
             
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-gray-100 pb-6">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Tasks</h1>
-                    <p className="text-gray-500 text-sm mt-1 font-medium">Manage and track your project assignments</p>
-                </div>
-                <Button 
-                    label="New Task" 
-                    icon="pi pi-plus" 
-                    className="p-button-primary rounded-xl px-8 h-[46px] shadow-lg shadow-primary/20 hover:scale-105 transition-all"
-                    onClick={() => { setSelectedTask(null); setTaskDialogVisible(true); }}
-                />
-            </div>
+            <PageHeader 
+                title="Tasks" 
+                description="Manage and track your project assignments" 
+                buttonLabel="New Task" 
+                onButtonClick={() => { setSelectedTask(null); setTaskDialogVisible(true); }}
+            />
 
             <FilterBar 
                 filters={filters} 

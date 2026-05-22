@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import sessionStore from '@/stores/session'
 import { UserService } from "@/services/userService"
+import PageHeader from "@/components/shared/PageHeader"
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -73,15 +74,13 @@ export function UserList() {
     };
 
     return (
-        <div className="">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-medium">Users</h2>
-                <Button
-                    label="+ User"
-                    className="p-button-rounded rounded-full px-4 py-2"
-                    onClick={() => navigate('/user/NEW')}
-                />
-            </div>
+        <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+            <PageHeader 
+                title="Users" 
+                description="Manage and edit collaborator accounts and system permissions" 
+                buttonLabel="New User" 
+                onButtonClick={() => navigate('/user/NEW')}
+            />
 
             <div className="card">
                 <DataTable

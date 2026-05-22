@@ -10,6 +10,7 @@ import { Calendar } from 'primereact/calendar'
 import { Dialog } from 'primereact/dialog'
 import paymentRequestService from '@/services/paymentRequestService'
 import sessionStore from '@/stores/session'
+import PageHeader from '@/components/shared/PageHeader'
 
 const CONCEPTS = ['Closure', 'Benefits', 'Compensation', 'External']
 
@@ -188,16 +189,13 @@ export default function PaymentRequests() {
 	)
 
 	return (
-		<>
-			<div className="lexart-wa__hdr lexart-flex">
-				<div className="lexart-flex-5 flex justify-between items-center w-full">
-					<h1 className="lexart-wa__tit">
-						<a className="lexart-bc-item">Payment Requests</a>
-					</h1>
-				</div>
-			</div>
+		<div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
+			<PageHeader 
+				title="Payment Requests" 
+				description="Submit and track your payment requests and reimbursements" 
+			/>
 
-			<div className="lexart-wa__cnt flex flex-col gap-6 min-h-[600px]">
+			<div className="flex flex-col gap-6 min-h-[600px]">
 
 				{/* Form */}
 				<div className="flex gap-4 items-start">
@@ -425,6 +423,6 @@ export default function PaymentRequests() {
 			>
 				<p className="text-sm text-gray-600 pt-2">Are you sure you want to cancel this request?</p>
 			</Dialog>
-		</>
+		</div>
 	)
 }
