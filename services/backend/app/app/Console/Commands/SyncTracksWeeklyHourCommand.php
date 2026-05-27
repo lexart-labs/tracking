@@ -8,9 +8,9 @@ use Illuminate\Console\Command;
 
 class SyncTracksWeeklyHourCommand extends Command
 {
-    protected $signature = 'tracks:sync-weekly-hour {from : Start date (Y-m-d)} {to : End date (Y-m-d)} {--dry-run : Show changes without updating}';
+    protected $signature = 'tracks:sync-weekly-hour {from? : Start date (Y-m-d)} {to? : End date (Y-m-d)} {--dry-run : Show changes without updating}';
 
-    protected $description = 'Updates Tracks.idWeeklyHour by date range using WeeklyHours by user and date';
+    protected $description = 'Updates Tracks.idWeeklyHour using WeeklyHours by user/date (all tracks or date range)';
 
     public function handle()
     {
@@ -18,25 +18,33 @@ class SyncTracksWeeklyHourCommand extends Command
         $to = $this->argument('to');
         $dryRun = (bool) $this->option('dry-run');
 
-        if (!$this->isValidDate($from) || !$this->isValidDate($to)) {
-            $this->error('Invalid date format. Use Y-m-d for both dates.');
+        $query = Tracks::query();
+
+        if (($from && !$to) || (!$from && $to)) {
+            $this->error('If you send dates, you must provide both: from and to.');
             return 1;
         }
 
-        if ($from > $to) {
-            $this->error('The start date must be less than or equal to end date.');
-            return 1;
+        if ($from && $to) {
+            if (!$this->isValidDate($from) || !$this->isValidDate($to)) {
+                $this->error('Invalid date format. Use Y-m-d for both dates.');
+                return 1;
+            }
+
+            if ($from > $to) {
+                $this->error('The start date must be less than or equal to end date.');
+                return 1;
+            }
+
+            $fromDateTime = $from . ' 00:00:00';
+            $toDateTime = $to . ' 23:59:59';
+            $query->whereBetween('startTime', [$fromDateTime, $toDateTime]);
         }
-
-        $fromDateTime = $from . ' 00:00:00';
-        $toDateTime = $to . ' 23:59:59';
-
-        $query = Tracks::whereBetween('startTime', [$fromDateTime, $toDateTime]);
 
         $totalTracks = (clone $query)->count();
 
         if ($totalTracks === 0) {
-            $this->info('No tracks found in that date range.');
+            $this->info($from && $to ? 'No tracks found in that date range.' : 'No tracks found.');
             return 0;
         }
 
@@ -46,6 +54,11 @@ class SyncTracksWeeklyHourCommand extends Command
         $cache = [];
 
         $this->info('Tracks found: ' . $totalTracks);
+        if ($from && $to) {
+            $this->info('Date range: ' . $from . ' to ' . $to);
+        } else {
+            $this->info('Scope: all tracks');
+        }
         $this->info($dryRun ? 'Running in dry-run mode.' : 'Applying updates.');
 
         $query->chunkById(500, function ($tracks) use (&$updated, &$skipped, &$withoutWeeklyHour, &$cache, $dryRun) {
