@@ -4,10 +4,8 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
-import { Tag } from 'primereact/tag'
 import clientService from '@/services/clientService'
 import sessionStore from '@/stores/session'
-import BreadCrumbs from '@/components/shared/BreadCrumbs'
 import PageHeader from '@/components/shared/PageHeader'
 
 /**
@@ -17,7 +15,8 @@ import PageHeader from '@/components/shared/PageHeader'
  */
 export default function ClientList() {
 	const [clients, setClients] = useState([])
-	const [globalFilter, setGlobalFilter] = useState(null)
+	const [draftFilters, setDraftFilters] = useState({ id: '', name: '', company: '' })
+	const [appliedFilters, setAppliedFilters] = useState({ id: '', name: '', company: '' })
 	const [loading, setLoading] = useState(true)
 	const navigate = useNavigate()
 	const { user: userLogged } = sessionStore()
@@ -109,6 +108,20 @@ export default function ClientList() {
 		)
 	}
 
+	const filteredClients = clients.filter((c) => {
+		const idOk = !appliedFilters.id || String(c.id || '').toLowerCase().includes(appliedFilters.id.toLowerCase())
+		const nameOk = !appliedFilters.name || String(c.name || '').toLowerCase().includes(appliedFilters.name.toLowerCase())
+		const companyOk = !appliedFilters.company || String(c.company || '').toLowerCase().includes(appliedFilters.company.toLowerCase())
+		return idOk && nameOk && companyOk
+	})
+
+	const handleApplyFilters = () => setAppliedFilters({ ...draftFilters })
+	const handleClearFilters = () => {
+		const empty = { id: '', name: '', company: '' }
+		setDraftFilters(empty)
+		setAppliedFilters(empty)
+	}
+
 	if (userLogged.userRole !== 'admin' && userLogged.userRole !== 'pm') {
 		return <div className="p-4 text-center text-red-600 font-bold">Access Denied: Only Admin and PM can manage clients.</div>
 	}
@@ -123,8 +136,26 @@ export default function ClientList() {
 			/>
 
 			<div className="lexart-wa__cnt">
+				<div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 items-end">
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">ID</label>
+						<InputText value={draftFilters.id} onChange={(e) => setDraftFilters((p) => ({ ...p, id: e.target.value }))} placeholder="ID" className="h-[42px]" />
+					</div>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">Name</label>
+						<InputText value={draftFilters.name} onChange={(e) => setDraftFilters((p) => ({ ...p, name: e.target.value }))} placeholder="Name" className="h-[42px]" />
+					</div>
+					<div className="flex flex-col gap-2">
+						<label className="text-xs font-bold text-gray-500 uppercase ml-1">Company</label>
+						<InputText value={draftFilters.company} onChange={(e) => setDraftFilters((p) => ({ ...p, company: e.target.value }))} placeholder="Company" className="h-[42px]" />
+					</div>
+					<div className="flex gap-2 ml-auto">
+						<Button label="Apply" icon="pi pi-search" className="p-button-primary rounded-lg h-[42px] px-6" onClick={handleApplyFilters} />
+						<Button label="Clear" icon="pi pi-filter-slash" className="p-button-secondary p-button-outlined rounded-lg h-[42px] px-4" onClick={handleClearFilters} />
+					</div>
+				</div>
 				<DataTable
-					value={clients}
+					value={filteredClients}
 					loading={loading}
 					paginator
 					rows={10}
@@ -133,25 +164,20 @@ export default function ClientList() {
 					tableStyle={{ minWidth: '50rem' }}
 					className="lexart-table"
 					emptyMessage="No clients found."
-					filterDisplay="row"
 					pt={{
 						root: { className: 'border-none shadow-none bg-transparent' },
 						header: { className: 'hidden' },
 						thead: { className: 'bg-transparent' },
 						column: {
 							headerCell: { className: 'bg-transparent border-none p-3 font-bold text-gray-800' },
-							filterCell: { className: 'bg-transparent border-none p-3' },
 							bodyCell: { className: 'p-3 border-b border-gray-100' },
-							filterMenuButton: { className: 'hidden' }, // Hide the filter icon
-							filterClearButton: { className: 'hidden' } // Hide clear button
 						},
-						filterRow: { className: 'bg-transparent' },
 						filterInput: { className: 'field-filter' }
 					}}
 				>
-					<Column field="id" header="ID" sortable filter filterPlaceholder="ID" style={{ width: '8rem' }} />
-					<Column field="name" header="Name" body={clientNameTemplate} sortable filter filterPlaceholder="Name" />
-					<Column field="company" header="Company" sortable filter filterPlaceholder="Company" />
+					<Column field="id" header="ID" sortable style={{ width: '8rem' }} />
+					<Column field="name" header="Name" body={clientNameTemplate} sortable />
+					<Column field="company" header="Company" sortable />
 					<Column header="Status" body={statusBodyTemplate} sortable sortField="active" style={{ width: '10rem' }} />
 					<Column body={actionBodyTemplate} exportable={false} style={{ width: '8rem' }} />
 				</DataTable>
