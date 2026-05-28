@@ -685,28 +685,7 @@ class TracksController extends BaseController
                 ->whereRaw("Tracks.typeTrack = ?", ["manual"])
             ->get();
 
-            $endlessTrello = Tracks::select(
-                    "Tracks.*",
-                    DB::raw("Projects.name AS projectName"),
-                    DB::raw("TrelloTask.id_project AS TrelloProyect"),
-                    DB::raw("TrelloTask.name AS taskName"),
-                    DB::raw("Users.name AS userName"),
-                    DB::raw("Users.photo"),
-                    DB::raw("TIMEDIFF( Tracks.endTime, Tracks.startTime ) AS duration")
-                )->join("TrelloTask", "Tracks.idTask", "=", "TrelloTask.id")
-                ->join("Users", "Tracks.idUser", "=", "Users.id")
-                ->join("Projects", "Projects.id", "=", "TrelloTask.id_project")
-                ->whereRaw("endTime IS NULL")
-                #->orWhereRaw("Tracks.endTime = ?", ["0000-00-00 00:00:00"])
-                ->whereRaw("TrelloTask.active = ?", [1])
-                ->whereRaw("Tracks.typeTrack = ?", ["trello"])
-            ->get();
-
             $endless = array();
-
-            foreach ($endlessTrello as $value) {
-                array_push($endless, $value);
-            }
 
             foreach ($endlessManual as $value) {
                 array_push($endless, $value);
