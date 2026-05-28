@@ -29,7 +29,8 @@ local: $(ENV_FILE_LOCAL) $(COMPOSE_BASE) $(COMPOSE_LOCAL)
 	@echo "==> Running Local Environment..."
 	@echo "Building Docker images without cache..."
 	@docker compose --env-file $(ENV_FILE_LOCAL) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_LOCAL) build --no-cache && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_LOCAL) build --no-cache \
+		--build-arg GITHUB_TOKEN=$${GITHUB_TOKEN:-} && \
 		echo "Images for local built successfully!" || \
 		(echo "Error building images for local. Please check the logs."; exit 1)
 	@echo "Starting Docker containers..."
@@ -42,7 +43,8 @@ dev: $(ENV_FILE_DEV) $(COMPOSE_BASE) $(COMPOSE_DEV)
 	@echo "==> Running Local Development..."
 	@echo "Building Docker images without cache..."
 	@docker compose --env-file $(ENV_FILE_DEV) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_DEV) build --no-cache && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_DEV) build --no-cache \
+		--build-arg GITHUB_TOKEN=$${GITHUB_TOKEN:-} && \
 		echo "Images for development built successfully!" || \
 		(echo "Error building images for development. Please check the logs."; exit 1)
 	@echo "Starting Docker containers..."
@@ -55,7 +57,8 @@ prod: $(ENV_FILE_PROD) $(COMPOSE_BASE) $(COMPOSE_PROD)
 	@echo "==> Running Production Environment..."
 	@echo "Building Docker images without cache..."
 	@docker compose --env-file $(ENV_FILE_PROD) \
-		-f $(COMPOSE_BASE) -f $(COMPOSE_PROD) build --no-cache && \
+		-f $(COMPOSE_BASE) -f $(COMPOSE_PROD) build --no-cache \
+		--build-arg GITHUB_TOKEN=$${GITHUB_TOKEN:-} && \
 		echo "Images for production built successfully!" || \
 		(echo "Error building images for production. Please check the logs."; exit 1)
 	@echo "Starting Docker containers..."

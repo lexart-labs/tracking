@@ -39,6 +39,12 @@
                 controller: 'DashboardCtrl'
             })
 
+            .state('app.paymentRequests', {
+                url: '/payment-requests',
+                templateUrl: 'app/components/paymentRequests/views/paymentRequestsView.html',
+                controller: 'PaymentRequestsCtrl'
+            })
+
             .state('app.paymentRequestsAdmin', {
                 url: '/admin/payment-requests',
                 templateUrl: 'app/components/paymentRequestsAdmin/views/adminPaymentRequestsView.html',
@@ -106,8 +112,8 @@
             // TASKS
             .state('app.tasks', {
                 url: '/tasks',
-                templateUrl: 'app/components/tasks/tasks/views/tasksView.html',
-                controller: 'TasksCtrl',
+                templateUrl: 'app/components/tasks/tasks/views/tasks_react.html',
+                controller: 'TasksReactCtrl',
                 resolve: {
                 PreviousState: ["$state", function ($state) {
                     var currentStateData = {
@@ -298,6 +304,12 @@
                 url: '/bill/edit/:id',
                 templateUrl: 'app/components/bills/views/billFormView.html',
                 controller: 'BillCtrl'
+            })
+
+            .state('app.tracks', {
+                url: '/tracks',
+                templateUrl: 'app/components/tracks/views/tracksView.html',
+                controller: 'TracksCtrl'
             })
 
             .state('app.weeklyHours', {

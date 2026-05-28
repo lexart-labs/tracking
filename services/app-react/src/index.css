@@ -1,12 +1,185 @@
 @import "tailwindcss";
+
+@media print {
+  .no-print { display: none !important; }
+}
 @import 'primeicons/primeicons.css';
 /* import soho theme */
 
 @import "primereact/resources/themes/soho-light/theme.css";
+@import "primereact/resources/primereact.min.css";
+
 /* @import "primereact/resources/themes/soho-dark/theme.css"; */
 :root {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-size: .9rem;
+  --color-active-text: #7076FE;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F9F9F9;
+  min-height: 100vh;
+}
+
+/* Legacy Button — matches AngularJS .lexart-btn */
+.lexart-btn {
+  display: inline-block;
+  padding: 0rem 1.2rem;
+  line-height: 2rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: .875rem;
+  color: #F9F9F9 !important;
+  background-color: var(--color-active-text) !important;
+  border: none !important;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease-in, border-color 0.2s ease-in;
+}
+
+.lexart-btn:hover {
+  background-color: #8085ff !important;
+}
+
+.lexart-btn:active {
+  background-color: #5660dd !important;
+}
+
+/* Round modifier — matches AngularJS .lexart-btn--round */
+.lexart-btn--round {
+  font-size: .875rem;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+  padding: .25rem 1rem .20rem;
+  margin-bottom: .25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, .1) !important;
+  word-break: keep-all;
+}
+
+.lexart-btn--round:hover {
+  background-color: #8085ff !important;
+}
+
+.lexart-btn--alt {
+  background-color: #E5E5E5 !important;
+  color: #666 !important;
+}
+
+.lexart-btn--alt:hover {
+  background-color: #d1d1d1 !important;
+}
+
+/* Status Tags */
+.lexart-tag {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  width: fit-content;
+  letter-spacing: 0.4px;
+  display: inline-block;
+}
+
+.lexart-tag--info {
+  color: #0048AD;
+  background: #CAE3FC;
+}
+
+.lexart-tag--success {
+  color: #52C41A;
+  background: #F6FFED;
+}
+
+.lexart-tag--danger {
+  color: #FF4D4F;
+  background: #FFF1F0;
+}
+
+.lexart-tag--warning {
+  color: #B24D00;
+  background: #FFE3D4;
+}
+
+/* Circular Button for Actions */
+.lexart-btn-circle {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #fff !important;
+  border: 1px solid #c3c7cc !important;
+  color: #3c4250 !important;
+  transition: all 0.2s !important;
+  padding: 0 !important;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lexart-btn-circle:hover {
+  background: var(--color-active-text) !important;
+  color: #fff !important;
+  border-color: var(--color-active-text) !important;
+}
+
+.lexart-btn-circle i {
+  font-family: 'remixicon' !important;
+  font-size: 1.2rem !important;
+  line-height: 1 !important;
+  font-style: normal;
+}
+
+/* DataTable Customization */
+.p-datatable.lexart-table .p-datatable-thead > tr > th {
+  background: #fff;
+  color: #8c9196;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1.25rem 1rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr {
+  background: #fff;
+  transition: background-color 0.2s;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+.p-datatable.lexart-table .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f3f5;
+  color: #495057;
+  font-size: 0.875rem;
+}
+
+.p-paginator {
+  background: transparent !important;
+  border: none !important;
+  padding: 1rem 0 !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--color-active-text) !important;
+  color: #fff !important;
+  border-radius: 8px;
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

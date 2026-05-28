@@ -99,7 +99,8 @@ class UserController extends BaseController
                     "costHour" => 1,
                     "workLoad" => 40,
                     "currency" => "USD",
-                    "borrado" => 0
+                    "borrado" => 0,
+                    "valid_from" => date('Y-m-d'),
                 ));
             }
 

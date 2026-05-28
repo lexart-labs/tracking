@@ -17,6 +17,7 @@
     "finance"     : "Finances",
     "bank"        : "Bank Accounts",
     "weeklyHour"  : "Weekly Hours",
+    "timeReports" : "Reports",
     "sale"        : "Sales",
     "bill"        : "Bills",
     "my-profile"  : "My Profile",
@@ -200,6 +201,7 @@
     "totalCost"         : "Total Cost",
     "presupuesto"       : "Budget",
     "trackCost"         : "Cost",
+    "rate"              : "Rate",
     "currency"          : "Currency",
     "trello"            : "Trello",
     "manual"            : "Manual",
@@ -249,9 +251,16 @@
     "clientName"        : "Client Name",
     "user"              : "User",
     "currency"          : "Currency",
+    "validFrom"         : "Valid From",
+    "validUntil"        : "Valid Until",
 
 
 
+
+    "validUntilError"   : "Valid Until must be after Valid From",
+    "deleted"           : "Deleted",
+    "showDeleted"       : "Show deleted",
+    "activate"          : "Activate",
 
     "save"              : "Save",
     "confirm"           : "Confirm",

@@ -12,11 +12,11 @@
         $rootScope.showIframe = TRACKING_REACT_ON == 1;
         $rootScope.showChatbot = TRACKING_REACT_CHATBOT_ON == 1;
 
-        let env_react_url = $rootScope.trackingReactUrl + '/chatbot';
+        let env_react_url = $rootScope.trackingReactUrl + '/#/chatbot';
         //convert URL to trsuted URL
         $rootScope.chatbot_env_react_url = $sce.trustAsResourceUrl(env_react_url);
 
-        
+
 
         $rootScope.$on('$stateChangeSuccess', function (evt, toState, toParams, fromState, fromParams) {
             evt.preventDefault();
@@ -45,7 +45,7 @@
     });
 
     Module.controller('MainCtrl', ['$log', '$window', '$rootScope', '$scope', '$state', '$timeout', 'TracksServices', 'ProjectsServices', 'WeeklyHourServices', 'ngDialog', 'tasks_automaticServices', 'TasksServices', '$filter', function ($log, $window, $rootScope, $scope, $state, $timeout, TracksServices, ProjectsServices, WeeklyHourServices, ngDialog, tasks_automaticServices, TasksServices, $filter) {
-        
+
         $scope.thisHide = false;
         $scope.userToolsActive = false;
         $rootScope.inprogress = false;
@@ -153,7 +153,7 @@
         };
 
         $rootScope.startTrack = function (task, fromDashboard) {
-            
+
             if (!task) return
             return new Promise(resolve => {
                 WeeklyHourServices.find($scope.currentPage, $scope.query, function (err, weeklyHours, countItems) {
@@ -199,6 +199,7 @@
                                 result = result[0];
                                 $rootScope.currentTrack.id = result.id;
                                 $scope.toggleTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                                 $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
                                 $rootScope.topBar.filterTask.name = $rootScope.topBar.filterTask.taskName;
                                 $rootScope.topBar.filterTask.id = $rootScope.topBar.filterTask.idTask;
@@ -476,12 +477,14 @@
                             TracksServices.update($rootScope.currentTrack, function (err, result) {
                                 $rootScope.timerRunning = false;
                                 $scope.stopTimer();
+                                $rootScope.$broadcast('timerStateChanged');
                             });
                         })
                     } else {
                         TracksServices.update($rootScope.currentTrack, function (err, result) {
                             $rootScope.timerRunning = false;
                             $scope.stopTimer();
+                            $rootScope.$broadcast('timerStateChanged');
                         });
                     }
                 }
@@ -498,10 +501,17 @@
                     access: true
                 },
                 {
-                    uisref: 'app.paymentRequestsAdmin',
+                    uisref: 'app.paymentRequests',
                     icon: 'ri-bank-line',
                     name: 'PaymentRequests',
                     label: $filter('translate')('navigation.payment_requests'),
+                    access: true
+                },
+                {
+                    uisref: 'app.paymentRequestsAdmin',
+                    icon: 'ri-bank-line',
+                    name: 'PaymentRequestsAdmin',
+                    label: $filter('translate')('navigation.payment_requests') + ' (Admin)',
                     access: $rootScope.userRole == 'admin' || $rootScope.userRole == 'pm'
                 },
                 {
@@ -526,52 +536,20 @@
                     access: true
                 },
 
-                {
+/*                 {
                     uisref: 'app.calendar',
                     icon: 'ri-calendar-line',
                     name: 'Calendar',
                     label: $filter('translate')('navigation.calendar'),
                     access: true
-                },
+                }, */
 
                 {
-                    uisref: '',
+                    uisref: 'app.tasks',
                     icon: 'ri-task-line',
                     name: 'Tasks',
                     label: $filter('translate')('navigation.tasks'),
-                    access: true,
-                    submenus: [
-                        {
-                            uisref: 'app.tasks',
-                            name: 'Tasks Manuales',
-                            label: 'Tareas Manuales',
-                            access: true
-                        },
-                        // {
-                        //     uisref: 'app.tasks_automatic',
-                        //     name: 'Tasks Automatic',
-                        //     label: $filter('translate')('navigation.tasks_automatic'),
-                        //     access: true
-                        // },
-                        {
-                            uisref: 'app.tasks_trello',
-                            name: 'Tasks Trello',
-                            label: $filter('translate')('navigation.tasks_trello'),
-                            access: true
-                        },
-                        // {
-                        //     uisref: 'app.jira',
-                        //     name: 'Tasks Jira',
-                        //     label: $filter('translate')('navigation.jira'),
-                        //     access: true
-                        // },
-                        // {
-                        //     uisref: 'app.taskManager',
-                        //     name: 'Task Manager',
-                        //     label: $filter('translate')('navigation.taskManager'),
-                        //     access: true
-                        // }
-                    ]
+                    access: true
                 },
                 // PROFILE
                 {
@@ -581,15 +559,22 @@
                     label: $filter('translate')('navigation.my-profile'),
                     access: $rootScope.userRole == 'developer'
                 },
-                
-                
-                
-                {
+
+
+
+/*                 {
                     uisref: 'app.reports',
                     icon: 'ri-bar-chart-line',
                     name: 'Reports',
                     label: 'Reportes',
                     access: true
+                }, */
+                {
+                    uisref: 'app.tracks',
+                    icon: 'ri-timer-line',
+                    name: 'TimeReports',
+                    label: $filter('translate')('navigation.timeReports'),
+                    access: $rootScope.userRole !== 'client'
                 },
                 {
                     uisref: 'app.weeklyHours',
@@ -648,6 +633,62 @@
             ]
         };
 
+        $rootScope.syncTimerStatus = function() {
+            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
+                if (!err) {
+                    // Stop current visual timer if running
+                    if ($rootScope.timerRunning) {
+                        $scope.stopTimer();
+                        $rootScope.timerRunning = false;
+                    }
+
+                    if (track && (!track.endTime || track.endTime == '0000-00-00 00:00:00')) {
+                        // Update current track
+                        $rootScope.currentTrack = track;
+                        $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
+                        var now = new Date().getTime(); // Fecha actual milisegundos
+                        var start = new Date(track.startTime).getTime(); // Fecha de track en milisegundos
+                        var ms = now - start;
+                        $scope.toggleTimer(ms); // Iniciamos el clock con el tiempo corrido
+                    } else {
+                        $rootScope.currentTrack = {};
+                        $rootScope.timerRunning = false;
+                        $scope.mode = "Start";
+                        $scope.timer = "00:00:00";
+                        document.title = 'Tracking';
+                    }
+                    $rootScope.$broadcast('timerStateChanged');
+                }
+            });
+        };
+
+        // Listen for messages from React (in iframe)
+        $window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'object') {
+                if (event.data.action === 'refresh-timer') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.syncTimerStatus) $rootScope.syncTimerStatus()
+                    });
+                } else if (event.data.action === 'show-toast') {
+                    $rootScope.$applyAsync(function() {
+                        if ($rootScope.showToaster) {
+                            $rootScope.showToaster(event.data.message, event.data.type || 'info', '')
+                        }
+                    });
+                }
+            }
+        });
+
+        // Broadcast changes from Angular to React
+        $rootScope.$on('timerStateChanged', function() {
+            var iframes = document.querySelectorAll('iframe');
+            iframes.forEach(function(iframe) {
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ action: 'refresh-dashboard' }, '*');
+                }
+            });
+        });
+
         // Check for defined session values
         if (!$window.localStorage[TOKEN_KEY]) {
             $log.error('You are not logged in');
@@ -666,22 +707,7 @@
                 $rootScope.userIdClient = $window.localStorage["idUserClient"];
             }
             $rootScope.generateSidebarContent();
-            TracksServices.getCurrentUserLastTrack($rootScope.userId, function (err, track) {
-                if (!err) {
-                    if (track) {
-                        if (!track.endTime || track.endTime == '0000-00-00 00:00:00') {
-
-                            //Update current track
-                            $rootScope.currentTrack = track;
-                            $rootScope.topBar.filterTask = angular.copy($rootScope.currentTrack);
-                            var now = new Date().getTime(); //Fecha actual millisegundos
-                            var start = new Date(track.startTime).getTime(); //Fecha de track en millisegundos
-                            var ms = now - start;
-                            $scope.toggleTimer(ms); //Iniciamos el clock con el tiempo corrido
-                        }
-                    }
-                }
-            });
+            $rootScope.syncTimerStatus();
         }
 
 

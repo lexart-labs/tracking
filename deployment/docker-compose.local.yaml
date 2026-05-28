@@ -17,19 +17,21 @@ services:
       - ../services/frontend/src/js:/app/src/js
       - ../services/frontend/src/less:/app/src/less
       - ../services/frontend/src/index.html:/app/src/index.html
-  
+
   app-react:
-      restart: always
-      build:
-        context: ../services/app-react
-        dockerfile: Dockerfile.local
-        args:
-          - VITE_BASE_URL=${VITE_BASE_URL}
-          - VITE_BASE_PHOTO=${VITE_BASE_PHOTO}
-      volumes:
-        - ../services/app-react/src:/app/src
-      ports:
-        - 5180:5173
+    restart: always
+    build:
+      context: ../services/app-react
+      dockerfile: Dockerfile.local
+      args:
+        - VITE_BASE_URL=${VITE_BASE_URL}
+        - VITE_BASE_PHOTO=${VITE_BASE_PHOTO}
+    env_file:
+      - ../env_files/.env.local
+    volumes:
+      - ../services/app-react/src:/app/src
+    ports:
+      - 5180:5173
 
   nginx:
     build:
@@ -56,31 +58,18 @@ services:
       - vendor_data:/var/www/html/vendor
     ports:
       - "3085:9000"
-    expose: 
-        - 9000
-  
-  chatbot:
-    restart: always
-    build:
-        context: ../services/chatbot
-        dockerfile: Dockerfile.local
-    env_file:
-      - ../env_files/.env.local
-    volumes:
-      - ../services/chatbot/src:/app/src
-    ports:
-      - "3080:3000"
-    expose: 
-        - 3000
+    expose:
+      - 9000
 
   database:
+    image: mysql:8.0.36
     restart: always
     env_file:
       - ../env_files/.env.local
     ports:
       - ${DB_EXTERNAL_PORT}:3306
-    expose: 
-        - 33006
+    expose:
+      - 33006
     volumes:
       - ../services/database/db_init_scripts:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql

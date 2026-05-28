@@ -7,9 +7,9 @@ module.exports = {
 			port: 8000,
 			hostname: '*',
 			base: './dist/',
-			open: true,
+			open: false,
 			livereload: true,
-			middleware: function(connect, options, middlewares) {
+			middleware: function (connect, options, middlewares) {
 				// 1. mod-rewrite behavior
 				var rules = [
 					'!\\.html|\\.js|\\.css|\\.svg|\\.jp(e?)g|\\.png|\\.gif|\\.eot|\\.ttf|\\.woff$ /index.html'

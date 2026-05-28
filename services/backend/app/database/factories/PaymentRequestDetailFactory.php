@@ -29,6 +29,7 @@ class PaymentRequestDetailFactory extends Factory
                 'Benefits',
                 'Compensation',
                 'Closure',
+                'External',
                 ]),
             'concept_description' => $this->faker->paragraph(1),
             'amount' => 100,

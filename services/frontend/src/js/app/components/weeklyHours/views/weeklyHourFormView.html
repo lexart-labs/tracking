@@ -1,85 +1,112 @@
-<div class="lexart-wa__hdr lexart-flex">
-  <div class="lexart-flex-5">
-    <h1 class="lexart-wa__tit">
-      <a class="lexart-bc-item" ui-sref="app.weeklyHours">{{ 'weeklyHours.title' | translate }}</a>
-    </h1>
-    <div class="lexart-bc">
-      <a class="lexart-bc-item">{{ 'weeklyHours.weeklyHour' | translate }}</a>
-    </div>
-    <div class="lexart-bc" ng-if="weeklyHour.name">
-      <span class="lexart-bc-item lexart-bc--head">{{weeklyHour.name}}</span>
+<div ng-cloak ng-if="env_react_url && showIframe">
+	<iframe iframe-resizer options="iframeOptions"
+		style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+		sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+		src="{{env_react_url}}">
+	</iframe>
+</div>
+<div ng-if="!env_react_url && !showIframe">
+  <div class="lexart-wa__hdr lexart-flex">
+    <div class="lexart-flex-5">
+      <h1 class="lexart-wa__tit">
+        <a class="lexart-bc-item" ui-sref="app.weeklyHours">{{ 'weeklyHours.title' | translate }}</a>
+      </h1>
+      <div class="lexart-bc">
+        <a class="lexart-bc-item">{{ 'weeklyHours.weeklyHour' | translate }}</a>
+      </div>
+      <div class="lexart-bc" ng-if="weeklyHour.name">
+        <span class="lexart-bc-item lexart-bc--head">{{weeklyHour.name}}</span>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="lexart-wa__cnt">
-  <form class="lexart-frm lexart-frm--center">
+  <div class="lexart-wa__cnt">
+    <form class="lexart-frm lexart-frm--center">
+
+      <div class="lexart-frm__fldgrp">
+        <div class="lexart-frm__fld" ng-if="weeklyHour.id">
+          <label class="lexart-frm__lbl">
+            <input type="text" ng-value="weeklyHour.id" readonly/>
+            <b class="lexart-frm__lbl-name">{{ 'ID' }}</b>
+          </label>
+        </div>
+
+        <div class="lexart-frm__fld">
+          <label class="lexart-frm__lbl">
+            <b class="lexart-frm__lbl-name">{{ 'weeklyHours.user' | translate }} <span class="required">*</span></b>
+            <ui-select
+            ng-model="select.user"
+            class="lexart-select lexart-select--input"
+            theme="selectize"
+            append-to-body="true"
+            >
+            <ui-select-match>
+              {{$select.selected.name}}
+            </ui-select-match>
+            <ui-select-choices repeat="user in users | filter: { name: $select.search }">
+              <div ng-bind-html="user.name | highlight: $select.selected.name"></div>
+            </ui-select-choices>
+          </ui-select>
+
+        </label>
+      </div>
+
+    </div>
+
 
     <div class="lexart-frm__fldgrp">
-      <div class="lexart-frm__fld" ng-if="weeklyHour.id">
+      <div class="lexart-frm__fld">
         <label class="lexart-frm__lbl">
-          <input type="text" ng-value="weeklyHour.id" readonly/>
-          <b class="lexart-frm__lbl-name">{{ 'ID' }}</b>
+          <input type="number" ng-model="weeklyHour.workLoad" min="0"/>
+          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.workLoad' | translate }} <span class="required">*</span></b>
         </label>
       </div>
 
       <div class="lexart-frm__fld">
         <label class="lexart-frm__lbl">
-          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.user' | translate }} <span class="required">*</span></b>
-          <ui-select
-          ng-model="select.user"
-          class="lexart-select lexart-select--input"
-          theme="selectize"
-          append-to-body="true"
-          >
-          <ui-select-match>
-            {{$select.selected.name}}
-          </ui-select-match>
-          <ui-select-choices repeat="user in users | filter: { name: $select.search }">
-            <div ng-bind-html="user.name | highlight: $select.selected.name"></div>
-          </ui-select-choices>
-        </ui-select>
 
-      </label>
+          <input type="number" ng-model="weeklyHour.costHour" min="0"/>
+          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.costHour' | translate }} <span class="required">*</span></b>
+        </label>
+      </div>
+
+      <div class="lexart-frm__fld">
+        <label class="lexart-frm__lbl">
+          <select ng-model="weeklyHour.currency" id="">
+            <option value="$">$</option>
+            <option value="USD">USD</option>
+            <option value="R$">R$</option>
+          </select>
+          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.currency' | translate }} <span class="required">*</span></b>
+        </label>
+      </div>
+
     </div>
 
+    <div class="lexart-frm__fldgrp">
+      <div class="lexart-frm__fld">
+        <label class="lexart-frm__lbl">
+          <input type="date" ng-model="weeklyHour.valid_from" required/>
+          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.validFrom' | translate }} <span class="required">*</span></b>
+        </label>
+      </div>
+      <div class="lexart-frm__fld">
+        <label class="lexart-frm__lbl">
+          <input type="date" ng-model="weeklyHour.valid_until"/>
+          <b class="lexart-frm__lbl-name">{{ 'weeklyHours.validUntil' | translate }}</b>
+        </label>
+      </div>
+    </div>
+
+  </form>
   </div>
 
-
-  <div class="lexart-frm__fldgrp">
-    <div class="lexart-frm__fld">
-      <label class="lexart-frm__lbl">
-        <input type="number" ng-model="weeklyHour.workLoad" min="0"/>
-        <b class="lexart-frm__lbl-name">{{ 'weeklyHours.workLoad' | translate }} <span class="required">*</span></b>
-      </label>
-    </div>
-
-    <div class="lexart-frm__fld">
-      <label class="lexart-frm__lbl">
-
-        <input type="number" ng-model="weeklyHour.costHour" min="0"/>
-        <b class="lexart-frm__lbl-name">{{ 'weeklyHours.costHour' | translate }} <span class="required">*</span></b>
-      </label>
-    </div>
-
-    <div class="lexart-frm__fld">
-      <label class="lexart-frm__lbl">
-        <select ng-model="weeklyHour.currency" id="">
-          <option value="$">$</option>
-          <option value="USD">USD</option>
-          <option value="R$">R$</option>
-        </select>
-        <b class="lexart-frm__lbl-name">{{ 'weeklyHours.currency' | translate }} <span class="required">*</span></b>
-      </label>
-    </div>
-
+  <div class="lexart-wa__actions">
+    <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
+    <p ng-if="dateError" class="err-display">{{dateError}}</p>
+    <button class="lexart-btn lexart-btn--alt" ng-if="weeklyHour.id && weeklyHour.borrado != '1'" ng-click="delete()">{{ 'general.delete' | translate }}</button>
+    <button class="lexart-btn lexart-btn--alt" ng-if="weeklyHour.id && weeklyHour.borrado == '1'" ng-click="activate()">{{ 'weeklyHours.activate' | translate }}</button>
+    <button class="lexart-btn lexart-btn--alt" ui-sref="app.weeklyHours">{{ 'weeklyHours.back' | translate }}</button>
+    <button class="lexart-btn" ng-disabled="sendingData" ng-click="save()">{{ 'weeklyHours.save' | translate }}</button>
   </div>
-
-</form>
-</div>
-
-<div class="lexart-wa__actions">
-  <p ng-if="error" class="err-display">{{error}} {{ 'general.cant_be_empty' | translate }}</p>
-  <button class="lexart-btn lexart-btn--alt" ui-sref="app.weeklyHours">{{ 'weeklyHours.back' | translate }}</button>
-  <button class="lexart-btn" ng-disabled="sendingData" ng-click="save()">{{ 'weeklyHours.save' | translate }}</button>
 </div>

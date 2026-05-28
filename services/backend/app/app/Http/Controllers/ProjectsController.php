@@ -21,7 +21,23 @@ class ProjectsController extends BaseController
             }
 
 
-            $projects = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')->select('Projects.*', 'Clients.name as clientName')->get();
+            $user = AuthController::current();
+            $query = Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
+                ->select('Projects.*', 'Clients.name as clientName')
+                ->where('Projects.active', 1);
+
+            // Security check: non-admins only see projects where they have assigned tasks
+            if ($user->role !== 'admin' && $user->role !== 'pm') {
+                $model_like = '%{"idUser":"' . $user->id . '"}%';
+                $query->whereExists(function ($query) use ($model_like) {
+                    $query->select(DB::raw(1))
+                        ->from('Tasks')
+                        ->whereRaw('Tasks.idProject = Projects.id')
+                        ->where('Tasks.users', 'LIKE', $model_like);
+                });
+            }
+
+            $projects = $query->get();
 
             return array('response' => $projects);
         } catch (Exception $e) {
@@ -36,7 +52,11 @@ class ProjectsController extends BaseController
                 return (new Response(array("Error" => ID_INVALID, "Operation" => "projects client id"), 500));
             }
 
-            return Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')->select('Projects.*', 'Clients.name as clientName')->where("idClient", $id)->get();
+            return Projects::join('Clients', 'Projects.idClient', '=', 'Clients.id')
+                ->select('Projects.*', 'Clients.name as clientName')
+                ->where("idClient", $id)
+                ->where('Projects.active', 1)
+                ->get();
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects client id"), 500));
         }
@@ -51,7 +71,7 @@ class ProjectsController extends BaseController
         $user = $request->input();
 
         try {
-            if ($tracked) {
+            if ($tracked && ($filter == 'rest' || $filter == 'update' || $filter == 'TotalUpdate')) {
                 if ($filter == 'rest' || $filter == 'update') {
                     $c = DB::table('Projects')
                         ->select("totalCost")
@@ -78,25 +98,25 @@ class ProjectsController extends BaseController
                     } else {
                         return array("Error" => "Error al actualizar el Proyecto.");
                     }
+                }
+            } else {
+                $d = Projects::where('id', $id)
+                    ->update([
+                        'name' => $user['name'],
+                        'idClient' => $user['idClient'],
+                        'description' => $user['description'],
+                        'comments' => $user['comments'],
+                        'duration' => $user['duration'],
+                        'presupuesto' => $user['presupuesto'],
+                        'active' => $user['active'],
+                    ]);
+
+
+                // CALLBACK
+                if (empty($d)) {
+                    return array("response" => 'OK');
                 } else {
-                    $d = Projects::where('id', $id)
-                        ->update([
-                            'name' => $user['name'],
-                            'idClient' => $user['idClient'],
-                            'description' => $user['description'],
-                            'comments' => $user['comments'],
-                            'duration' => $user['duration'],
-                            'presupuesto' => $user['presupuesto'],
-                            'active' => $user['active'],
-                        ]);
-
-
-                    // CALLBACK
-                    if (empty($d)) {
-                        return array("response" => 'OK');
-                    } else {
-                        return array("Error" => "Error al actualizar el Proyecto.");
-                    }
+                    return array("Error" => "Error al actualizar el Proyecto.");
                 }
             }
         } catch (Exception $e) {
@@ -126,6 +146,26 @@ class ProjectsController extends BaseController
             return array("response" => $project);
         }catch(Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects new"), 500));
+        }
+    }
+
+    public function delete(Request $request, $id = null)
+    {
+        if (!$id) {
+            $id = $request->input("id");
+        }
+
+        try {
+            $project = Projects::where('id', $id)->where('active', 1)->first();
+            if ($project) {
+                $project->active = 0;
+                $project->save();
+                return array("response" => 'OK');
+            } else {
+                return (new Response(array("Error" => "Proyecto ya desactivado o no existe."), 400));
+            }
+        } catch (Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "projects delete"), 500));
         }
     }
 }

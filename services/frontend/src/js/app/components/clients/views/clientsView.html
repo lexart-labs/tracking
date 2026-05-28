@@ -1,51 +1,52 @@
-<div class="lexart-wa__hdr lexart-flex">
-    <div class="lexart-flex-5">
-        <h1 class="lexart-wa__tit">
-            <a class="lexart-bc-item" ui-sref="app.clients">{{ 'clients.title' | translate }}</a>
-        </h1>
-        <div class="lexart-btn__right">
-            <a ui-sref="app.clientNew" class="lexart-btn lexart-btn--round">&#43; {{ 'clients.client' | translate }}</a>
-        </div>
-    </div>
+<div ng-cloak ng-if="env_react_url && showIframe">
+	<iframe iframe-resizer options="iframeOptions" style="width: 100%; border:none; margin-top: 70px; overflow-y: scroll;"
+		sandbox="allow-top-navigation allow-presentation allow-top-navigation-by-user-activation allow-pointer-lock allow-orientation-lock allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+		src="{{env_react_url}}">
+	</iframe>
 </div>
-<div class="lexart-wa__cnt">
-    <table class="lexart-table">
-        <thead>
-            <tr>
-                <th>{{ 'clients.id' | translate }}</th>
-                <th>{{ 'clients.name' | translate }}</th>
-                <th>{{ 'clients.company' | translate }}</th>
-                <th class="lexart-cstm__grid-5"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input class="field-filter" ng-model="filter.id"></td>
-                <td><input class="field-filter" ng-model="filter.name"></td>
-                <td><input class="field-filter" ng-model="filter.company"></td>
-                <td></td>
-            </tr>
-            <tr ng-repeat="client in clients | filter: filter">
-                <td>{{client.id}}</td>
-                <td>{{client.name}}</td>
-                <td>{{client.company}}</td>
-                <td>
-                    <a ui-sref="app.clientEdit({id: client.id})">
-                        <i class="ri-edit-line"></i>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<div ng-if="!env_react_url && !showIframe">
+	<div class="lexart-wa__hdr lexart-flex">
+		<div class="lexart-flex-5">
+			<h1 class="lexart-wa__tit">
+				<a class="lexart-bc-item" ui-sref="app.clients">{{ 'clients.title' | translate }}</a>
+			</h1>
+			<div class="lexart-btn__right">
+				<a ui-sref="app.clientNew" class="lexart-btn lexart-btn--round">&#43; {{ 'clients.client' | translate }}</a>
+			</div>
+		</div>
+	</div>
+	<div class="lexart-wa__cnt">
+		<table class="lexart-table">
+			<thead>
+				<tr>
+					<th>{{ 'clients.id' | translate }}</th>
+					<th>{{ 'clients.name' | translate }}</th>
+					<th>{{ 'clients.company' | translate }}</th>
+					<th class="lexart-cstm__grid-5"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><input class="field-filter" ng-model="filter.id"></td>
+					<td><input class="field-filter" ng-model="filter.name"></td>
+					<td><input class="field-filter" ng-model="filter.company"></td>
+					<td></td>
+				</tr>
+				<tr ng-repeat="client in clients | filter: filter">
+					<td>{{client.id}}</td>
+					<td>{{client.name}}</td>
+					<td>{{client.company}}</td>
+					<td>
+						<a ui-sref="app.clientEdit({id: client.id})">
+							<i class="ri-edit-line"></i>
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-<paging
-    ng-show="total>pageSize"
-    page="currentPage"
-    page-size="pageSize"
-    total="total"
-    hide-if-empty="true"
-    show-prev-next="true"
-    show-first-last="true"
-    paging-action="pager(page)">
-</paging>
+	<paging ng-show="total>pageSize" page="currentPage" page-size="pageSize" total="total" hide-if-empty="true"
+		show-prev-next="true" show-first-last="true" paging-action="pager(page)">
+	</paging>
+</div>

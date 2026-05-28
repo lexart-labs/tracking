@@ -23,8 +23,8 @@
 
 		console.log(PreviousState, $stateParams);
 
-		if (PreviousState.Params.id == $stateParams.id) {
-			$scope.task.idProject = $stateParams.id;
+		if (idTask && idTask.toString().indexOf('new-') !== -1) {
+			$scope.task.idProject = idTask.replace('new-', '');
 			console.log('Agregar tarea');
 			ProjectsServices.findById($scope.task.idProject, function (err, res) {
 				console.log('by project', err, res);
@@ -146,8 +146,9 @@
 						console.log("result:: ", result);
 						if (!err) {
 							//$scope.tasks[index] = angular.copy($scope.task);
+							var targetId = (result && result.idProject) ? result.idProject : $scope.task.idProject;
 							$scope.task = {};
-							$state.go('app.projectEdit', {id: result.idProject});
+							$state.go('app.projectEdit', {id: targetId});
 						}
 					});
 				} else {
@@ -168,8 +169,9 @@
 							console.log("result:: ", result);
 							if (!err) {
 								//$scope.tasks[index] = angular.copy($scope.task);
+								var targetId = (result && result.idProject) ? result.idProject : $scope.task.idProject;
 								$scope.task = {};
-								$state.go('app.projectEdit', {id: result.idProject});
+								$state.go('app.projectEdit', {id: targetId});
 							}
 						});
 					} else {
@@ -189,8 +191,9 @@
 							console.log("result:: ", result);
 							if (!err) {
 								//$scope.tasks[index] = angular.copy($scope.task);
+								var targetId = (result && result.idProject) ? result.idProject : $scope.task.idProject;
 								$scope.task = {};
-								$state.go('app.projectEdit', {id: result.idProject});
+								$state.go('app.projectEdit', {id: targetId});
 							}
 						});
 					}

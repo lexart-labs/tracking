@@ -3,7 +3,15 @@
 
 	var Module = ng.module("LexTracking");
 
-	Module.controller("PaymentRequestsCtrl", ["$scope","$rootScope","$translate","ngDialog","PaymentRequestsService",function ($scope, $rootScope, $translate, ngDialog, PaymentRequestsService) {
+	Module.controller("PaymentRequestsCtrl", ["$scope","$rootScope","$translate","$sce","ngDialog","PaymentRequestsService",function ($scope, $rootScope, $translate, $sce, ngDialog, PaymentRequestsService) {
+
+		let reactUrl = $rootScope.trackingReactUrl || (typeof TRACKING_REACT_URL !== 'undefined' ? TRACKING_REACT_URL : '');
+		$scope.env_react_url = $sce.trustAsResourceUrl(reactUrl + '/#/payment-requests');
+		$scope.iframeOptions = {
+			license: "GPLv3",
+			log: 'collapsed',
+			waitForLoad: true,
+		};
 			
 		const USER_ID = localStorage.getItem("userId");
 		const INITIAL_STATE_PAYMENT_REQUEST = {

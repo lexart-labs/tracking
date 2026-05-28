@@ -7,9 +7,18 @@
 		"$scope",
 		"$rootScope",
 		"$translate",
+		"$sce",
 		"ngDialog",
 		"PaymentRequestsServiceAdmin",
-		function ($scope, $rootScope, $translate, ngDialog, PaymentRequestsServiceAdmin) {
+		function ($scope, $rootScope, $translate, $sce, ngDialog, PaymentRequestsServiceAdmin) {
+
+			let reactUrl = $rootScope.trackingReactUrl || (typeof TRACKING_REACT_URL !== 'undefined' ? TRACKING_REACT_URL : '');
+			$scope.env_react_url = $sce.trustAsResourceUrl(reactUrl + '/#/admin/payment-requests');
+			$scope.iframeOptions = {
+				license: "GPLv3",
+				log: 'collapsed',
+				waitForLoad: true,
+			};
 
 			const INITIAL_STATE_FILTERS = {
 				concept: null,
@@ -29,27 +38,8 @@
 				External: $translate.instant("payment_requests.concepts.external_closure")
 			};
 			$scope.currencyTexts = {
-				CLP: $translate.instant("payment_requests.currency.clp"),
 				USD: $translate.instant("payment_requests.currency.usd"),
-				EUR: $translate.instant("payment_requests.currency.eur"),
 				BRL: $translate.instant("payment_requests.currency.brl"),
-				JPY: $translate.instant("payment_requests.currency.jpy"),
-				GBP: $translate.instant("payment_requests.currency.gbp"),
-				CAD: $translate.instant("payment_requests.currency.cad"),
-				AUD: $translate.instant("payment_requests.currency.aud"),
-				CNY: $translate.instant("payment_requests.currency.cny"),
-				INR: $translate.instant("payment_requests.currency.inr"),
-				MXN: $translate.instant("payment_requests.currency.mxn"),
-				RUB: $translate.instant("payment_requests.currency.rub"),
-				ZAR: $translate.instant("payment_requests.currency.zar"),
-				CHF: $translate.instant("payment_requests.currency.chf"),
-				KRW: $translate.instant("payment_requests.currency.krw"),
-				SEK: $translate.instant("payment_requests.currency.sek"),
-				NZD: $translate.instant("payment_requests.currency.nzd"),
-				SGD: $translate.instant("payment_requests.currency.sgd"),
-				HKD: $translate.instant("payment_requests.currency.hkd"),
-				ARS: $translate.instant("payment_requests.currency.ars"),
-				PYG: $translate.instant("payment_requests.currency.pyg"),
 				UYU: $translate.instant("payment_requests.currency.uyu")
 			};
 			$scope.statusTexts = {
@@ -163,8 +153,10 @@
 							const date = r.created_at;
 							r.created_at = new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 							r.created_at_display = moment(date).format('MMM DD, YYYY');
-							r.start_date_display = r.payment_request_details.find(detail => detail.start_date)?.start_date ? moment(r.payment_request_details.find(detail => detail.start_date).start_date).format('MMM DD, YYYY') : '';
-							r.end_date_display = r.payment_request_details.find(detail => detail.end_date)?.end_date ? moment(r.payment_request_details.find(detail => detail.end_date).end_date).format('MMM DD, YYYY') : '';
+							var startDetail = r.payment_request_details.find(function(detail) { return detail.start_date; });
+							r.start_date_display = startDetail ? moment(startDetail.start_date).format("MMM DD, YYYY") : "";
+							var endDetail = r.payment_request_details.find(function(detail) { return detail.end_date; });
+							r.end_date_display = endDetail ? moment(endDetail.end_date).format("MMM DD, YYYY") : "";
 							r.status_display = $scope.statusTexts[r.status];
 							// Add http if not present
 							r.payment_request_details.forEach(detail => {

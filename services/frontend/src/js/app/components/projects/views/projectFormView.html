@@ -114,7 +114,7 @@
 
             <div class="lexart-frm__fld" ng-if="project.id">
                 <label class="lexart-frm__lbl">
-                    <button class="lexart-btn" ui-sref="app.taskForm({id: project.id})">{{ 'projects.add_task' | translate }}</button>
+                    <button class="lexart-btn" ui-sref="app.taskForm({id: 'new-' + project.id})">{{ 'projects.add_task' | translate }}</button>
                 </label>
             </div>
         </div>

@@ -40,6 +40,12 @@
         })
       },
 
+      findByUserAndDate: function(userId, date, cb) {
+        RestClient.get('weeklyhours/user/' + userId + '/bydate/' + date, function(err, result) {
+          cb(err, result);
+        });
+      },
+
       currentUser: function (user, cb){
         RestClient.get(model + "/user/current", function(err, result){
           cb(err,result);
@@ -68,6 +74,12 @@
 
       remove: function(id, cb) {
         RestClient.delete(model + "/" + id, function(err, result) {
+          cb(err, result);
+        })
+      },
+
+      activate: function(id, cb) {
+        RestClient.put(model + "/" + id + "/activate", {}, function(err, result) {
           cb(err, result);
         })
       }

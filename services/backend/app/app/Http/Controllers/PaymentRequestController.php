@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -29,6 +30,9 @@ class PaymentRequestController extends BaseController
             $q->whereHas('payment_request_details', function ($q) use ($concept) {
             $q->where(DB::raw('BINARY concept'), '=', $concept);
         });
+        })
+        ->when($request->filled('user'), function ($q) use ($request) {
+            $q->where('user_id', (int)$request->input('user'));
         })
         ->when($request->filled('user.id'), function ($q) use ($request) {
             $q->where('user_id', (int)$request->input('user.id'));
@@ -83,24 +87,70 @@ class PaymentRequestController extends BaseController
             return new Response(["Error" => INVALID_NUMERIC_ID, "Operation" => $operation], 422);
         }
 
-        $this->validate($request, [
-            'concept_description' => 'required|string',
-            'amount' => 'required|numeric|min:0'
-        ]);
-
         try {
-            $paymentRequestDetail = PaymentRequestDetail::where('payment_request_id', $payment_request_id)->firstOrFail();
+            if ($request->has('details')) {
+                $this->validate($request, [
+                    'details' => 'required|array|min:1',
+                    'details.*.detail_id' => 'required|numeric',
+                    'details.*.concept_description' => 'required|string',
+                    'details.*.amount' => 'required|numeric|min:0'
+                ]);
+            } else {
+                $this->validate($request, [
+                    'detail_id' => 'sometimes|numeric',
+                    'concept_description' => 'required|string',
+                    'amount' => 'required|numeric|min:0'
+                ]);
+            }
 
-            $paymentRequestDetail->concept_description = $request->input('concept_description');
-            $paymentRequestDetail->amount = $request->input('amount');
-            $paymentRequestDetail->save();
+            DB::beginTransaction();
+
+            if ($request->has('details')) {
+                $details = $request->input('details');
+                foreach ($details as $detailUpdate) {
+                    $paymentRequestDetail = PaymentRequestDetail::where('payment_request_id', $payment_request_id)
+                        ->where('id', $detailUpdate['detail_id'])
+                        ->firstOrFail();
+
+                    $paymentRequestDetail->concept_description = $detailUpdate['concept_description'];
+                    $paymentRequestDetail->amount = $detailUpdate['amount'];
+                    $paymentRequestDetail->save();
+                }
+            } else {
+                $detailQuery = PaymentRequestDetail::where('payment_request_id', $payment_request_id);
+                if ($request->filled('detail_id')) {
+                    $detailQuery->where('id', $request->input('detail_id'));
+                }
+
+                $paymentRequestDetail = $detailQuery->firstOrFail();
+
+                $paymentRequestDetail->concept_description = $request->input('concept_description');
+                $paymentRequestDetail->amount = $request->input('amount');
+                $paymentRequestDetail->save();
+            }
+
+            DB::commit();
 
             return new Response(['response' => UPDATED], 201);
         } catch (ModelNotFoundException $ex) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return new Response(['Error' => PAYMENT_REQUEST_NOT_FOUND], 404);
         } catch (ValidationException $ex) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return new Response(['Error' => INVALID_DATA, 'errors' => $ex->errors()], 422);
         } catch (PDOException $ex) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return new Response(['Error' => INTERNAL_SERVER_ERROR, 'Operation' => $operation], 500);
+        } catch (Exception $ex) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return new Response(['Error' => INTERNAL_SERVER_ERROR, 'Operation' => $operation], 500);
         }
     }
@@ -108,13 +158,6 @@ class PaymentRequestController extends BaseController
 
     public function create(Request $request)
     {
-        $whiteListedOrigins = [
-            'localhost',
-            'tracking.lexart.tech'
-        ];
-
-        header('Access-Control-Allow-Origin: ' . implode(', ', $whiteListedOrigins));
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
         $operation = "Create payment request";
 
 
@@ -192,6 +235,9 @@ class PaymentRequestController extends BaseController
             $payment_request_id = DB::table('PaymentRequest')->insertGetId($attributes);
 
             foreach ($details as $detail) {
+                $startDate = $this->normalizeDateInput($detail["start_date"] ?? null);
+                $endDate = $this->normalizeDateInput($detail["end_date"] ?? null);
+
                 $attributes = [
                     "payment_request_id" => $payment_request_id,
                     "concept" => PaymentRequestDetailConcepts::from($detail["concept"]),
@@ -199,8 +245,8 @@ class PaymentRequestController extends BaseController
                     "amount" => $detail["amount"],
                     "bill_link" => $detail["bill_link"] ?? null,
                     "report_link" => $detail["report_link"] ?? null,
-                    "start_date" => $detail["start_date"] ?? null,
-                    "end_date" => $detail["end_date"] ?? null
+                    "start_date" => $startDate,
+                    "end_date" => $endDate
                 ];
 
                 DB::table('PaymentRequestDetail')->insert($attributes);
@@ -211,6 +257,19 @@ class PaymentRequestController extends BaseController
             return $payment_request_id;
         } catch (Exception $e) {
             DB::rollBack();
+            return null;
+        }
+    }
+
+    private function normalizeDateInput($value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value)->toDateString();
+        } catch (Exception $e) {
             return null;
         }
     }

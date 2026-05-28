@@ -6,12 +6,9 @@ import { Card } from "primereact/card"
 export default function Layout() {
   const { changeTheme } = useContext(PrimeReactContext)
 
-
   return (
-    <Card>
-      <div className="rounded">
+    <div className="w-full min-h-screen">
         <Outlet />
-      </div>
-    </Card>
+    </div>
   )
 }

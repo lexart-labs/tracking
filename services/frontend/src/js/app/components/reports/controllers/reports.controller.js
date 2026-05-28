@@ -1611,48 +1611,24 @@
                 } else {
                   var idHourCost = $rootScope.userId;
                 }
-                WeeklyHourServices.find(
-                  $scope.currentPage,
-                  $scope.query,
-                  function (err, weeklyHours, countItems) {
-                    if (!err) {
-                      if (weeklyHours.length > 0) {
-                        var exist = false;
-                        angular.forEach(weeklyHours, function (value, key) {
-                          if (value.idUser == idHourCost) {
-                            exist = true;
-                            var costo = parseInt(value.costHour);
-                            var result2 = (msc / 3600 / 1000) * costo;
-                            result2 = Math.ceil(result2);
-                            newCostTracked(result2);
-                          }
-                        });
-                        if (exist === false) {
-                          TracksServices.update(
-                            objTrack,
-                            function (err, result) {
-                              if (!err) {
-                                $scope.search();
-                                ngDialog.close();
-                              } else {
-                                $scope.error = err;
-                              }
-                            }
-                          );
-                        }
+                var trackDate = objTrack.startTime ? objTrack.startTime.split(' ')[0] : new Date().toISOString().split('T')[0];
+                WeeklyHourServices.findByUserAndDate(idHourCost, trackDate, function(err, weeklyHour) {
+                  if (!err && weeklyHour && weeklyHour.costHour) {
+                    var costo = parseInt(weeklyHour.costHour);
+                    var result2 = Math.ceil((msc / 3600 / 1000) * costo);
+                    newCostTracked(result2);
+                  } else {
+                    objTrack.trace = "reports";
+                    TracksServices.update(objTrack, function (err, result) {
+                      if (!err) {
+                        $scope.search();
+                        ngDialog.close();
                       } else {
-                        TracksServices.update(objTrack, function (err, result) {
-                          if (!err) {
-                            $scope.search();
-                            ngDialog.close();
-                          } else {
-                            $scope.error = err;
-                          }
-                        });
+                        $scope.error = err;
                       }
-                    }
+                    });
                   }
-                );
+                });
               }
               var newCostTracked = function (value) {
                 // console.log(value)
@@ -1691,6 +1667,7 @@
                         Number($scope.track.trackCost);
                       objTrack.projCost += Number(objTrack.trackCost);
                     }
+                    objTrack.trace = "reports";
                     TracksServices.update(objTrack, function (err, result) {
                       if (!err) {
                         //$state.reload();
@@ -1729,6 +1706,7 @@
               var objTrack = angular.copy($scope.autoTrack);
               objTrack.startTime = parseTrackTime(objTrack.startTime);
               objTrack.endTime = parseTrackTime(objTrack.endTime);
+              objTrack.trace = "reports";
               TracksServices.update(objTrack, function (err, result) {
                 if (!err) {
                   $scope.search();
@@ -1763,6 +1741,7 @@
               var objTrack = angular.copy($scope.trelloTrack);
               objTrack.startTime = parseTrackTime(objTrack.startTime);
               objTrack.endTime = parseTrackTime(objTrack.endTime);
+              objTrack.trace = "reports";
               TracksServices.update(objTrack, function (err, result) {
                 if (!err) {
                   $scope.search();
@@ -1796,6 +1775,7 @@
               var objTrack = angular.copy($scope.jiraTrack);
               objTrack.startTime = parseTrackTime(objTrack.startTime);
               objTrack.endTime = parseTrackTime(objTrack.endTime);
+              objTrack.trace = "reports";
               TracksServices.update(objTrack, function (err, result) {
                 if (!err) {
                   $scope.search();

@@ -8,12 +8,18 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "serve -s dist -l 5173"
+    "start": "serve -s dist -l 5173",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:docker": "docker-compose -f docker-compose.test.yml run --rm test-app"
   },
   "dependencies": {
     "@iframe-resizer/child": "^5.4.6",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.10.0",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.6",
     "react": "^19.0.0",
@@ -27,13 +33,26 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/js": "^9.21.0",
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
-    "vite": "^6.2.0"
+    "jsdom": "^28.1.0",
+    "msw": "^2.12.10",
+    "vite": "^6.2.0",
+    "vitest": "^4.0.18"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

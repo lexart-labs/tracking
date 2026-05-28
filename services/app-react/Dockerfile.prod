@@ -1,7 +1,7 @@
 FROM node:24-alpine AS builder-base
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm i
 
 FROM builder-base AS builder
 
@@ -24,7 +24,7 @@ ENV VITE_BASE_PHOTO=$VITE_BASE_PHOTO
 
 COPY --from=builder /app/package*.json ./
 
-RUN npm ci --omit=dev
+RUN npm i --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
