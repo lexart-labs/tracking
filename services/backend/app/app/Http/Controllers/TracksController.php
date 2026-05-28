@@ -730,44 +730,24 @@ class TracksController extends BaseController
         $user_id = AuthController::current()->id;
         $tracksHistory = Tracks::select(
             "Tracks.*",
-            DB::raw("
-                (CASE
-                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.project
-                    ELSE Projects.name
-                END) as projectName"),
-            DB::raw("
-                (CASE
-                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.idProyecto
-                    ELSE Tasks.idProject
-                END) as projectId"),
-            DB::raw("
-                (CASE
-                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.name
-                    ELSE Tasks.name
-                END) as taskName"),
-            DB::raw("
-                (CASE
-                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.status
-                    ELSE Tasks.status
-                END) as status"),
-            DB::raw("
-                (CASE
-                    WHEN Tracks.typeTrack='trello' THEN TrelloTask.active
-                    ELSE Tasks.active
-                END) as isActive"),
+            DB::raw("Projects.name AS projectName"),
+            DB::raw("Tasks.idProject AS projectId"),
+            DB::raw("Tasks.name AS taskName"),
+            DB::raw("Tasks.status AS status"),
+            DB::raw("Tasks.active AS isActive"),
             DB::raw("Users.name AS userName"),
             DB::raw("Users.photo"),
             DB::raw("TIMEDIFF( Tracks.endTime, Tracks.startTime ) AS duration")
         )
         ->leftJoin("Tasks", "Tracks.idTask", "=", "Tasks.id")
-        ->leftJoin("TrelloTask", "Tracks.idTask", "=", "TrelloTask.id")
         ->join("Users", "Tracks.idUser", "=", "Users.id")
         ->join("Projects", function($join) {
             $join
                 ->on('Projects.id', '=', 'Tasks.idProject')
                 ->orOn('Projects.id', '=', 'Tracks.idProyecto');
         })
-        ->whereRaw("Tracks.idUser = ?", $user_id)
+        ->whereRaw("Tracks.idUser = ?", [$user_id])
+        ->where("Tracks.typeTrack", "manual")
         ->orderBy("Tracks.id", "DESC")
         ->distinct("Tracks.idTask")
         ->limit(20)
