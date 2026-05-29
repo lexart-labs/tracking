@@ -140,8 +140,15 @@ class UserController extends BaseController
 
     public function userById(Request $request, $id)
     {
-
         $request["id"] = $id;
+
+        $currentUser = AuthController::current();
+        $isSelf = $currentUser->id == $id;
+        $canViewOther = in_array($currentUser->role, ["admin", "pm"]);
+
+        if (!$isSelf && !$canViewOther) {
+            return (new Response(array('message' => 'Unauthorized'), 401));
+        }
 
         $this->validate($request, [
             "id" => "exists:Users"
@@ -262,6 +269,36 @@ class UserController extends BaseController
             return array("response" => $user);
         }catch(Exception $e) {
             return array('response' => 'Update User', "error" => $e->getMessage());
+        }
+    }
+
+    public function uploadProfileImage(Request $request, $id)
+    {
+        $request["id"] = $id;
+        $this->role = AuthController::current()->role;
+
+        $this->validate($request, [
+            "id" => ["required", Rule::exists("Users", "id")->where(function($query) {
+                if($this->role != "admin") $query->where("role", "!=", "admin");
+            })]
+        ]);
+
+        try {
+            if (!$request->hasFile('image')) {
+                return (new Response(array("Error" => "No image file provided", "Operation" => "profile-image"), 400));
+            }
+
+            $image = $request->file('image');
+            if (!$image->isValid()) {
+                return (new Response(array("Error" => "Invalid image upload", "Operation" => "profile-image"), 400));
+            }
+
+            $photoSaved = FileHelper::saveFile($image);
+            User::where("id", $id)->update(['photo' => $photoSaved]);
+
+            return array("response" => ["photo" => $photoSaved]);
+        } catch(Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "profile-image"), 500));
         }
     }
 

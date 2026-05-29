@@ -1,5 +1,5 @@
 //Core
-import { useContext, useState, useEffect } from "react"
+import { useContext, useRef, useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { resizerContext } from "@/providers/iframe-resizer"
 //Stores and services
@@ -15,6 +15,7 @@ import { Password } from "primereact/password"
 import { Dropdown } from "primereact/dropdown"
 import { FileUpload } from "primereact/fileupload"
 import { InputNumber } from "primereact/inputnumber"
+import { Toast } from "primereact/toast"
 
 
 
@@ -41,17 +42,30 @@ export function User() {
 	const [submitted, setSubmitted] = useState(false)
 	const [error, setError] = useState('')
 	const [loading, setLoading] = useState(false)
+	const [authorized, setAuthorized] = useState(true)
+	const toast = useRef(null)
 
 	const isNewUser = () => userId === 'NEW';
+	const isAdminOrPm = userLogged.userRole === 'admin' || userLogged.userRole === 'pm';
+	const currentUserId = userLogged.id || userLogged.userId;
+	const isSelf = !userId || String(userId) === String(currentUserId);
 
 	useEffect(() => {
-		if (isNewUser()) return;
-		loadUserData()
-	}, [userId])
+		const effectiveUserId = isNewUser() ? null : (userId || currentUserId);
 
-	const loadUserData = async () => {
+		if (!isAdminOrPm && (!isSelf || isNewUser())) {
+			setAuthorized(false);
+			return;
+		}
+
+		setAuthorized(true);
+		if (isNewUser() || !effectiveUserId) return;
+		loadUserData(effectiveUserId)
+	}, [userId, userLogged])
+
+	const loadUserData = async (id) => {
 		try {
-			const userData = await userService.getUser(userId)
+			const userData = await userService.getUser(id)
 
 			const imagePreview = userData.photo || null
 
@@ -127,7 +141,12 @@ export function User() {
 
 			setSubmitted(false)
 			setLoading(false)
-			navigate(-1)
+			toast.current?.show({ severity: 'success', summary: 'Saved', detail: isNewUser() ? 'User created successfully' : 'User updated successfully', life: 3000 })
+
+			const shouldNavigateToUsers = isNewUser() || (!isSelf && isAdminOrPm)
+			if (shouldNavigateToUsers) {
+				navigate('/users')
+			}
 		} catch (error) {
 			setError(error.message || 'Error saving user data')
 			setSubmitted(false)
@@ -135,10 +154,36 @@ export function User() {
 		}
 	}
 
+	if (!authorized) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center bg-white rounded-lg shadow-sm border border-gray-100 max-w-md mx-auto my-12 animate-in fade-in duration-300">
+				<i className="pi pi-exclamation-triangle text-red-500 text-5xl mb-4" />
+				<h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+				<p className="text-gray-600 mb-6">
+					You do not have permission to view or edit this user's profile.
+				</p>
+				<Button
+					label="Go Back"
+					icon="pi pi-arrow-left"
+					size="small"
+					onClick={() => navigate(-1)}
+				/>
+			</div>
+		)
+	}
+
 	return (
 		<div className="">
+			<Toast ref={toast} />
 			<div className="flex justify-between items-center mb-8">
-				<h2 className="text-2xl font-medium">{isNewUser() ? 'Creating User' : 'Editing User'}</h2>
+				<h2 className="text-2xl font-medium">
+					{isNewUser() ? 'Creating User' : isSelf ? 'My Profile' : 'Editing User'}
+				</h2>
+				{isSelf && (
+					<span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded border border-blue-200">
+						Editando tu perfil
+					</span>
+				)}
 			</div>
 
 			<form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -260,6 +305,7 @@ export function User() {
 								name="idClient"
 								value={form.idClient}
 								onChange={(e) => setForm((prev) => ({ ...prev, idClient: e.value }))}
+								disabled={userLogged.userRole !== 'admin'}
 								className="p-inputtext-sm w-full"
 								inputstyle={{ width: '100%' }}
 							/>
