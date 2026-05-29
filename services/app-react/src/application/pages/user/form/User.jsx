@@ -72,6 +72,7 @@ export function User() {
 			setForm(prev => ({
 				...prev,
 				...userData,
+				password: '',
 				imagePreview: imagePreview,
 				image_base: userData.image_base || '',
 				photo: getPhotoUrl(userData.photo) || ''
