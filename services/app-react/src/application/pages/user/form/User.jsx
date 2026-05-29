@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { resizerContext } from "@/providers/iframe-resizer"
 //Stores and services
 import sessionStore from '@/stores/session'
-import { UserService } from "@/services/userService"
+import { UserService, getPhotoUrl } from "@/services/userService"
 //Componentes
 import BreadCrumbs from "@/components/shared/BreadCrumbs"
 import { InputText } from "primereact/inputtext"
@@ -60,7 +60,7 @@ export function User() {
 				...userData,
 				imagePreview: imagePreview,
 				image_base: userData.image_base || '',
-				photo: import.meta.env.VITE_BASE_PHOTO + userData.photo || ''
+				photo: getPhotoUrl(userData.photo) || ''
 			}))
 		} catch (err) {
 			setError('Error loading user data')
@@ -99,17 +99,24 @@ export function User() {
 		if (!form.password && isNewUser()) return setError('Password is required')
 		if (!form.role) return setError('Role is required')
 		if (form.password && form.password.length < 8) return setError('Password must be at least 8 characters long')
-		// e.preventDefault()
+
 		setSubmitted(true)
 		setLoading(true)
 		setError('')
 
 		try {
+			// Only include image_base if user selected a NEW image (starts with "data:")
+			// Never send imagePreview (base64 display copy), photo (resolved URL), or image (File object)
+			const hasNewImage = form.image_base && form.image_base.startsWith('data:')
+
 			const formData = {
-				...form,
-				id: userId,
-				// Remove the actual file object since we're sending base64
-				image: undefined
+				name: form.name,
+				email: form.email,
+				role: form.role,
+				idSlack: form.idSlack,
+				idClient: form.idClient,
+				...(form.password ? { password: form.password } : {}),
+				...(hasNewImage ? { image_base: form.image_base } : {}),
 			}
 
 			if (isNewUser()) {
@@ -214,9 +221,13 @@ export function User() {
 						<div className="flex flex-col gap-2">
 							Imagen actual:
 							<img
-								src={form.photo}
+								src={form.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name || 'User')}&background=random`}
 								alt="Profile"
 								className="w-40 h-40 object-cover rounded-full mb-2"
+								onError={(e) => {
+									e.target.onerror = null;
+									e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name || 'User')}&background=random`;
+								}}
 							/>
 							<FileUpload
 								mode="basic"
@@ -226,13 +237,17 @@ export function User() {
 								maxFileSize={1000000}
 								className="w-full"
 							/>
-							{form.imagePreview && (
-								<img
-									src={form.imagePreview}
-									alt="Profile preview"
-									className="w-40 h-40 object-cover rounded-full mb-2"
-								/>
-							)}
+							{/* Show preview only for newly selected images (not the existing saved photo) */}
+					{form.imagePreview && form.imagePreview.startsWith('data:') && (
+						<div className="flex flex-col gap-1">
+							<span className="text-xs text-gray-500">Nueva imagen seleccionada:</span>
+							<img
+								src={form.imagePreview}
+								alt="Profile preview"
+								className="w-40 h-40 object-cover rounded-full mb-2 border-2 border-blue-400"
+							/>
+						</div>
+					)}
 						</div>
 					</div>
 				</div>
