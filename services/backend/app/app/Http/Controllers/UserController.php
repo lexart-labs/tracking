@@ -156,6 +156,9 @@ class UserController extends BaseController
 
         try {
             $user = User::where('id', $id)->first();
+            if ($user) {
+                $user->makeHidden(['password']);
+            }
 
             return array("response" => $user);
         } catch (Exception $e) {
