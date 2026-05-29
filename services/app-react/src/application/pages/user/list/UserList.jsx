@@ -16,7 +16,7 @@ export function UserList() {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [globalFilter, setGlobalFilter] = useState('');
+    const [globalFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('active'); // 'active', 'inactive', 'all'
 
     useEffect(() => {
