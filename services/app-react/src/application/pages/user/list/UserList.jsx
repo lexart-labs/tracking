@@ -117,7 +117,8 @@ export function UserList() {
     };
 
     const actionBodyTemplate = (rowData) => {
-        const isSelf = rowData.id === userLogged.id;
+        const currentUserId = userLogged.id || userLogged.userId;
+        const isSelf = rowData.id === currentUserId;
         const isActive = !rowData.deleted_at && rowData.status !== 0;
         const canManage = userLogged.userRole === 'admin' || userLogged.userRole === 'pm';
 

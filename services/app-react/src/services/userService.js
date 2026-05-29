@@ -6,9 +6,16 @@ const USERS_ENDPOINT = '/user'
 export const getPhotoUrl = (photo) => {
     if (!photo) return null;
     if (photo.startsWith('http')) return photo;
-    const basePhotoUrl = import.meta.env.VITE_BASE_PHOTO || 
+
+    const basePhotoUrl =
+        import.meta.env.VITE_BASE_PHOTO ||
+        import.meta.env.VITE_FILES_BASE ||
         (import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL.replace(/\/api\/?$/, '/files/') : 'http://localhost:82/files/');
-    return basePhotoUrl + photo;
+
+    const normalizedBase = basePhotoUrl.endsWith('/') ? basePhotoUrl : `${basePhotoUrl}/`;
+    let normalizedPhoto = photo.replace(/^\//, '');
+    normalizedPhoto = normalizedPhoto.replace(/^files\//, '');
+    return normalizedBase + normalizedPhoto;
 }
 
 export class UserService {
@@ -63,12 +70,7 @@ export class UserService {
 
             const response = await this.api.post(
                 `${USERS_ENDPOINT}/${userId}/profile-image`,
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
+                formData
             )
             return response.data
         } catch (error) {
