@@ -174,7 +174,10 @@ class UserController extends BaseController
         $id = $request->input("id");
 
         try{
-            return User::where("id", $id)->update(["status" => 1]);
+            return User::where("id", $id)->update([
+                "status" => 0,
+                "deleted_at" => date('Y-m-d H:i:s')
+            ]);
         }catch (Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "delete"), 500));
         }
@@ -189,13 +192,16 @@ class UserController extends BaseController
         $id = $request->input("id");
 
         try{
-            $user = User::where("id", $id)->where("status", 1)->first();
+            $user = User::where("id", $id)->first();
 
             if(!$user) {
                 return (new Response(array("Error" => USER_NOT, "Operation" => "undelete"), 400));
             }
 
-            return User::where("id", $id)->update(["status" => 0]);
+            return User::where("id", $id)->update([
+                "status" => 1,
+                "deleted_at" => null
+            ]);
         }catch (Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "undelete"), 500));
         }

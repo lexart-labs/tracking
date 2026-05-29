@@ -3,6 +3,14 @@ import sessionStore from '@/stores/session'
 
 const USERS_ENDPOINT = '/user'
 
+export const getPhotoUrl = (photo) => {
+    if (!photo) return null;
+    if (photo.startsWith('http')) return photo;
+    const basePhotoUrl = import.meta.env.VITE_BASE_PHOTO || 
+        (import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL.replace(/\/api\/?$/, '/files/') : 'http://localhost:82/files/');
+    return basePhotoUrl + photo;
+}
+
 export class UserService {
     constructor() {
         this.api = api
@@ -62,6 +70,24 @@ export class UserService {
                     }
                 }
             )
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async deleteUser(userId) {
+        try {
+            const response = await this.api.delete(`${USERS_ENDPOINT}/delete`, { data: { id: userId } })
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async undeleteUser(userId) {
+        try {
+            const response = await this.api.post(`${USERS_ENDPOINT}/undelete`, { id: userId })
             return response.data
         } catch (error) {
             throw error
