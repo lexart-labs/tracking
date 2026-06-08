@@ -14,10 +14,23 @@ use App\Models\Tasks;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Weeklyhours;
+use App\Services\TrackReportService;
 use Illuminate\Support\Carbon;
 
 class TracksController extends BaseController
 {
+    private TrackReportService $trackReportService;
+
+    public function __construct(TrackReportService $trackReportService)
+    {
+        $this->trackReportService = $trackReportService;
+    }
+
+    private function reportResponse($tracks): array
+    {
+        return array("response" => $this->trackReportService->buildReportResponse($tracks));
+    }
+
     //Function all nao retorna uma em especifico somente a do usuario selecionado pelo id
     public function all(Request $request, $id = null)
     {
@@ -68,14 +81,14 @@ class TracksController extends BaseController
 
                         $tracks = $this->calcCosto($tracks);
 
-                        return array("response" => $tracks);
+                        return $this->reportResponse($tracks);
                     }
 
                     $tracks = $tracks->get();
 
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 if (!empty($project_id)) {
@@ -83,14 +96,14 @@ class TracksController extends BaseController
 
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 $tracks = $tracks->get();
 
                 $tracks = $this->calcCosto($tracks);
 
-                return array("response" => $tracks);
+                return $this->reportResponse($tracks);
             }
 
             if (!empty($client_id)) {
@@ -101,25 +114,25 @@ class TracksController extends BaseController
 
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 $tracks = $tracks->get();
 
                 $tracks = $this->calcCosto($tracks);
 
-                return array("response" => $tracks);
+                return $this->reportResponse($tracks);
             }
 
             if (!empty($project_id)) {
-                $tracks = $tracks->whereRaw("(Projects.id) = ?", [$project_id])->get();
+                $tracks = $tracks->whereRaw("(Projects.id) = ?", [$project_id]);
             }
 
             $tracks = $tracks->get();
 
             $tracks = $this->calcCosto($tracks);
 
-            return array("response" => $tracks);
+            return $this->reportResponse($tracks);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tracks all"), 500));
         }
@@ -464,13 +477,13 @@ class TracksController extends BaseController
 
                         $tracks = $this->calcCosto($tracks);
 
-                        return array("response" => $tracks);
+                        return $this->reportResponse($tracks);
                     }
 
                     $tracks = $tracks->get();
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 if (!empty($project_id)) {
@@ -478,13 +491,13 @@ class TracksController extends BaseController
 
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 $tracks = $tracks->get();
                 $tracks = $this->calcCosto($tracks);
 
-                return array("response" => $tracks);
+                return $this->reportResponse($tracks);
             }
 
             if (!empty($client_id)) {
@@ -495,14 +508,14 @@ class TracksController extends BaseController
 
                     $tracks = $this->calcCosto($tracks);
 
-                    return array("response" => $tracks);
+                    return $this->reportResponse($tracks);
                 }
 
                 $tracks = $tracks->get();
 
                 $tracks = $this->calcCosto($tracks);
 
-                return array("response" => $tracks);
+                return $this->reportResponse($tracks);
             }
 
             if (!empty($project_id)) {
@@ -510,13 +523,13 @@ class TracksController extends BaseController
 
                 $tracks = $this->calcCosto($tracks);
 
-                return array("response" => $tracks);
+                return $this->reportResponse($tracks);
             }
 
             $tracks = $tracks->get();
             $tracks = $this->calcCosto($tracks);
 
-            return array("response" => $tracks);
+            return $this->reportResponse($tracks);
         } catch (Exception $e) {
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "tracks trello"), 500));
         }
@@ -531,24 +544,12 @@ class TracksController extends BaseController
 
     public function convertTimeToDecimal($value)
     {
-        $time = explode(":", $value);
-        $horas = floatval($time[0]);
-        $minutes = floatval($time[1]) / 60;
-        $seconds = floatval($time[2]) / 3600;
-        $fraccionaria = $minutes + $seconds;
-        $decimal = floatval($horas + $fraccionaria);
-        return $decimal;
+        return $this->trackReportService->convertTimeToDecimal($value);
     }
 
     public function calcCosto($tracks)
     {
-        foreach ($tracks as $track) {
-            $cost = floatval($track['costHour']);
-            $costDecimal = $this->ConvertTimeToDecimal($track['durations'] ? $track['durations'] : $track['duration']);
-            $track['trackCost'] = round($costDecimal * $cost, 2);
-        }
-
-        return $tracks;
+        return $this->trackReportService->calculateCosts($tracks);
     }
 
     private function getExportTracks(Request $request)
