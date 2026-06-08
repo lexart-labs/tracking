@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Currency;
 use App\Models\CostHour;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Tracks;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Models\Weeklyhours;
 use App\Services\TrackReportService;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rules\Enum;
 
 class TracksController extends BaseController
 {
@@ -170,7 +172,7 @@ class TracksController extends BaseController
         }
 
         $this->validate($request, [
-            "currency" => "required",
+            "currency" => ["required", new Enum(Currency::class)],
             "idProyecto" => "required|numeric|exists:Projects,id",
             "idTask" => "required|numeric",
             "idUser" => "required|numeric|exists:Users,id",

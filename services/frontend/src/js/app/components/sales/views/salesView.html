@@ -108,11 +108,13 @@
         <td>{{sale.concept}}</td>
         <td>{{sale.seller}}</td>
         <td>{{sale.client}}</td>
-        <td ng-if="sale.currency=='$'">{{sale.amount| currency:" $"}}</td>
+        <td ng-if="sale.currency=='UYU'">{{sale.amount| currency:" UYU"}}</td>
 
         <td ng-if="sale.currency=='USD'">{{sale.amount| currency:" USD"}}</td>
 
-        <td ng-if="sale.currency=='R$'">{{sale.amount| currency:" R$"}}</td>
+        <td ng-if="sale.currency=='BRL'">{{sale.amount| currency:" BRL"}}</td>
+
+        <td ng-if="sale.currency=='USDT'">{{sale.amount| currency:" USDT"}}</td>
 
         <td>
           <a ui-sref="app.saleEdit({id: sale.id})">
@@ -130,11 +132,13 @@
         <td></td>
 
         <td><b>
-          {{ sales.totalSales.totalPesos | currency:" $" }}
+          {{ sales.totalSales.totalUYU | currency:" UYU" }}
           <br>
-          {{ sales.totalSales.totalDolares | currency: "USD" }}
+          {{ sales.totalSales.totalUSD | currency: "USD" }}
           <br>
-          {{ sales.totalSales.totalReales | currency:" R$" }}
+          {{ sales.totalSales.totalBRL | currency:" BRL" }}
+          <br>
+          {{ sales.totalSales.totalUSDT | currency:" USDT" }}
         </b></td>
 
         <td></td>

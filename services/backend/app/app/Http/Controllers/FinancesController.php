@@ -98,45 +98,49 @@ class FinancesController extends BaseController
 
             // CAJA
 
-            "realCash" => (float) (($totalCharges["totalPesos"]+ $totalCharges["totalDolares"]*$this->cotizacionDolar) - ($totalExpenses["totalPesos"] + $totalExpenses["totalDolares"]*$this->cotizacionDolar)),
+            "realCash" => (float) (($totalCharges["totalUYU"] + ($totalCharges["totalUSD"] + $totalCharges["totalUSDT"]) * $this->cotizacionDolar) - ($totalExpenses["totalUYU"] + ($totalExpenses["totalUSD"] + $totalExpenses["totalUSDT"]) * $this->cotizacionDolar)),
 
             // CAJA Estiamda
 
-            "estimatedCash" => (float) (($totalEstimatedCharges["totalPesos"]  + $totalEstimatedCharges["totalDolares"]*$this->cotizacionDolar)),
+            "estimatedCash" => (float) (($totalEstimatedCharges["totalUYU"] + ($totalEstimatedCharges["totalUSD"] + $totalEstimatedCharges["totalUSDT"]) * $this->cotizacionDolar)),
 
             // SALDO Real
 
-            "realBalance" => (float) (($totalCharges["totalPesos"]+ $totalCharges["totalDolares"]*$this->cotizacionDolar) - ($totalScheduledExpenses["totalPesos"] + $totalScheduledExpenses["totalDolares"]*$this->cotizacionDolar + $totalExpenses["totalPesos"]+$totalExpenses["totalDolares"]*$this->cotizacionDolar)),
+            "realBalance" => (float) (($totalCharges["totalUYU"] + ($totalCharges["totalUSD"] + $totalCharges["totalUSDT"]) * $this->cotizacionDolar) - ($totalScheduledExpenses["totalUYU"] + ($totalScheduledExpenses["totalUSD"] + $totalScheduledExpenses["totalUSDT"]) * $this->cotizacionDolar + $totalExpenses["totalUYU"] + ($totalExpenses["totalUSD"] + $totalExpenses["totalUSDT"]) * $this->cotizacionDolar)),
 
             // Saldo Estimado
 
-            "chargesBalance" => (float) ( ($totalEstimatedCharges["totalPesos"] + $totalEstimatedCharges["totalDolares"]*$this->cotizacionDolar)-($totalCharges["totalPesos"] + $totalCharges["totalDolares"]*$this->cotizacionDolar)),
+            "chargesBalance" => (float) (($totalEstimatedCharges["totalUYU"] + ($totalEstimatedCharges["totalUSD"] + $totalEstimatedCharges["totalUSDT"]) * $this->cotizacionDolar) - ($totalCharges["totalUYU"] + ($totalCharges["totalUSD"] + $totalCharges["totalUSDT"]) * $this->cotizacionDolar)),
 
             //total Cobros
 
-            "allCharges" => (float)($totalCharges["totalPesos"]+ $totalCharges["totalDolares"]*$this->cotizacionDolar)
+            "allCharges" => (float)($totalCharges["totalUYU"] + ($totalCharges["totalUSD"] + $totalCharges["totalUSDT"]) * $this->cotizacionDolar)
         );
 
         return $res;
     }
 
     public function totalAmount($arr,$key){
-		$totalDolares = 0;
-		$totalPesos = 0;
+		$totalUSD = 0;
+		$totalUYU = 0;
+		$totalBRL = 0;
+		$totalUSDT = 0;
 		for ($i=0; $i < count($arr) ; $i++) {
-			if ($arr[$i]["currency"]=="$") {
-				$totalPesos = $totalPesos + (float) $arr[$i][$key];
+			if ($arr[$i]["currency"]=="UYU") {
+				$totalUYU = $totalUYU + (float) $arr[$i][$key];
+			} elseif ($arr[$i]["currency"]=="BRL") {
+				$totalBRL = $totalBRL + (float) $arr[$i][$key];
+			} elseif ($arr[$i]["currency"]=="USDT") {
+				$totalUSDT = $totalUSDT + (float) $arr[$i][$key];
 			}else {
-				$totalDolares=$totalDolares +(float) $arr[$i][$key];
+				$totalUSD = $totalUSD +(float) $arr[$i][$key];
 			}
 		}
 
-		return array("totalPesos" => $totalPesos,"totalDolares" =>  $totalDolares);
+		return array("totalUYU" => $totalUYU, "totalUSD" => $totalUSD, "totalBRL" => $totalBRL, "totalUSDT" => $totalUSDT);
 	}
 
     public function getCotizacion(){
 		return json_decode(file_get_contents('https://api.lexart.com.uy/gp-beta/algorithm/scrap/ine.php'));
 	}
 }
-
-

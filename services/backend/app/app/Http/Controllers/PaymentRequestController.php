@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Enums\Currency;
 use App\Enums\PaymentRequestDetailConcepts;
 use App\Enums\PaymentRequestStatus;
 use App\Models\PaymentRequest;
@@ -64,6 +65,12 @@ class PaymentRequestController extends BaseController
     {
         $operation = "Get payment Requests";
         $query = PaymentRequest::query();
+
+        if ($request->filled('currency')) {
+            $this->validate($request, [
+                'currency' => [new Enum(Currency::class)],
+            ]);
+        }
 
         try {
             $query = $this->applyFilters($query, $request);

@@ -63,8 +63,10 @@
         <th>{{ 'budgets.clientName' | translate }}</th>
         <th>{{ 'budgets.description' | translate }}</th>
         <th>{{ 'Concepto' }}</th>
-        <th>{{ 'Monto Pesos' }}</th>
-        <th>{{ 'Monto Dolares' }}</th>
+        <th>{{ 'Monto UYU' }}</th>
+        <th>{{ 'Monto USD' }}</th>
+        <th>{{ 'Monto BRL' }}</th>
+        <th>{{ 'Monto USDT' }}</th>
 
         <th>{{ 'Fecha de presupuesto' }}</th>
         <th>{{ 'Estado' }}</th>
@@ -77,7 +79,9 @@
         <td><input class="field-filter" ng-model="filter.description"></td>
         <td><input class="field-filter" ng-model="filter.concept"></td>
         <td><input class="field-filter" ng-model="filter.amount"></td>
-        <td><input class="field-filter" ng-model="filter.date"></td>
+        <td><input class="field-filter" ng-model="filter.amount"></td>
+        <td><input class="field-filter" ng-model="filter.amount"></td>
+        <td><input class="field-filter" ng-model="filter.amount"></td>
 
         <td><input class="field-filter" ng-model="filter.date"></td>
         <td><input class="field-filter" ng-model="filter.status"></td>
@@ -88,13 +92,23 @@
         <td>{{budget.description}}</td>
         <td>{{budget.concept}}</td>
         <td>
-          <b ng-show="budget.currency == 'Pesos'">{{budget.amount | currency:(budget.currency == 'Dolares' ? ' USD' : ' $')}}</b>
-          <span ng-show="budget.currency != 'Pesos' " style="opacity: 0.5">{{ cotizacion ?  (budget.amount*cotizacion | currency:"≈ $" )  : "Calculando ..." }}</span>
+          <b ng-show="budget.currency == 'UYU'">{{budget.amount | currency:' UYU'}}</b>
+          <span ng-show="budget.currency != 'UYU' " style="opacity: 0.5">-</span>
 
         </td>
         <td>
-          <b ng-show="budget.currency == 'Dolares' ">{{budget.amount | currency:(budget.currency == 'Dolares' ? ' USD' : ' $')}}</b>
-          <span ng-show="budget.currency != 'Dolares' " style="opacity: 0.5">{{ cotizacion ?  (budget.amount/cotizacion | currency:"≈ USD" )  : "Calculando ..." }}</span>
+          <b ng-show="budget.currency == 'USD' ">{{budget.amount | currency:' USD'}}</b>
+          <span ng-show="budget.currency != 'USD' " style="opacity: 0.5">-</span>
+
+        </td>
+        <td>
+          <b ng-show="budget.currency == 'BRL' ">{{budget.amount | currency:' BRL'}}</b>
+          <span ng-show="budget.currency != 'BRL' " style="opacity: 0.5">-</span>
+
+        </td>
+        <td>
+          <b ng-show="budget.currency == 'USDT' ">{{budget.amount | currency:' USDT'}}</b>
+          <span ng-show="budget.currency != 'USDT' " style="opacity: 0.5">-</span>
 
         </td>
 
@@ -112,8 +126,10 @@
         <td><b>TOTAL:</b> </td>
         <td></td>
         <td></td>
-        <td><b>{{  totalAmount.pesos | currency:" $"}}</b></td>
+        <td><b>{{  totalAmount.uyu | currency:" UYU"}}</b></td>
         <td><b>{{  totalAmount.usd | currency:" USD"}}</b></td>
+        <td><b>{{  totalAmount.brl | currency:" BRL"}}</b></td>
+        <td><b>{{  totalAmount.usdt | currency:" USDT"}}</b></td>
 
         <td></td>
 
