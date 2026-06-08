@@ -32,8 +32,8 @@
       <tr ng-repeat="cost in hoursCost| filter: filter">
         <td>{{cost.clientName}}</td>
         <td>{{cost.userName}}</td>
-        <td>{{cost.costUser | currency:(cost.currencyUser == 'USD' ? ' USD' : ' $')}}</td>
-        <td>{{cost.costClient | currency:(cost.currencyClient == 'USD' ? ' USD' : ' $')}}</td>
+        <td>{{cost.costUser | currency:(' ' + cost.currencyUser)}}</td>
+        <td>{{cost.costClient | currency:(' ' + cost.currencyClient)}}</td>
         <td>
           <a ui-sref="app.hourCostEdit({id: cost.id})">
             <i class="ri-edit-line"></i>

@@ -73,15 +73,18 @@
       $scope.verifyMss = [];
       $scope.arrCost = [];
       $scope.filter.idTask = 0;
-      $scope.totalCostTrelloPesos = 0;
-      $scope.totalCostTrelloReales = 0;
-      $scope.totalCostTrelloDolares = 0;
-      $scope.totalCostManualPesos = 0;
-      $scope.totalCostManualReales = 0;
-      $scope.totalCostManualDolares = 0;
-      $scope.totalCostPesos = 0;
-      $scope.totalCostReales = 0;
-      $scope.totalCostDolares = 0;
+      $scope.totalCostTrelloUYU = 0;
+      $scope.totalCostTrelloBRL = 0;
+      $scope.totalCostTrelloUSD = 0;
+      $scope.totalCostTrelloUSDT = 0;
+      $scope.totalCostManualUYU = 0;
+      $scope.totalCostManualBRL = 0;
+      $scope.totalCostManualUSD = 0;
+      $scope.totalCostManualUSDT = 0;
+      $scope.totalCostUYU = 0;
+      $scope.totalCostBRL = 0;
+      $scope.totalCostUSD = 0;
+      $scope.totalCostUSDT = 0;
       $scope.totalDuration = 0;
       $scope.CurrTotalCost = '';
 
@@ -112,15 +115,18 @@
       }
 
       $scope.cleanTotals = function(){
-        $scope.totalCostTrelloPesos = 0;
-        $scope.totalCostTrelloReales = 0;
-        $scope.totalCostTrelloDolares = 0;
-        $scope.totalCostManualPesos = 0;
-        $scope.totalCostManualReales = 0;
-        $scope.totalCostManualDolares = 0;
-        $scope.totalCostPesos = 0;
-        $scope.totalCostReales = 0;
-        $scope.totalCostDolares = 0;
+        $scope.totalCostTrelloUYU = 0;
+        $scope.totalCostTrelloBRL = 0;
+        $scope.totalCostTrelloUSD = 0;
+        $scope.totalCostTrelloUSDT = 0;
+        $scope.totalCostManualUYU = 0;
+        $scope.totalCostManualBRL = 0;
+        $scope.totalCostManualUSD = 0;
+        $scope.totalCostManualUSDT = 0;
+        $scope.totalCostUYU = 0;
+        $scope.totalCostBRL = 0;
+        $scope.totalCostUSD = 0;
+        $scope.totalCostUSDT = 0;
         $scope.totalDuration =0;
       }
 
@@ -442,7 +448,7 @@
       function groupBudgetsByClient(budgets, currency) {
         angular.forEach(budgets, function(v, k) {
           if (!$scope.clientTotals[v.Client]) {
-            $scope.clientTotals[v.Client]= {};
+            $scope.clientTotals[v.Client]= { totalBRL: 0, totalUYU: 0, totalUSD: 0, totalUSDT: 0 };
           }
 
           $scope.clientTotals[v.Client]['total' + currency] = v.total;
@@ -506,20 +512,27 @@
         var calculeTotalHrDesarollo = function (array, clientKeyName) {
           // Creo a los seletores y valores default
           var totalName = {
-            'R$': 'totalReales',
-            '$': 'totalPesos',
-            'USD': 'totalDolares'
+            'BRL': 'totalBRL',
+            'UYU': 'totalUYU',
+            'USD': 'totalUSD',
+            'USDT': 'totalUSDT'
           };
 
           // Itero sobre los tracks y modifico el result conforme el cliente y la moneda
           angular.forEach(array, function (el, key) {
+            var currency = totalName[el.currency] ? el.currency : 'USD';
+
             if(!$scope.clientTotalDev[el[clientKeyName]]) {
-              $scope.clientTotalDev[el[clientKeyName]] = { totalReales: 0, totalPesos: 0, totalDolares: 0 };
+              $scope.clientTotalDev[el[clientKeyName]] = { totalBRL: 0, totalUYU: 0, totalUSD: 0, totalUSDT: 0 };
+            }
+
+            if(!$scope.clientTotals[el[clientKeyName]]) {
+              $scope.clientTotals[el[clientKeyName]] = { totalBRL: 0, totalUYU: 0, totalUSD: 0, totalUSDT: 0 };
             }
 
             $scope.clientTotalDev
               [el[clientKeyName]]
-              [totalName[el.currency]] += el.trackCost;
+              [totalName[currency]] += el.trackCost;
           });
         };
 
@@ -531,7 +544,7 @@
             var tempTotal = 0;
             tracks.forEach(function (track) {
               if(!track.currency){
-                track.currency = '$'
+                track.currency = 'USD'
               }
               tempTotal += (track.trackCost ? track.trackCost : 0);
               $scope.totalcost = tempTotal;
@@ -545,9 +558,9 @@
                   //   function (err, weeklyHours, countItems) {
                   //     if (!err) {
                   //       var object = weeklyHours.find(function (value) {
-                  //         if(value.currency == null || value.currency == ''){
-                  //           track.currency = '$'
-                  //         }
+              //         if(value.currency == null || value.currency == ''){
+              //           track.currency = 'USD'
+              //         }
 
                   //         return track.idUser == value.idUser;
                   //       });
@@ -692,19 +705,23 @@
                 }
               }
               if(track.currency == null || track.currency == ''){
-                track.currency = '$'
+                track.currency = 'USD'
               }
-              if(track.currency == '$'){
-                $scope.totalCostManualPesos += track.trackCost
-                $scope.totalCostPesos += track.trackCost
+              if(track.currency == 'UYU'){
+                $scope.totalCostManualUYU += track.trackCost
+                $scope.totalCostUYU += track.trackCost
               }
-              if(track.currency == 'R$'){
-                $scope.totalCostManualReales += track.trackCost
-                $scope.totalCostReales += track.trackCost
+              if(track.currency == 'BRL'){
+                $scope.totalCostManualBRL += track.trackCost
+                $scope.totalCostBRL += track.trackCost
               }
               if(track.currency == 'USD'){
-                $scope.totalCostManualDolares += track.trackCost
-                $scope.totalCostDolares += track.trackCost
+                $scope.totalCostManualUSD += track.trackCost
+                $scope.totalCostUSD += track.trackCost
+              }
+              if(track.currency == 'USDT'){
+                $scope.totalCostManualUSDT += track.trackCost
+                $scope.totalCostUSDT += track.trackCost
               }
             });
             // Subtotal by Project
@@ -1246,17 +1263,21 @@
                     });
                   }
                 }
-                if(track.currency == '$'){
-                  $scope.totalCostTrelloPesos += track.trackCost
-                  $scope.totalCostPesos += track.trackCost
+                if(track.currency == 'UYU'){
+                  $scope.totalCostTrelloUYU += track.trackCost
+                  $scope.totalCostUYU += track.trackCost
                 }
-                if(track.currency == 'R$'){
-                  $scope.totalCostTrelloReales += track.trackCost
-                  $scope.totalCostReales += track.trackCost
+                if(track.currency == 'BRL'){
+                  $scope.totalCostTrelloBRL += track.trackCost
+                  $scope.totalCostBRL += track.trackCost
                 }
                 if(track.currency == 'USD'){
-                  $scope.totalCostTrelloDolares += track.trackCost
-                  $scope.totalCostDolares += track.trackCost
+                  $scope.totalCostTrelloUSD += track.trackCost
+                  $scope.totalCostUSD += track.trackCost
+                }
+                if(track.currency == 'USDT'){
+                  $scope.totalCostTrelloUSDT += track.trackCost
+                  $scope.totalCostUSDT += track.trackCost
                 }
               });
             });

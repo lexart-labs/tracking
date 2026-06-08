@@ -160,7 +160,7 @@
                     angular.forEach(weeklyHours, function (value, index) {
                         if (value.idUser == $rootScope.userId) {
                             if (value.currency == null || value.currency == '') {
-                                value.currency = '$'
+                                value.currency = 'USD'
                             }
                             $scope.currency = value.currency
 
@@ -302,7 +302,7 @@
                     angular.forEach(weeklyHours, function (value, index) {
                         if (value.idUser == $rootScope.userId) {
                             if (value.currency == null || value.currency == '') {
-                                value.currency = '$'
+                                value.currency = 'USD'
                             }
                             $scope.currency = value.currency
 
@@ -442,7 +442,7 @@
                                         exist = true;
                                         var costo = parseInt(value.costHour);
                                         if (value.currency == null || value.currency == '') {
-                                            value.currency = '$'
+                                            value.currency = 'USD'
                                         }
                                         $rootScope.currentTrack.currency = value.currency;
                                         var result = decimalTime * costo;
