@@ -89,7 +89,13 @@ class TracksControllerTest extends TestCase
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'response' => [
-                ['id', 'name', 'projectName', 'userName', 'clientName', 'duration', 'trackCost', 'currency'],
+                'amount',
+                'currency',
+                'totals',
+                'summary',
+                'tracks' => [
+                    ['id', 'name', 'projectName', 'userName', 'clientName', 'duration', 'trackCost', 'currency'],
+                ],
             ],
         ]);
     }
@@ -101,7 +107,7 @@ class TracksControllerTest extends TestCase
 
         $this->actingAs($pm)->post('/api/tracks/user/all', $this->dateParams());
         $this->seeStatusCode(200);
-        $this->seeJsonStructure(['response' => [['id', 'projectName']]]);
+        $this->seeJsonStructure(['response' => ['tracks' => [['id', 'projectName']]]]);
     }
 
     public function test_admin_filters_tracks_by_user()
@@ -115,7 +121,7 @@ class TracksControllerTest extends TestCase
         $this->seeStatusCode(200);
 
         $body = json_decode($this->response->getContent(), true);
-        $ids = array_column($body['response'], 'idUser');
+        $ids = array_column($body['response']['tracks'], 'idUser');
         foreach ($ids as $id) {
             $this->assertEquals($other->id, $id);
         }
@@ -142,10 +148,27 @@ class TracksControllerTest extends TestCase
         $this->seeStatusCode(200);
 
         $body = json_decode($this->response->getContent(), true);
-        $this->assertNotEmpty($body['response']);
-        foreach ($body['response'] as $track) {
+        $this->assertNotEmpty($body['response']['tracks']);
+        foreach ($body['response']['tracks'] as $track) {
             $this->assertEquals($developer->id, $track['idUser']);
         }
+    }
+
+    public function test_reports_total_is_calculated_from_duration_and_weekly_hour()
+    {
+        $admin = $this->makeUser('admin');
+        $this->createTrackScenario($admin, [
+            'startTime' => '2024-03-01 09:00:00',
+            'endTime' => '2024-03-01 10:30:00',
+            'trackCost' => 999.99,
+        ]);
+
+        $this->actingAs($admin)->post('/api/tracks/user/all', $this->dateParams());
+        $this->seeStatusCode(200);
+
+        $body = json_decode($this->response->getContent(), true);
+        $this->assertEquals(75.0, (float)$body['response']['amount']);
+        $this->assertEquals(75.0, (float)$body['response']['tracks'][0]['trackCost']);
     }
 
     // -------------------------------------------------------------------------

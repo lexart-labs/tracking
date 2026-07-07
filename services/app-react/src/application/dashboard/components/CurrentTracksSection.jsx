@@ -34,10 +34,13 @@ export function CurrentTracksSection({ tracks, userRole, ...props }) {
 									<tr key={index}>
 										<td>
 											<img
-												src={track.photo ? (track.photo.startsWith('http') ? track.photo : `${import.meta.env.VITE_FILES_BASE || 'https://api-tracking.lexart.tech/files/'}${track.photo}`) : '/assets/images/user-placeholder.png'}
+												src={track.photo ? (track.photo.startsWith('http') ? track.photo : `${import.meta.env.VITE_FILES_BASE || 'http://localhost:82/files/'}${track.photo}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(track.userName || 'User')}&background=random`}
 												alt="avatar"
 												className="usr-photo-table"
-												onError={(e) => { e.target.src = '/assets/images/user-placeholder.png' }}
+												onError={(e) => {
+													e.target.onerror = null;
+													e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(track.userName || 'User')}&background=random`;
+												}}
 											/>
 										</td>
 										<td>{track.userName}</td>

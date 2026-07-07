@@ -39,6 +39,21 @@ const tracks = [
   },
 ]
 
+function tracksReportResponse(rows) {
+  const amount = rows.reduce((acc, track) => acc + Number(track.trackCost || 0), 0)
+  const minutes = rows.length * 60
+  return {
+    tracks: rows,
+    amount,
+    currency: 'USD',
+    totals: [{ currency: 'USD', amount, minutes }],
+    summary: {
+      totals: [{ currency: 'USD', amount, minutes }],
+      projects: [{ idProyecto: 10, projectName: 'Alpha Project', currency: 'USD', amount, minutes }],
+    },
+  }
+}
+
 const projects = [
   { id: 10, name: 'Alpha Project' },
   { id: 11, name: 'Beta Project' },
@@ -161,16 +176,16 @@ export const handlers = [
   }),
 
   http.post(`${BASE_URL}/tracks/user/all`, () => {
-    return HttpResponse.json({ response: tracks })
+    return HttpResponse.json({ response: tracksReportResponse(tracks) })
   }),
 
   http.post(`${BASE_URL}/tracks/user/current`, () => {
-    return HttpResponse.json({ response: [tracks[1]] })
+    return HttpResponse.json({ response: tracksReportResponse([tracks[1]]) })
   }),
 
   http.post(`${BASE_URL}/tracks/user/:id`, ({ params }) => {
     const filtered = tracks.filter((t) => t.idUser === Number(params.id))
-    return HttpResponse.json({ response: filtered })
+    return HttpResponse.json({ response: tracksReportResponse(filtered) })
   }),
 
   http.put(`${BASE_URL}/tracks/update`, () => {

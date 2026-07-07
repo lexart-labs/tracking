@@ -140,8 +140,15 @@ class UserController extends BaseController
 
     public function userById(Request $request, $id)
     {
-
         $request["id"] = $id;
+
+        $currentUser = AuthController::current();
+        $isSelf = $currentUser->id == $id;
+        $canViewOther = in_array($currentUser->role, ["admin", "pm"]);
+
+        if (!$isSelf && !$canViewOther) {
+            return (new Response(array('message' => 'Unauthorized'), 401));
+        }
 
         $this->validate($request, [
             "id" => "exists:Users"
@@ -149,6 +156,9 @@ class UserController extends BaseController
 
         try {
             $user = User::where('id', $id)->first();
+            if ($user) {
+                $user->makeHidden(['password']);
+            }
 
             return array("response" => $user);
         } catch (Exception $e) {
@@ -174,7 +184,10 @@ class UserController extends BaseController
         $id = $request->input("id");
 
         try{
-            return User::where("id", $id)->update(["status" => 1]);
+            return User::where("id", $id)->update([
+                "status" => 0,
+                "deleted_at" => date('Y-m-d H:i:s')
+            ]);
         }catch (Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "delete"), 500));
         }
@@ -189,13 +202,16 @@ class UserController extends BaseController
         $id = $request->input("id");
 
         try{
-            $user = User::where("id", $id)->where("status", 1)->first();
+            $user = User::where("id", $id)->first();
 
             if(!$user) {
                 return (new Response(array("Error" => USER_NOT, "Operation" => "undelete"), 400));
             }
 
-            return User::where("id", $id)->update(["status" => 0]);
+            return User::where("id", $id)->update([
+                "status" => 1,
+                "deleted_at" => null
+            ]);
         }catch (Exception $e){
             return (new Response(array("Error" => BAD_REQUEST, "Operation" => "undelete"), 500));
         }
@@ -256,6 +272,36 @@ class UserController extends BaseController
             return array("response" => $user);
         }catch(Exception $e) {
             return array('response' => 'Update User', "error" => $e->getMessage());
+        }
+    }
+
+    public function uploadProfileImage(Request $request, $id)
+    {
+        $request["id"] = $id;
+        $this->role = AuthController::current()->role;
+
+        $this->validate($request, [
+            "id" => ["required", Rule::exists("Users", "id")->where(function($query) {
+                if($this->role != "admin") $query->where("role", "!=", "admin");
+            })]
+        ]);
+
+        try {
+            if (!$request->hasFile('image')) {
+                return (new Response(array("Error" => "No image file provided", "Operation" => "profile-image"), 400));
+            }
+
+            $image = $request->file('image');
+            if (!$image->isValid()) {
+                return (new Response(array("Error" => "Invalid image upload", "Operation" => "profile-image"), 400));
+            }
+
+            $photoSaved = FileHelper::saveFile($image);
+            User::where("id", $id)->update(['photo' => $photoSaved]);
+
+            return array("response" => ["photo" => $photoSaved]);
+        } catch(Exception $e) {
+            return (new Response(array("Error" => BAD_REQUEST, "Operation" => "profile-image"), 500));
         }
     }
 

@@ -18,7 +18,7 @@ class CreatePaymentRequestMigration extends Migration
             $table->id();
             $table->integer('user_id');
             $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Canceled']);
-            $table->string('currency');
+            $table->enum('currency', ['USD', 'UYU', 'BRL', 'USDT']);
             $table->string('reply')->nullable();
             $table->timestamps();
         });

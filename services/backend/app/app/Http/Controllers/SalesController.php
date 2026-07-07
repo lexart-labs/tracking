@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Currency;
 use Exception;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Sales;
+use Illuminate\Validation\Rules\Enum;
 
 class SalesController extends BaseController
 {
@@ -34,7 +36,7 @@ class SalesController extends BaseController
             "concept" => "required",
             "amount" => "required|numeric",
             "type" => "required",
-            "currency" => "required",
+            "currency" => ["required", new Enum(Currency::class)],
             "active" => "required|numeric",
             "date" => "required|date",
             "status" => "string",
@@ -78,7 +80,7 @@ class SalesController extends BaseController
             "concept" => "required",
             "amount" => "required|numeric",
             "type" => "required",
-            "currency" => "required",
+            "currency" => ["required", new Enum(Currency::class)],
             "active" => "required|numeric",
             "date" => "required",
             "status" => "string",
@@ -192,28 +194,34 @@ class SalesController extends BaseController
     public function addAmountsToCurrency($sales)
     {
 
-        $totalPesos = 0;
-        $totalDolares = 0;
-        $totalReales = 0;
+        $totalUYU = 0;
+        $totalUSD = 0;
+        $totalBRL = 0;
+        $totalUSDT = 0;
 
         foreach($sales as $sale) {
-            if($sale->currency === "R$" ){
-                $totalReales += floatval($sale->amount);
+            if($sale->currency === "BRL" ){
+                $totalBRL += floatval($sale->amount);
             }
 
             if($sale->currency === "USD" ){
-                $totalDolares += floatval($sale->amount);
+                $totalUSD += floatval($sale->amount);
             }
 
-            if($sale->currency === "$" ){
-                $totalPesos += floatval($sale->amount);
+            if($sale->currency === "UYU" ){
+                $totalUYU += floatval($sale->amount);
+            }
+
+            if($sale->currency === "USDT" ){
+                $totalUSDT += floatval($sale->amount);
             }
         }
 
         return array(
-            "totalPesos" => $totalPesos,
-            "totalDolares" => $totalDolares,
-            "totalReales" => $totalReales
+            "totalUYU" => $totalUYU,
+            "totalUSD" => $totalUSD,
+            "totalBRL" => $totalBRL,
+            "totalUSDT" => $totalUSDT
         );
     }
 

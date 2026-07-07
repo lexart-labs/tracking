@@ -13,8 +13,9 @@ import sessionStore from '@/stores/session'
 
 const CURRENCIES = [
 	{ label: 'USD', value: 'USD' },
-	{ label: '$', value: '$' },
-	{ label: 'R$', value: 'R$' },
+	{ label: 'UYU', value: 'UYU' },
+	{ label: 'BRL', value: 'BRL' },
+	{ label: 'USDT', value: 'USDT' },
 ]
 
 function toDateString(date) {
