@@ -20,7 +20,7 @@ describe('ClientList', () => {
     setSession()
     renderWithProviders(<ClientList />)
     expect(screen.getByText('Clients')).toBeInTheDocument()
-    expect(screen.getByText('+ CLIENT')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /New Client/i })).toBeInTheDocument()
   })
 
   it('loads and displays clients from API', async () => {

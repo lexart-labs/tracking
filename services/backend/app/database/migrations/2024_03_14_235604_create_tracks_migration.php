@@ -19,7 +19,7 @@ class CreateTracksMigration extends Migration
             $table->integer('idUser')->nullable();
             $table->string('name');
             $table->string('typeTrack');
-            $table->string('currency')->nullable();
+            $table->enum('currency', ['USD', 'UYU', 'BRL', 'USDT'])->nullable();
             $table->integer('trackCost')->nullable();
             $table->integer('idProyecto')->nullable();
             $table->integer('duracion');

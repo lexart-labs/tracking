@@ -1,10 +1,92 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Calendar } from 'primereact/calendar'
 
 export default function HistoryItem({ item, onStart, onStop, onSaveSelection, submitting, isFirstItem, isCurrentTrack, hasAnyActiveTrack }) {
 	const [itemTab, setItemTab] = useState(1) // 1: Play, 2: Manual
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(new Date())
+	const [activePicker, setActivePicker] = useState(null) // 'start' or 'end'
+
+	useEffect(() => {
+		if (!activePicker) return
+
+		const handleGlobalClick = (e) => {
+			const hourSpan = e.target.closest('.p-hour-picker > span')
+			const minuteSpan = e.target.closest('.p-minute-picker > span')
+
+			if (!hourSpan && !minuteSpan) return
+
+			const span = hourSpan || minuteSpan
+			const isHour = !!hourSpan
+
+			// If it's already an input, do nothing
+			if (span.querySelector('input') || span.tagName === 'INPUT') return
+
+			const currentText = span.textContent.trim()
+			const input = document.createElement('input')
+			input.type = 'number'
+			input.value = currentText
+			input.min = '0'
+			input.max = isHour ? '23' : '59'
+			
+			// Premium glassmorphism / neat styles
+			input.style.width = '2.5rem'
+			input.style.textAlign = 'center'
+			input.style.fontSize = 'inherit'
+			input.style.fontWeight = 'bold'
+			input.style.fontFamily = 'inherit'
+			input.style.border = '1px solid var(--primary-color, #3b82f6)'
+			input.style.borderRadius = '4px'
+			input.style.background = 'rgba(255, 255, 255, 0.1)'
+			input.style.color = 'inherit'
+			input.style.outline = 'none'
+			input.style.padding = '2px 0'
+
+			span.replaceWith(input)
+			input.focus()
+			input.select()
+
+			const saveValue = () => {
+				let val = parseInt(input.value, 10)
+				if (isNaN(val)) val = 0
+				if (isHour) {
+					val = Math.max(0, Math.min(23, val))
+				} else {
+					val = Math.max(0, Math.min(59, val))
+				}
+
+				const baseDate = activePicker === 'start' ? startDate : endDate
+				const newDate = new Date(baseDate)
+
+				if (isHour) {
+					newDate.setHours(val)
+				} else {
+					newDate.setMinutes(val)
+				}
+
+				if (activePicker === 'start') {
+					setStartDate(newDate)
+				} else {
+					setEndDate(newDate)
+				}
+
+				span.textContent = String(val).padStart(2, '0')
+				input.replaceWith(span)
+			}
+
+			input.addEventListener('blur', saveValue)
+			input.addEventListener('keydown', (ev) => {
+				if (ev.key === 'Enter') {
+					saveValue()
+				} else if (ev.key === 'Escape') {
+					input.replaceWith(span)
+				}
+			})
+		}
+
+		document.addEventListener('click', handleGlobalClick)
+		return () => document.removeEventListener('click', handleGlobalClick)
+	}, [activePicker, startDate, endDate])
 
 	const formatStartTime = (dateStr) => {
 		const d = new Date(dateStr)
@@ -75,6 +157,8 @@ export default function HistoryItem({ item, onStart, onStop, onSaveSelection, su
 									showTime
 									hourFormat="24"
 									dateFormat="dd/mm/yy"
+									onShow={() => setActivePicker('start')}
+									onHide={() => setActivePicker(null)}
 								/>
 							</div>
 							<div className="history-item__datepicker">
@@ -85,6 +169,8 @@ export default function HistoryItem({ item, onStart, onStop, onSaveSelection, su
 									showTime
 									hourFormat="24"
 									dateFormat="dd/mm/yy"
+									onShow={() => setActivePicker('end')}
+									onHide={() => setActivePicker(null)}
 								/>
 							</div>
 							<button

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Currency;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Exception;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Http\Response;
 use App\Models\Weeklyhours;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rules\Enum;
 use WeeklyHour;
 
 class WeeklyhoursController extends BaseController
@@ -58,7 +60,7 @@ class WeeklyhoursController extends BaseController
             "userName" => "required",
             "costHour" => "required|numeric",
             "workLoad" => "required|numeric",
-            "currency" => "required",
+            "currency" => ["required", new Enum(Currency::class)],
             "borrado" => "required|numeric",
             "id" => "required|numeric",
             "valid_from" => "required|date",
@@ -107,7 +109,7 @@ class WeeklyhoursController extends BaseController
             "userName" => "required",
             "costHour" => "required|numeric",
             "workLoad" => "required|numeric",
-            "currency" => "required",
+            "currency" => ["required", new Enum(Currency::class)],
             "borrado" => "required|numeric",
             "valid_from" => "required|date",
             "valid_until" => "nullable|date|after:valid_from",
@@ -179,5 +181,4 @@ class WeeklyhoursController extends BaseController
         }
     }
 }
-
 

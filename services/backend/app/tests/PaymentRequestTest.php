@@ -315,6 +315,41 @@ class PaymentRequestTest extends TestCase
         ]);
     }
 
+    public function test_get_balance_between_dates_uses_report_cost_calculation()
+    {
+        $user = User::factory()->count(1)->create(['role' => 'employee', 'status' => 1])->first();
+        $weeklyHour = Weeklyhours::factory()->count(1)->create([
+            'idUser' => $user->id,
+            'costHour' => 50,
+            'currency' => 'USD',
+            'valid_from' => '2024-01-01',
+            'borrado' => '0',
+        ])->first();
+
+        $client = Clients::factory()->count(1)->create()->first();
+        $project = Projects::factory()->count(1)->create(['idClient' => $client->id])->first();
+        $task = Tasks::factory()->count(1)->create(['idProject' => $project->id, 'active' => 1])->first();
+        Tracks::factory()->count(1)->create([
+            'idUser' => $user->id,
+            'idTask' => $task->id,
+            'idProyecto' => $project->id,
+            'idWeeklyHour' => $weeklyHour->id,
+            'startTime' => '2024-03-01 09:00:00',
+            'endTime' => '2024-03-01 10:30:00',
+            'typeTrack' => 'manual',
+            'trackCost' => 999.99,
+        ])->first();
+
+        $this->actingAs($user);
+
+        $response = $this->get("/api/payment_requests/closure/$user->id/2024-03-01/2024-03-31");
+
+        $response->seeStatusCode(200);
+        $body = json_decode($this->response->getContent(), true);
+        $this->assertEquals(75.0, (float)$body['response']['amount']);
+        $this->assertEquals(75.0, (float)$body['response']['tracks'][0]['trackCost']);
+    }
+
     // UPDATE ROUTE
     public function test_update_payment_requests_should_return_unauthorized()
     {

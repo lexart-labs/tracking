@@ -61,6 +61,8 @@ function FilterBar({ filters, onChange, onApply, users, clients, projects, isAdm
                             optionValue="id"
                             onChange={(e) => onChange({ ...filters, idClient: e.value })}
                             showClear
+                            filter
+                            filterBy="name"
                             placeholder="Select Client"
                             style={{ minWidth: '12rem' }}
                             className="h-[42px] flex items-center"
@@ -77,6 +79,8 @@ function FilterBar({ filters, onChange, onApply, users, clients, projects, isAdm
                             optionValue="id"
                             onChange={(e) => onChange({ ...filters, idUser: e.value })}
                             showClear
+                            filter
+                            filterBy="name"
                             placeholder="Select User"
                             style={{ minWidth: '12rem' }}
                             className="h-[42px] flex items-center"
@@ -93,6 +97,8 @@ function FilterBar({ filters, onChange, onApply, users, clients, projects, isAdm
                             optionValue="id"
                             onChange={(e) => onChange({ ...filters, idProject: e.value })}
                             showClear
+                            filter
+                            filterBy="name"
                             placeholder="Select Project"
                             style={{ minWidth: '12rem' }}
                             className="h-[42px] flex items-center"

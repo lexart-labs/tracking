@@ -42,11 +42,11 @@
   <div class="lexart-flex" style="margin-top: 1em;">
     <div class="lexart-flex-6">
       <ul class="lexart-flex ul--cash">
-        <li class="lexart-flex"><span>CAJA Real:</span>    <b>{{finances.realCash       | currency:" $"}}</b></li>
-        <li class="lexart-flex"><span>CAJA Est.:</span>    <b>{{finances.estimatedCash | currency:" $"}}</b></li>
-        <li class="lexart-flex"><span>SALDO Real:</span>   <b>{{finances.realBalance    | currency:" $"}}</b></li>
-        <li class="lexart-flex"><span>SALDO Cobros:</span> <b>{{finances.chargesBalance | currency:" $"}}</b></li>
-        <li class="lexart-flex"><span>TOTAL Cobros:</span> <b>{{finances.allCharges   | currency:" $"}}</b></li>
+        <li class="lexart-flex"><span>CAJA Real:</span>    <b>{{finances.realCash       | currency:" UYU"}}</b></li>
+        <li class="lexart-flex"><span>CAJA Est.:</span>    <b>{{finances.estimatedCash | currency:" UYU"}}</b></li>
+        <li class="lexart-flex"><span>SALDO Real:</span>   <b>{{finances.realBalance    | currency:" UYU"}}</b></li>
+        <li class="lexart-flex"><span>SALDO Cobros:</span> <b>{{finances.chargesBalance | currency:" UYU"}}</b></li>
+        <li class="lexart-flex"><span>TOTAL Cobros:</span> <b>{{finances.allCharges   | currency:" UYU"}}</b></li>
       </ul>
     </div>
   </div>
@@ -88,7 +88,7 @@
         <td><b>TOTAL:</b> </td>
         <td></td>
         <td></td>
-        <td><b>{{finances.totalExpenses.totalPesos | currency:" $"}}</b></td>
+        <td><b>{{finances.totalExpenses.totalUYU | currency:" UYU"}}<br>{{finances.totalExpenses.totalUSD | currency:" USD"}}<br>{{finances.totalExpenses.totalBRL | currency:" BRL"}}<br>{{finances.totalExpenses.totalUSDT | currency:" USDT"}}</b></td>
         <td></td>
       </tr>
     </tfoot>
@@ -131,7 +131,7 @@
         <td><b>TOTAL:</b> </td>
         <td></td>
         <td></td>
-        <td><b>{{finances.totalScheduledExpenses.totalPesos | currency:" $"}}</b></td>
+        <td><b>{{finances.totalScheduledExpenses.totalUYU | currency:" UYU"}}<br>{{finances.totalScheduledExpenses.totalUSD | currency:" USD"}}<br>{{finances.totalScheduledExpenses.totalBRL | currency:" BRL"}}<br>{{finances.totalScheduledExpenses.totalUSDT | currency:" USDT"}}</b></td>
         <td></td>
       </tr>
     </tfoot>
@@ -178,7 +178,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><b>{{finances.totalCharges.totalPesos | currency:" $"}}</b></td>
+        <td><b>{{finances.totalCharges.totalUYU | currency:" UYU"}}<br>{{finances.totalCharges.totalUSD | currency:" USD"}}<br>{{finances.totalCharges.totalBRL | currency:" BRL"}}<br>{{finances.totalCharges.totalUSDT | currency:" USDT"}}</b></td>
         <td></td>
       </tr>
     </tfoot>
@@ -223,9 +223,9 @@
         <td><b>TOTAL:</b> </td>
         <td></td>
         <td></td>
-        <td><b>{{finances.totalEstimatedCharges.totalDolares | currency:" USD"}}</b></td>
+        <td><b>{{finances.totalEstimatedCharges.totalUSD | currency:" USD"}}<br>{{finances.totalEstimatedCharges.totalBRL | currency:" BRL"}}<br>{{finances.totalEstimatedCharges.totalUSDT | currency:" USDT"}}</b></td>
 
-        <td><b>{{finances.totalEstimatedCharges.totalPesos | currency:" $"}}</b></td>
+        <td><b>{{finances.totalEstimatedCharges.totalUYU | currency:" UYU"}}</b></td>
         <td></td>
       </tr>
     </tfoot>
@@ -272,9 +272,9 @@
         <td><b>TOTAL:</b> </td>
         <td></td>
         <td></td>
-        <td><b>{{finances.totalDebts.totalDolares | currency:" USD"}}</b></td>
+        <td><b>{{finances.totalDebts.totalUSD | currency:" USD"}}<br>{{finances.totalDebts.totalBRL | currency:" BRL"}}<br>{{finances.totalDebts.totalUSDT | currency:" USDT"}}</b></td>
 
-        <td><b>{{finances.totalDebts.totalPesos | currency:" $"}}</b></td>
+        <td><b>{{finances.totalDebts.totalUYU | currency:" UYU"}}</b></td>
 
 
         <td></td>

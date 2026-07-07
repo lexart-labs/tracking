@@ -24,7 +24,7 @@ function formatMinutes(totalMinutes) {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 
-export function exportToPDF(grouped, isAdminOrPm, filters) {
+export function exportToPDF(grouped, isAdminOrPm, filters, summary) {
     const doc = new jsPDF({ orientation: 'landscape' })
 
     doc.setFontSize(14)
@@ -41,6 +41,12 @@ export function exportToPDF(grouped, isAdminOrPm, filters) {
         : ['Project', 'Client', 'Task', 'Start', 'End', 'Duration', 'Cost/Hr', 'Cost']
 
     const body = []
+    const projectsById = {}
+    for (const project of summary?.projects || []) {
+        if (!projectsById[project.idProyecto]) projectsById[project.idProyecto] = []
+        projectsById[project.idProyecto].push(project)
+    }
+
     for (const g of grouped) {
         body.push([{
             content: g.projectName,
@@ -64,16 +70,10 @@ export function exportToPDF(grouped, isAdminOrPm, filters) {
             body.push(row)
         }
 
-        // Subtotal row
-        const byCurrency = {}
-        let subMinutes = 0
-        for (const t of g.tracks) {
-            const cur = t.currency || 'USD'
-            if (!byCurrency[cur]) byCurrency[cur] = 0
-            byCurrency[cur] += Number(t.trackCost) || 0
-            subMinutes += parseDurationToMinutes(t.duration)
-        }
-        const subText = `Subtotal: ${formatMinutes(subMinutes)}   ${Object.entries(byCurrency).map(([c, v]) => `${c} ${v.toFixed(2)}`).join('   ')}`
+        const projectSummary = projectsById[g.idProyecto] || []
+        const subText = projectSummary
+            .map((item) => `Subtotal: ${formatMinutes(item.minutes)}   ${item.currency} ${Number(item.amount).toFixed(2)}`)
+            .join('   ')
         body.push([{
             content: subText,
             colSpan: headers.length,
@@ -104,36 +104,20 @@ export function exportToPDF(grouped, isAdminOrPm, filters) {
     doc.text('Summary', 14, summaryStartY)
     doc.setFont(undefined, 'normal')
 
-    const summary = {}
-    for (const g of grouped) {
-        for (const t of g.tracks) {
-            const cur = t.currency || 'USD'
-            const pid = g.idProyecto
-            if (!summary[cur]) summary[cur] = { projects: {}, total: 0, totalMinutes: 0 }
-            const cost = Number(t.trackCost) || 0
-            const mins = parseDurationToMinutes(t.duration)
-            summary[cur].total += cost
-            summary[cur].totalMinutes += mins
-            if (!summary[cur].projects[pid]) {
-                summary[cur].projects[pid] = { name: g.projectName, cost: 0, minutes: 0 }
-            }
-            summary[cur].projects[pid].cost += cost
-            summary[cur].projects[pid].minutes += mins
-        }
-    }
-
     let nextY = summaryStartY + 4
-    for (const [cur, sec] of Object.entries(summary)) {
+    for (const total of summary?.totals || []) {
+        const cur = total.currency
+        const currencyProjects = (summary?.projects || []).filter((project) => project.currency === cur)
         const sumBody = [
-            ...Object.values(sec.projects).map((p) => [
-                p.name,
+            ...currencyProjects.map((p) => [
+                p.projectName,
                 formatMinutes(p.minutes),
-                `${cur} ${p.cost.toFixed(2)}`,
+                `${cur} ${Number(p.amount).toFixed(2)}`,
             ]),
             [
                 { content: `TOTAL ${cur}`, styles: { fontStyle: 'bold' } },
-                { content: formatMinutes(sec.totalMinutes), styles: { fontStyle: 'bold' } },
-                { content: `${cur} ${sec.total.toFixed(2)}`, styles: { fontStyle: 'bold' } },
+                { content: formatMinutes(total.minutes), styles: { fontStyle: 'bold' } },
+                { content: `${cur} ${Number(total.amount).toFixed(2)}`, styles: { fontStyle: 'bold' } },
             ],
         ]
         autoTable(doc, {

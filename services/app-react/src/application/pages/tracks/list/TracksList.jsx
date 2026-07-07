@@ -21,14 +21,6 @@ function toApiDatetime(date, isEnd = false) {
     return isEnd ? `${y}-${m}-${d} 23:59:59` : `${y}-${m}-${d} 00:00:00`
 }
 
-function parseDurationToMinutes(duration) {
-    if (!duration) return 0
-    const parts = duration.split(':').map(Number)
-    if (parts.length >= 3) return parts[0] * 60 + parts[1] + Math.round(parts[2] / 60)
-    if (parts.length === 2) return parts[0] * 60 + parts[1]
-    return 0
-}
-
 function getDefaultFilters() {
     const to = new Date()
     const from = new Date()
@@ -43,6 +35,7 @@ function TracksList() {
 
     const [filters, setFilters] = useState(getDefaultFilters)
     const [tracks, setTracks] = useState([])
+    const [summary, setSummary] = useState({ totals: [], projects: [] })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [users, setUsers] = useState([])
@@ -60,7 +53,8 @@ function TracksList() {
             projectService.getProjects(),
         ])
             .then(([u, c, p]) => {
-                setUsers(u || [])
+                const activeUsers = (u || []).filter(user => user.status !== 0 && !user.deleted_at)
+                setUsers(activeUsers)
                 setClients(c || [])
                 setProjects(p || [])
             })
@@ -79,10 +73,12 @@ function TracksList() {
                 idProject: filters.idProject || null,
             }
             const data = await tracksService.getTracks(params, userRole)
-            setTracks(data || [])
+            setTracks(data?.tracks || [])
+            setSummary(data?.summary || { totals: data?.totals || [], projects: [] })
         } catch (err) {
             setError('Failed to load tracks.')
             setTracks([])
+            setSummary({ totals: [], projects: [] })
         } finally {
             setLoading(false)
         }
@@ -98,8 +94,8 @@ function TracksList() {
         fetchTracks()
     }
 
-    const { grouped, grandTotalCost, grandTotalMinutes } = useMemo(() => {
-        if (!tracks.length) return { grouped: [], grandTotalCost: 0, grandTotalMinutes: 0 }
+    const grouped = useMemo(() => {
+        if (!tracks.length) return []
 
         const groups = {}
         for (const track of tracks) {
@@ -109,20 +105,12 @@ function TracksList() {
                     idProyecto: track.idProyecto,
                     projectName: track.projectName,
                     tracks: [],
-                    subtotalCost: 0,
-                    subtotalMinutes: 0,
                 }
             }
             groups[key].tracks.push(track)
-            groups[key].subtotalCost += Number(track.trackCost) || 0
-            groups[key].subtotalMinutes += parseDurationToMinutes(track.duration)
         }
 
-        const grouped = Object.values(groups)
-        const grandTotalCost = grouped.reduce((sum, g) => sum + g.subtotalCost, 0)
-        const grandTotalMinutes = grouped.reduce((sum, g) => sum + g.subtotalMinutes, 0)
-
-        return { grouped, grandTotalCost, grandTotalMinutes }
+        return Object.values(groups)
     }, [tracks])
 
     if (userRole === 'client') {
@@ -182,7 +170,7 @@ function TracksList() {
                         onClick={() => {
                             setExporting('pdf')
                             try {
-                                exportToPDF(grouped, isAdminOrPm, filters)
+                                exportToPDF(grouped, isAdminOrPm, filters, summary)
                             } catch (e) {
                                 console.error('PDF export error:', e)
                             } finally {
@@ -195,12 +183,13 @@ function TracksList() {
 
             <GroupedTracksTable
                 grouped={grouped}
+                summary={summary}
                 loading={loading}
                 isAdminOrPm={isAdminOrPm}
                 onEdit={handleEdit}
             />
 
-            <TracksSummary grouped={grouped} />
+            <TracksSummary grouped={grouped} summary={summary} />
 
             <TrackEditDialog
                 visible={dialogVisible}

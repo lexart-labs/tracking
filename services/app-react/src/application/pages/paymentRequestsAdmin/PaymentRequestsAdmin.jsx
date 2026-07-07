@@ -17,7 +17,8 @@ const CONCEPTS = ['Closure', 'Benefits', 'Compensation', 'External']
 const CURRENCIES = [
 	{ label: 'USD', value: 'USD' },
 	{ label: 'UYU', value: 'UYU' },
-	{ label: 'Reales (BRL)', value: 'BRL' },
+	{ label: 'BRL', value: 'BRL' },
+	{ label: 'USDT', value: 'USDT' },
 ]
 
 const STATUS_CLASSES = {

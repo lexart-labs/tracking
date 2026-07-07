@@ -17,7 +17,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $table = 'Users';
     protected $fillable = ['email', 'password','name','role', 'photo', 'idSlack'];
 
-    protected $hidden = ['created_at', 'updated_at', 'status'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function getJWTIdentifier()
     {

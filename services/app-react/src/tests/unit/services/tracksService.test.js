@@ -12,9 +12,10 @@ describe('tracksService.getTracks', () => {
     it('calls /tracks/user/all for admin without idUser', async () => {
         setSession(adminUser)
         const result = await tracksService.getTracks(DATE_PARAMS, 'admin')
-        expect(Array.isArray(result)).toBe(true)
-        expect(result.length).toBeGreaterThan(0)
-        expect(result[0].projectName).toBe('Alpha Project')
+        expect(Array.isArray(result.tracks)).toBe(true)
+        expect(result.tracks.length).toBeGreaterThan(0)
+        expect(result.tracks[0].projectName).toBe('Alpha Project')
+        expect(result.amount).toBe(80)
     })
 
     it('calls /tracks/user/:id for admin with idUser', async () => {
