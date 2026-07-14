@@ -22,10 +22,10 @@ function renderWithProviders(user = adminUser) {
 }
 
 describe('TracksList', () => {
-    it('renders "Tracks" heading', () => {
+    it('renders "Reports" heading', () => {
         setSession(adminUser)
         renderWithProviders(adminUser)
-        expect(screen.getByRole('heading', { name: 'Tracks' })).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: 'Reports' })).toBeInTheDocument()
     })
 
     it('shows Access Denied for client role', () => {

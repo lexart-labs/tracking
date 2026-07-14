@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Enums\Currency;
 use App\Enums\PaymentRequestDetailConcepts;
 use App\Enums\PaymentRequestStatus;
 use App\Models\PaymentRequest;
 use App\Models\PaymentRequestDetail;
-use App\Models\Tracks;
 use App\Models\Weeklyhours;
+use App\Services\TrackReportService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -23,6 +24,13 @@ use App\Models\User;
 
 class PaymentRequestController extends BaseController
 {
+    private TrackReportService $trackReportService;
+
+    public function __construct(TrackReportService $trackReportService)
+    {
+        $this->trackReportService = $trackReportService;
+    }
+
     private function applyFilters(Builder $query, Request $request)
     {
         $query->when($request->filled('concept'), function ($q) use ($request) {
@@ -57,6 +65,12 @@ class PaymentRequestController extends BaseController
     {
         $operation = "Get payment Requests";
         $query = PaymentRequest::query();
+
+        if ($request->filled('currency')) {
+            $this->validate($request, [
+                'currency' => [new Enum(Currency::class)],
+            ]);
+        }
 
         try {
             $query = $this->applyFilters($query, $request);
@@ -326,27 +340,16 @@ class PaymentRequestController extends BaseController
             if ($last_closure != null) $start_date = $last_closure->created_at;
             else $start_date = date("Y-m-01 00:00:00");
 
-            $tracks = Tracks::join("Tasks", "Tracks.idTask", "=", "Tasks.id")
-                ->where("Tracks.idUser", $user_id)
-                ->where("Tracks.startTime", ">=", $start_date)
-                ->whereNotNull("Tracks.endTime")
-                ->select(
-                    "Tracks.trackCost",
-                    "Tasks.name AS taskName",
-                    "Tracks.duracion AS trackDuration"
-                )->get();
-
-            $amount = 0;
-
-            foreach ($tracks as $track) {
-                $amount += $track->trackCost;
-            };
+            $tracks = $this->trackReportService->getManualTracks($user_id, $start_date);
+            $report = $this->trackReportService->buildReportResponse($tracks);
 
             return new Response(['response' => [
                 'tracks' => $tracks,
                 'start_date' => $start_date,
-                'amount' => $amount,
-                'currency' => $weekly_hours->currency
+                'amount' => $report['amount'] ?? 0,
+                'currency' => $weekly_hours->currency,
+                'totals' => $report['totals'],
+                'summary' => $report['summary']
             ]], 200);
         } catch (Exception $e) {
             // echo $e;
@@ -397,26 +400,18 @@ class PaymentRequestController extends BaseController
                 ? date("Y-m-d 23:59:59", strtotime($inputEnd))
                 : date("Y-m-d 23:59:59");
     
-            $tracks = Tracks::join("Tasks", "Tracks.idTask", "=", "Tasks.id")
-                ->where("Tracks.idUser", $user_id)
-                ->whereBetween("Tracks.startTime", [$start_date, $end_date])
-                ->whereNotNull("Tracks.endTime")
-                ->select(
-                    "Tracks.trackCost",
-                    "Tasks.name AS taskName",
-                    "Tracks.duracion AS trackDuration"
-                )
-                ->get();
-    
-            $amount = $tracks->sum('trackCost');
+            $tracks = $this->trackReportService->getManualTracks($user_id, $start_date, $end_date);
+            $report = $this->trackReportService->buildReportResponse($tracks);
     
             return new Response([
                 'response' => [
                     'tracks' => $tracks,
                     'start_date' => $start_date,
                     'end_date' => $end_date,
-                    'amount' => $amount,
+                    'amount' => $report['amount'] ?? 0,
                     'currency' => $weekly_hours->currency,
+                    'totals' => $report['totals'],
+                    'summary' => $report['summary'],
                     'response' => 'Balance calculated successfully'
                 ]
             ], 200);

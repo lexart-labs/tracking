@@ -14,8 +14,10 @@
     $scope.users        = [];
     $scope.select       = {};
     $scope.totalAmount={
-      "pesos":0,
+      "uyu":0,
       "usd":0,
+      "brl":0,
+      "usdt":0,
     }
 
     var date = new Date();
@@ -140,8 +142,10 @@
     //   if (!err) {
     //     console.log('budgets =', result);
     //     $scope.budgets  = result.budgets;
-    //     $scope.totalAmount.pesos=result.totalPesos;
-    //     $scope.totalAmount.usd=result.totalUsd;
+    //     $scope.totalAmount.uyu=result.totalUYU;
+    //     $scope.totalAmount.usd=result.totalUSD;
+    //     $scope.totalAmount.brl=result.totalBRL;
+    //     $scope.totalAmount.usdt=result.totalUSDT;
     //     $scope.total    = countItems;
     //   }
     // });
@@ -187,8 +191,10 @@
     var search  = function (){
       console.log($scope.query);
       $scope.budgets = [];
-      $scope.totalAmount.pesos = 0;
+      $scope.totalAmount.uyu = 0;
       $scope.totalAmount.usd = 0;
+      $scope.totalAmount.brl = 0;
+      $scope.totalAmount.usdt = 0;
       console.log('SELECT::',$scope.select.user, $scope.query);
       if (!$scope.select.user) {
         BudgetServices.findByMonth($scope.currentPage, $scope.query, function(err, budgets, countItems) {
@@ -199,19 +205,31 @@
             }
             $scope.budgets  = angular.copy(budgets.budgets);
             if(budgets){
-              if(!budgets.totalBudgets.totalPesos){
-                $scope.totalAmount.pesos = 0;
+              if(!budgets.totalBudgets.totalUYU){
+                $scope.totalAmount.uyu = 0;
               }else{
-                $scope.totalAmount.pesos = budgets.totalBudgets.totalPesos;
+                $scope.totalAmount.uyu = budgets.totalBudgets.totalUYU;
               }
-              if(!budgets.totalBudgets.totalDolares){
+              if(!budgets.totalBudgets.totalUSD){
                 $scope.totalAmount.usd = 0;
               }else{
-                $scope.totalAmount.usd = budgets.totalBudgets.totalDolares;
+                $scope.totalAmount.usd = budgets.totalBudgets.totalUSD;
+              }
+              if(!budgets.totalBudgets.totalBRL){
+                $scope.totalAmount.brl = 0;
+              }else{
+                $scope.totalAmount.brl = budgets.totalBudgets.totalBRL;
+              }
+              if(!budgets.totalBudgets.totalUSDT){
+                $scope.totalAmount.usdt = 0;
+              }else{
+                $scope.totalAmount.usdt = budgets.totalBudgets.totalUSDT;
               }
             }else{
-              $scope.totalAmount.pesos = 0;
+              $scope.totalAmount.uyu = 0;
               $scope.totalAmount.usd = 0;
+              $scope.totalAmount.brl = 0;
+              $scope.totalAmount.usdt = 0;
             }
             $scope.total    = countItems;
           }
@@ -227,19 +245,31 @@
             }
             $scope.budgets  = angular.copy(budgets.budgets);
             if(budgets){
-              if(!budgets.totalBudgets.totalPesos){
-                $scope.totalAmount.pesos = 0;
+              if(!budgets.totalBudgets.totalUYU){
+                $scope.totalAmount.uyu = 0;
               }else{
-                $scope.totalAmount.pesos = budgets.totalBudgets.totalPesos;
+                $scope.totalAmount.uyu = budgets.totalBudgets.totalUYU;
               }
-              if(!budgets.totalBudgets.totalDolares){
+              if(!budgets.totalBudgets.totalUSD){
                 $scope.totalAmount.usd = 0;
               }else{
-                $scope.totalAmount.usd = budgets.totalBudgets.totalDolares;
+                $scope.totalAmount.usd = budgets.totalBudgets.totalUSD;
+              }
+              if(!budgets.totalBudgets.totalBRL){
+                $scope.totalAmount.brl = 0;
+              }else{
+                $scope.totalAmount.brl = budgets.totalBudgets.totalBRL;
+              }
+              if(!budgets.totalBudgets.totalUSDT){
+                $scope.totalAmount.usdt = 0;
+              }else{
+                $scope.totalAmount.usdt = budgets.totalBudgets.totalUSDT;
               }
             }else{
-              $scope.totalAmount.pesos = 0;
+              $scope.totalAmount.uyu = 0;
               $scope.totalAmount.usd = 0;
+              $scope.totalAmount.brl = 0;
+              $scope.totalAmount.usdt = 0;
             }
             $scope.total    = countItems;
           } 

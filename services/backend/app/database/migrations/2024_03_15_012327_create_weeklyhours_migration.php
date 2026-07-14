@@ -19,7 +19,7 @@ class CreateWeeklyhoursMigration extends Migration
             $table->string('userName')->nullable();
             $table->float('costHour')->nullable();
             $table->float('workLoad')->nullable();
-            $table->string('currency')->nullable();
+            $table->enum('currency', ['USD', 'UYU', 'BRL', 'USDT'])->nullable();
             $table->tinyInteger('borrado')->nullable();
             $table->timestamps();
         });

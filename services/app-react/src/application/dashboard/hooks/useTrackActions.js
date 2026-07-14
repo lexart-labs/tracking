@@ -40,7 +40,7 @@ export function useTrackActions(user, onRefresh) {
                 startTime: toSQLFormat(new Date()),
                 idProyecto: item.projectId || item.idProyecto,
                 typeTrack: item.typeTrack || 'manual',
-                currency: item.currency || '$'
+                currency: item.currency || 'USD'
             }
             await tracksService.create(payload)
             if (onRefresh) onRefresh()
@@ -89,7 +89,7 @@ export function useTrackActions(user, onRefresh) {
                 endTime: toSQLFormat(endDate),
                 idProyecto: item.projectId || item.idProyecto,
                 typeTrack: item.typeTrack || 'manual',
-                currency: item.currency || '$'
+                currency: item.currency || 'USD'
             }
             await tracksService.create(payload)
             if (onRefresh) onRefresh()

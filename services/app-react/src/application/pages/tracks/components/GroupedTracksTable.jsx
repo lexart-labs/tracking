@@ -26,26 +26,20 @@ function formatDatetime(datetime) {
     return `${d}/${m}/${y}${time ? ` ${time}` : ''}`
 }
 
-const GroupedTracksTable = forwardRef(function GroupedTracksTable({ grouped, loading, isAdminOrPm, onEdit }, ref) {
+const GroupedTracksTable = forwardRef(function GroupedTracksTable({ grouped, summary, loading, isAdminOrPm, onEdit }, ref) {
 
     const flatTracks = useMemo(() => grouped.flatMap((g) => g.tracks), [grouped])
 
     const groupSubtotals = useMemo(() => {
         const map = {}
-        for (const g of grouped) {
-            const byCurrency = {}
-            for (const track of g.tracks) {
-                const cur = track.currency || 'USD'
-                if (!byCurrency[cur]) byCurrency[cur] = 0
-                byCurrency[cur] += Number(track.trackCost) || 0
+        for (const project of summary?.projects || []) {
+            if (!map[project.idProyecto]) {
+                map[project.idProyecto] = []
             }
-            map[g.idProyecto] = {
-                minutes: g.subtotalMinutes,
-                byCurrency,
-            }
+            map[project.idProyecto].push(project)
         }
         return map
-    }, [grouped])
+    }, [summary])
 
     const rowGroupHeaderTemplate = (data) => (
         <span className="font-bold">{data.projectName}</span>
@@ -57,9 +51,11 @@ const GroupedTracksTable = forwardRef(function GroupedTracksTable({ grouped, loa
         const colCount = isAdminOrPm ? 10 : 9
         return (
             <td colSpan={colCount} className="text-right font-semibold bg-gray-50 pr-4">
-                <span className="mr-6">Subtotal: {formatMinutes(sub.minutes)}</span>
-                {Object.entries(sub.byCurrency).map(([cur, cost]) => (
-                    <span key={cur} className="ml-4">{cur} {cost.toFixed(2)}</span>
+                {sub.map((item) => (
+                    <span key={`${item.currency}-${item.idProyecto}`} className="ml-4">
+                        <span className="mr-2">Subtotal: {formatMinutes(item.minutes)}</span>
+                        {item.currency} {Number(item.amount).toFixed(2)}
+                    </span>
                 ))}
             </td>
         )
