@@ -177,7 +177,6 @@ export function UserList() {
         setAppliedFilters(empty);
         setStatusFilter('active');
     };
-
     return (
         <div className="p-4 lg:p-10 max-w-[1600px] mx-auto animate-in fade-in duration-500">
             <PageHeader 

@@ -53,7 +53,8 @@ function TracksList() {
             projectService.getProjects(),
         ])
             .then(([u, c, p]) => {
-                setUsers(u || [])
+                const activeUsers = (u || []).filter(user => user.status !== 0 && !user.deleted_at)
+                setUsers(activeUsers)
                 setClients(c || [])
                 setProjects(p || [])
             })

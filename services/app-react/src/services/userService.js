@@ -6,7 +6,6 @@ const USERS_ENDPOINT = '/user'
 export const getPhotoUrl = (photo) => {
     if (!photo) return null;
     if (photo.startsWith('http')) return photo;
-
     const basePhotoUrl =
         import.meta.env.VITE_BASE_PHOTO ||
         import.meta.env.VITE_FILES_BASE ||
