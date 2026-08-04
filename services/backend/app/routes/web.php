@@ -39,6 +39,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('exceptions/{id}/{date}', 'UserController@createException');
             Route::post('/fixeds/{id}', 'UserController@upsertFixed');
             Route::put('update/{id}', 'UserController@update');
+            Route::post('{id}/profile-image', 'UserController@uploadProfileImage');
 
             //Performances
             Route::group(['prefix' => 'performance'], function() {
@@ -49,10 +50,9 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::group(['middleware' => 'pm:api'], function () {
             Route::post('register', 'UserController@register');
-            //Route::delete('delete', 'UserController@delete');
-            //Route::post('undelete', 'UserController@undelete');
+            Route::delete('delete', 'UserController@delete');
+            Route::post('undelete', 'UserController@undelete');
             Route::get('all-admin', 'UserController@allAdmin');
-            Route::get('{id}', 'UserController@userById');
 
 
             //Hours
@@ -69,6 +69,8 @@ Route::group(['prefix' => 'api'], function () {
                 Route::post('{id}/save', 'PerformanceController@save');
             });
         });
+
+        Route::get('{id}', 'UserController@userById');
     });
 
     //Projects

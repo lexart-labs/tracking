@@ -38,6 +38,8 @@ enableMocking().then(() => createRoot(document.getElementById('root')).render(
 								<Route index element={<Dashboard />} />
 								<Route path="/users" element={<UserList />} />
 								<Route path="/user/:userId?" element={<User />} />
+					<Route path="/app/user/edit/:userId" element={<User />} />
+					<Route path="/app/user/:userId?" element={<User />} />
 								<Route path="/clients" element={<ClientList />} />
 								<Route path="/client/:clientId?" element={<ClientForm />} />
 								<Route path="/payment-requests" element={<PaymentRequests />} />
