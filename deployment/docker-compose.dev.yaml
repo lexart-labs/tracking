@@ -56,20 +56,6 @@ services:
     expose:
       - 9000
 
-  chatbot:
-    build:
-      context: ../services/chatbot
-      dockerfile: Dockerfile.dev
-    restart: always
-    env_file:
-      - ../env_files/.env.dev
-    volumes:
-      - ../services/chatbot/src:/app/src
-    ports:
-      - "127.0.0.1:3081:3000"
-    expose:
-      - 3000
-
   database:
     image: mysql:8.0.36
     restart: always
@@ -82,18 +68,6 @@ services:
     volumes:
       - ../services/database/db_init_scripts:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin:5.2.1
-    restart: always
-    ports:
-      - "127.0.0.1:8081:80"
-    environment:
-      PMA_HOST: database
-      PMA_PORT: 3306
-      UPLOAD_LIMIT: 300M
-    depends_on:
-      - database
 
 volumes:
   vendor_data:
