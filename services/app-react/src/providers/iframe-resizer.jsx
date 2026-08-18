@@ -5,19 +5,22 @@ import sessionStore from "@/stores/session";
 export const resizerContext = createContext()
 
 function ResizerProvider({ children }) {
-    const { setUser, setToken, user, token } = sessionStore()
+    const { setIframeSession, user, token } = sessionStore()
     const [refreshCounter, setRefreshCounter] = React.useState(0)
+    const [iframeChecked, setIframeChecked] = React.useState(window.parent === window)
 
     window.iFrameResizer = {
         onMessage: (event) => {
-            if (event && (event.user || event.token)) {
-                setUser(event.user || {})
-                setToken(event.token || '')
-            } else {
-                console.warn('⚠️ Received unknown message from parent iframe', event);
-            }
+            if (event?.user && event?.token) setIframeSession(event.user, event.token)
+            setIframeChecked(true)
         }
     }
+
+    React.useEffect(() => {
+        if (iframeChecked) return
+        const timeout = window.setTimeout(() => setIframeChecked(true), 1500)
+        return () => window.clearTimeout(timeout)
+    }, [iframeChecked])
 
     React.useEffect(() => {
         const handleMessage = (event) => {
@@ -29,10 +32,7 @@ function ResizerProvider({ children }) {
         return () => window.removeEventListener('message', handleMessage)
     }, [])
 
-    if (!user || !token) {
-        console.log('⏳ Waiting for session message from parent...');
-        return null;
-    }
+    if (!iframeChecked) return null
 
     return (
         <resizerContext.Provider value={{ user, token, refreshCounter }}>

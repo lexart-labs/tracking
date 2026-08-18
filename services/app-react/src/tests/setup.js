@@ -8,7 +8,7 @@ import sessionStore from '@/stores/session'
 vi.mock('@iframe-resizer/child', () => ({}))
 
 // ResizeObserver polyfill for jsdom
-global.ResizeObserver = class ResizeObserver {
+globalThis.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
@@ -20,6 +20,6 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterEach(() => {
   server.resetHandlers()
   cleanup()
-  sessionStore.setState({ user: null, token: null })
+  sessionStore.getState().clearSession()
 })
 afterAll(() => server.close())

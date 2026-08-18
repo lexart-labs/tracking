@@ -19,7 +19,7 @@ function isTrackRunning(track) {
 
 export default function AppHeader({ sidebarCollapsed = false, onToggleSidebar }) {
   const navigate = useNavigate()
-  const { user, token, setUser, setToken } = sessionStore()
+  const { user, token, clearSession } = sessionStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [searching, setSearching] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -45,7 +45,7 @@ export default function AppHeader({ sidebarCollapsed = false, onToggleSidebar })
       try {
         const track = await tracksService.getCurrentUserLastTrack()
         setLastTrack(track || null)
-      } catch (error) {
+      } catch {
         setLastTrack(null)
       }
     }
@@ -85,7 +85,7 @@ export default function AppHeader({ sidebarCollapsed = false, onToggleSidebar })
 
     try {
       if (isTrackRunning(lastTrack)) {
-        const { duracion, ...payload } = lastTrack
+        const { duracion: _DURACION, ...payload } = lastTrack
         await tracksService.update({ ...payload, endTime: toSqlDateTime() }, user?.userRole)
         setLastTrack({ ...lastTrack, endTime: toSqlDateTime() })
       } else {
@@ -116,8 +116,7 @@ export default function AppHeader({ sidebarCollapsed = false, onToggleSidebar })
 
   const handleLogout = () => {
     setMenuOpen(false)
-    setUser(null)
-    setToken(null)
+    clearSession()
     if (window.parent && window.parent.postMessage) {
       window.parent.postMessage({ action: 'logout' }, '*')
     }

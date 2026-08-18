@@ -17,7 +17,7 @@ api.interceptors.request.use(
     
     config => {
         const session = sessionStore.getState()
-        config.headers.Authorization = `Bearer ${session.token}`
+        if (session.token) config.headers.Authorization = `Bearer ${session.token}`
         return config
     },
     error => {
