@@ -20,6 +20,7 @@ import Layout from '@/application/Layout'
 import '@iframe-resizer/child'
 import './index.css'
 import ChatBotWidget from '@/application/pages/chatbot/ChatBotWidget.tsx'
+import Login from '@/application/pages/login/Login'
 
 async function enableMocking() {
 	if (import.meta.env.VITE_MSW_ENABLED !== 'true') return
@@ -30,30 +31,29 @@ async function enableMocking() {
 enableMocking().then(() => createRoot(document.getElementById('root')).render(
 	<StrictMode>
 		<PrimeReactProvider>
-			<ResizerProvider>
-				<Router>
-					<Routes>
-						<Route path="/" element={<Layout />}>
-							<Route element={<ProtectedRoute />}>
-								<Route index element={<Dashboard />} />
-								<Route path="/users" element={<UserList />} />
-								<Route path="/user/:userId?" element={<User />} />
-					<Route path="/app/user/edit/:userId" element={<User />} />
-					<Route path="/app/user/:userId?" element={<User />} />
-								<Route path="/clients" element={<ClientList />} />
-								<Route path="/client/:clientId?" element={<ClientForm />} />
-								<Route path="/payment-requests" element={<PaymentRequests />} />
-								<Route path="/admin/payment-requests" element={<PaymentRequestsAdmin />} />
-								<Route path="/weeklyhours" element={<WeeklyHoursList />} />
-								<Route path="/weeklyhour/:weeklyhoursId?" element={<WeeklyHoursForm />} />
-								<Route path="/tracks" element={<TracksList />} />
-								<Route path="/tasks" element={<TasksList />} />
-							</Route>
+			<Router>
+				<Routes>
+					<Route path="/login" element={<Login />} />
+					<Route path="/" element={<ResizerProvider><Layout /></ResizerProvider>}>
+						<Route element={<ProtectedRoute />}>
+							<Route index element={<Dashboard />} />
+							<Route path="/users" element={<UserList />} />
+							<Route path="/user/:userId?" element={<User />} />
+							<Route path="/app/user/edit/:userId" element={<User />} />
+							<Route path="/app/user/:userId?" element={<User />} />
+							<Route path="/clients" element={<ClientList />} />
+							<Route path="/client/:clientId?" element={<ClientForm />} />
+							<Route path="/payment-requests" element={<PaymentRequests />} />
+							<Route path="/admin/payment-requests" element={<PaymentRequestsAdmin />} />
+							<Route path="/weeklyhours" element={<WeeklyHoursList />} />
+							<Route path="/weeklyhour/:weeklyhoursId?" element={<WeeklyHoursForm />} />
+							<Route path="/tracks" element={<TracksList />} />
+							<Route path="/tasks" element={<TasksList />} />
 						</Route>
-						<Route path="/chatbot" element={<ChatBotWidget />} />
-					</Routes>
-				</Router>
-			</ResizerProvider>
+					</Route>
+					<Route path="/chatbot" element={<ChatBotWidget />} />
+				</Routes>
+			</Router>
 		</PrimeReactProvider>
 	</StrictMode>,
 ))

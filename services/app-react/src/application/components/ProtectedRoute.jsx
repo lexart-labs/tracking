@@ -5,9 +5,7 @@ const ProtectedRoute = () => {
     const { user, token } = sessionStore();
 
     if (!user || !token) {
-        // Since this app runs in an iframe and the parent handles the "login" state,
-        // we show nothing until the session is established.
-        return null;
+        return <Navigate to="/login" replace />;
     }
 
     return <Outlet />;

@@ -4,66 +4,46 @@
 
     var Module = ng.module('LexTracking');
 
-    Module.controller('AuthCtrl', ['$scope', '$rootScope', '$window', 'RestClient', '$log', '$state', '$filter', 'WeeklyHourServices', function ($scope, $rootScope, $window, RestClient, $log, $state, $filter, WeeklyHourServices) {
-
-        $scope.user = {
-            email: '',
-            password: ''
-        };
-        $scope.sendingData = false;
-        // AUTO FOCUS
-        jQuery('input[type=email]').focus();
+    Module.controller('AuthCtrl', ['$scope', '$rootScope', '$window', '$state', '$sce', function ($scope, $rootScope, $window, $state, $sce) {
 
         $window.localStorage["userName"] = "";
         $window.localStorage["userRole"] = "";
         $window.localStorage["userId"] = "";
 
-        $scope.isChecked = false;
-
         if ($window.localStorage[TOKEN_KEY]) {
             $state.go('app.dashboard');
+            return;
         }
 
-        $scope.authenticate = function () {
-            $scope.sendingData = true;
-            $scope.error = "";
-            RestClient.post('user/login', $scope.user, function (err, result) {
-                $scope.sendingData = false;
-                if (result && !result.token) {
-                    $rootScope.showToaster($filter('translate')('session.error_email_password'), 'error');
-                    // $rootScope.showToaster($filter('translate')('session.error_email_password'), 'error');
-                    // $scope.error = $filter('translate')('session.error_email_password');
-                }
-                else {
-                    // LOCAL STORAGE
-                    var user = result;
+        var reactUrl = $rootScope.trackingReactUrl || (typeof TRACKING_REACT_URL !== 'undefined' ? TRACKING_REACT_URL : '');
+        $scope.env_react_url = $sce.trustAsResourceUrl(reactUrl + '/#/login');
 
-                    $window.localStorage[TOKEN_KEY] = user.token;
-                    $window.localStorage["userId"] = user.id;
-                    $window.localStorage["userName"] = user.name;
-                    $window.localStorage["userEmail"] = user.email;
-                    $window.localStorage["userRole"] = user.role;
-                    $window.localStorage["isAdmin"] = user.role == 'admin';
-                    $window.localStorage["isClient"] = user.role == 'client';
-                    $window.localStorage["isDeveloper"] = user.role == 'developer';
-                    $window.localStorage["idUserClient"] = user.idClient;
-                    $window.localStorage["photo"] = FILES_BASE + user.photo;
+        function receiveLogin(event) {
+            var iframe = document.getElementById('react-login');
+            var user = event.data && event.data.user;
 
-                    $rootScope.userId = $window.localStorage["userId"];
-                    $rootScope.userName = $window.localStorage["userName"];
-                    $rootScope.userEmail = $window.localStorage["userEmail"];
-                    $rootScope.userRole = $window.localStorage["userRole"];
-                    $rootScope.isAdmin = $window.localStorage["isAdmin"];
-                    $rootScope.isClient = $window.localStorage["isClient"];
-                    $rootScope.isDeveloper = $window.localStorage["isDeveloper"];
-                    $rootScope.userPhoto = $window.localStorage["photo"];
-                    if ($rootScope.isClient == 'true') {
-                        $rootScope.userIdClient = $window.localStorage["idUserClient"];
-                    }
-                    $state.go('app.dashboard');
-                }
+            if (!iframe || event.source !== iframe.contentWindow || !event.data || event.data.action !== 'login-success' || !user || !user.token) return;
+
+            $window.localStorage[TOKEN_KEY] = user.token;
+            $window.localStorage["userId"] = user.id;
+            $window.localStorage["userName"] = user.name;
+            $window.localStorage["userEmail"] = user.email;
+            $window.localStorage["userRole"] = user.role;
+            $window.localStorage["isAdmin"] = user.role == 'admin';
+            $window.localStorage["isClient"] = user.role == 'client';
+            $window.localStorage["isDeveloper"] = user.role == 'developer';
+            $window.localStorage["idUserClient"] = user.idClient;
+            $window.localStorage["photo"] = FILES_BASE + user.photo;
+
+            $rootScope.$applyAsync(function () {
+                $state.go('app.dashboard');
             });
-        };
+        }
+
+        $window.addEventListener('message', receiveLogin);
+        $scope.$on('$destroy', function () {
+            $window.removeEventListener('message', receiveLogin);
+        });
 
     }]);
 
